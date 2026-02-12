@@ -1,4 +1,7 @@
 import Navbar from "./components/Navbar";
+import TopPriorities from "./components/TopPriorities";
+import ForTomorrow from "./components/ForTomorrow";
+import DontForget from "./components/DontForget";
 
 const App = () => {
   return (
@@ -37,15 +40,9 @@ const App = () => {
 
           {/* Right Side - Tasks Lists */}
           <div className="space-y-4">
-            <div className="bg-white border-2 border-black rounded-lg p-4 h-44">
-              <p className="font-bold border-b-2 border-black pb-2">Top Priorities</p>
-            </div>
-            <div className="bg-orange-100 border-2 border-black rounded-lg p-4 h-44">
-              <p className="font-bold border-b-2 border-black pb-2">For Tomorrow</p>
-            </div>
-            <div className="bg-green-200 border-2 border-black rounded-lg p-4 h-44">
-              <p className="font-bold border-b-2 border-black pb-2">Don't Forget</p>
-            </div>
+            <TopPriorities />
+            <ForTomorrow />
+            <DontForget />
             <div className="bg-yellow-100 border-2 border-black rounded-lg p-4 h-32">
               <p className="font-bold border-b-2 border-black pb-2">Notes/thoughts</p>
             </div>

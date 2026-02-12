@@ -1,11 +1,11 @@
 import { useState } from react // with do this to pull from package and use
 
-const DontForget = () => {
+const ForTomorrow = () => {
     // State: stores our list of tasks (where is it stored though, in the broswer, and when we put it in the backend, would it be stored there instead)
     const [tasks, setTasks] = useState([
-        { id: 1, text: 'Welcome customers to visit website', completed: false },
-        { id: 2, text: 'Prepare a light breakfast', completed: false },
-        { id: 3, text: 'Dentist', completed: false }
+        { id: 1, text: 'Continue VISA APP', completed: false },
+        { id: 2, text: 'CONTINUE Project', completed: false },
+        { id: 3, text: 'Drive to the company', completed: false }
     ]);
 
     // State: stores the new task being typed (stores where?)
@@ -38,7 +38,7 @@ const DontForget = () => {
     }
 
     return (
-        <div className="bg-green-200 border-2 border-black rounded-lg p-4 h-auto min-h-44">
+        <div className="bg-orange-100 border-2 border-black rounded-lg p-4 h-auto min-h-44">
             {/* Header */}
             <div className="flex justify-between items-center border-b-2 border-black pb-2 mb-3">
                 <p className="font-bold">For Tomorrow</p>
@@ -76,7 +76,7 @@ const DontForget = () => {
                         value={newTask}
                         onChange={(e) => setNewTask(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && addTask()}
-                        placeholder="Add reminder..."
+                        placeholder="Add task for tomorrow..."
                         className="flex-1 px-2 py-1 border border-gray-300 rounded"
                     />
                     <button
@@ -92,4 +92,4 @@ const DontForget = () => {
     )
 }
 
-export default DontForget;
+export default ForTomorrow;
