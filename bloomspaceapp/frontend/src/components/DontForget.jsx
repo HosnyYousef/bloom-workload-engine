@@ -3,9 +3,9 @@ import { useState } from react // with do this to pull from package and use
 const DontForget = () => {
     // State: stores our list of tasks (where is it stored though, in the broswer, and when we put it in the backend, would it be stored there instead)
     const [tasks, setTasks] = useState([
-        { id: 1, text: 'Continue VISA APP', completed: false },
-        { id: 2, text: 'CONTINUE Project', completed: false },
-        { id: 3, text: 'Drive to the company', completed: false }
+        { id: 1, text: 'Welcome customers to visit website', completed: false },
+        { id: 2, text: 'Prepare a light breakfast', completed: false },
+        { id: 3, text: 'Dentist', completed: false }
     ]);
 
     // State: stores the new task being typed (stores where?)
@@ -86,11 +86,10 @@ const DontForget = () => {
                         +
                     </button>
                 </div>
-
             </div>
         </div>
 
     )
 }
 
-export default ForTomorrow;
+export default DontForget;
