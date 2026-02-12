@@ -40,6 +40,26 @@ const DontForget = () => {
     return (
         <div className="bg-green-200 border-2 border-black rounded-lg p-4 h-auto min-h-44">
             {/* Header */}
+            <div className="flex justify-between items-center border-b-2 border-black pb-2 mb-3">
+                <p className="font-bold">For Tomorrow</p>
+                <button className="text-sm underline">See all...</button>
+            </div>
+
+            {/* Task List */}
+            <div className="space-y-2">
+                {tasks.map(task => (
+                    <div key={task.id} className="flex items-center gap-2 group">
+                        <input 
+                        type="checkbox"
+                        checked={task.completed}
+                        onChange={() => toggleTask(task.id)}
+                        className="w-4 h-4 cursor-pointer"
+                        />
+
+                    </div>
+                ))}
+
+            </div>
         </div>
         
     )
