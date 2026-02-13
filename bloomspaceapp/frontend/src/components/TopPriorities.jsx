@@ -46,12 +46,12 @@ const TopPriorities = () => {
             </div>
 
             {/* Task List */}
-            <div>
+            <div className="space-y-2">
                 {tasks.map(task => (
-                    <div key={task.id} className=''>
+                    <div key={task.id} className='flex items-center gap-2 group'>
                         {/* Checkbox */}
                         <input
-                            type="text"
+                            type="checkbox"
                             checked={task.completed}
                             onChange={() => toggleTask(task.id)}
                             className='w-4 h-4 cursor-pointer'
@@ -80,7 +80,7 @@ const TopPriorities = () => {
                         type="text"
                         value={newTask}
                         onChange={(e) => setNewTask(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && addTask()}
+                        onKeyDown={(e) => e.key === 'Enter' && addTask()}
                         placeholder='Add new task...'
                         className='flex-1 px-2 py-1 border border-gray-300 rounded'
                     />

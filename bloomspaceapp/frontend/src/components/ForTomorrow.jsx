@@ -30,12 +30,12 @@ const ForTomorrow = () => {
 
         setTasks([...tasks, newTaskObj])
         setNewTask('')
-    }
+    };
 
     //Function: Delete task
     const DeleteTask = (id) => {
         setTasks(tasks.filter(task => task.id !== id))
-    }
+    };
 
     return (
         <div className="bg-orange-100 border-2 border-black rounded-lg p-4 h-auto min-h-44">
@@ -55,9 +55,13 @@ const ForTomorrow = () => {
                             onChange={() => toggleTask(task.id)}
                             className="w-4 h-4 cursor-pointer"
                         />
+
+                         {/* Task Text */}
                         <span className={`flex-1 ${task.completed ? 'line-through text-gray-400' : ''}`}>
                             {task.text}
                         </span>
+
+                         {/* Delete Button (shows on hover) */}
                         <button
                             onClick={() => DeleteTask(task.id)}
                             className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
