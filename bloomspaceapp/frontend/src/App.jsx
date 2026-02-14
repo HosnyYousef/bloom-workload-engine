@@ -2,6 +2,7 @@ import Navbar from "./components/Navbar";
 import TopPriorities from "./components/TopPriorities";
 import ForTomorrow from "./components/ForTomorrow";
 import DontForget from "./components/DontForget";
+import DateDisplay from "./components/DateDisplay";
 
 const App = () => {
   return (
@@ -23,17 +24,17 @@ const App = () => {
           </div>
         </div>
 
-        {/* Date Dection */}
+        {/* Date section */}
         <div className="flex justify-between items-center mb-6">
           <div className="bg-blue-200 border-2 border-black rounded-full px-6 py-2">
             <span className="font-bold">TODAY ×</span>
           </div>
-          <div className="font-bold">DATE: 2 SEPTEMBER, 2030</div>
+          <DateDisplay />
         </div>
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-3 gap-4">
-          {/* Left Side - Parking Lod (spans 2 columns) */}
+          {/* Left Side - Parking Lot (spans 2 columns) */}
           <div className="col-span-2 bg-pink-300 border-2 border-black rounded-lg p-6 h-96">
             <p className="font-bold text-2xl">PARKING LOT</p>
           </div>
