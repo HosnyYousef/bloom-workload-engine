@@ -1,41 +1,18 @@
 import { useState } from 'react'
 
-const TopPriorities = () => {
-    // State: stores our list of tasks
-    const [tasks, setTasks] = useState([
-        { id: 1, text: 'Help friend apply for vistor VISA', completed: false },
-        { id: 2, text: 'Work on project', completed: false },
-        { id: 3, text: 'Process Business Data', completed: false }
-    ]);
-
-    // State: stores the new task being typed
+const TopPriorities = ({ tasks, onToggle, onDelete, onAdd}) => {
     const [newTask, setNewTask] = useState('');
 
-    // Funtion: Toggle task completion (check/uncheck)
-    const toggleTask = (id) => {
-        setTasks(tasks.map(task =>
-            task.id === id ? { ...task, completed: !task.completed } : task
-        ))
-    }
-
-    // Function: Add new task
-    const addTask = () => {
-        if (newTask.trim() === '') return; // Don't add empty tasks
-
-        const newTaskObj = {
-            id: Date.now(), // Simple ID (use UUID in production)
+    const handleAdd = () => {
+        if (newTask.trim() === '') return;
+        onAdd({
             text: newTask,
-            completed: false
-        }
-
-        setTasks([...tasks, newTaskObj]);
-        setNewTask(''); //Clear input
-    };
-
-    // Function: Delete task
-    const DeleteTask = (id) => {
-        setTasks(tasks.filter(task => task.id !== id));
-    };
+            hours: 1,
+            deadline: '',
+            importance: 'high' // Manual adds to priorties = high importance
+        })
+        setNewTask('');
+    }
 
     return (
         <div className='bg-white border-2 border-black rounded-lg p-4 h-auto min-h-44'>
@@ -53,7 +30,7 @@ const TopPriorities = () => {
                         <input
                             type="checkbox"
                             checked={task.completed}
-                            onChange={() => toggleTask(task.id)}
+                            onChange={() => onToggle(task.id)}
                             className='w-4 h-4 cursor-pointer'
                         />
 
@@ -64,7 +41,7 @@ const TopPriorities = () => {
 
                         {/* Delete Button (shows on hover) */}
                         <button
-                            onClick={() => DeleteTask(task.id)}
+                            onClick={() => onDelete(task.id)}
                             className='text-red-500 opacity-0 group-hover:opacity-100 transition-opacity'
                         >
                             x
@@ -80,8 +57,8 @@ const TopPriorities = () => {
                         type="text"
                         value={newTask}
                         onChange={(e) => setNewTask(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && addTask()}
-                        placeholder='Add new task...'
+                        onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+                        placeholder='Add priority task...'
                         className='flex-1 px-2 py-1 border border-gray-300 rounded'
                     />
                     <button
@@ -94,7 +71,6 @@ const TopPriorities = () => {
             </div>
         </div>
     )
-
 }
 
 export default TopPriorities
