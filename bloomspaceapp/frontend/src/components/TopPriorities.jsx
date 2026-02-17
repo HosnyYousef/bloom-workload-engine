@@ -62,7 +62,7 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd}) => {
                         className='flex-1 px-2 py-1 border border-gray-300 rounded'
                     />
                     <button
-                        onClick={addTask}
+                        onClick={handleAdd}
                         className='px-3 py-1 bg-green-500 text-white rounded font-bold hover:bg-green-600'
                     >
                         +

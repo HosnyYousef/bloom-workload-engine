@@ -1,40 +1,21 @@
 import { useState } from 'react' // with do this to pull from package and use
 
-const ForTomorrow = () => {
-    // State: stores our list of tasks (where is it stored though, in the broswer, and when we put it in the backend, would it be stored there instead)
-    const [tasks, setTasks] = useState([
-        { id: 1, text: 'Continue VISA APP', completed: false },
-        { id: 2, text: 'CONTINUE Project', completed: false },
-        { id: 3, text: 'Drive to the company', completed: false }
-    ]);
-
-    // State: stores the new task being typed (stores where?)
+const ForTomorrow = ({ tasks, onToggle, onDelete, onAdd }) => {
     const [newTask, setNewTask] = useState('');
 
-    // Function: Toggle task completion (check/uncheck)
-    const toggleTask = (id) => {
-        setTasks(tasks.map(task =>
-            task.id === id ? { ...task, completed: !task.completed } : task
-        ))
-    }
-
     // Function: Add new task
-    const addTask = () => {
+    const handleAdd = () => {
         if (newTask.trim() === '') return;
 
-        const newTaskObj = {
-            id: Date.new(),
-            task: newTask,
-            completed: false
-        }
-
-        setTasks([...tasks, newTaskObj])
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        onAdd({
+            text: newTask,
+            hours: 1,
+            deadline: tomorrow.toISOString().split('T')[0],
+            importance: 'medium'
+        })
         setNewTask('')
-    };
-
-    //Function: Delete task
-    const DeleteTask = (id) => {
-        setTasks(tasks.filter(task => task.id !== id))
     };
 
     return (
@@ -52,18 +33,18 @@ const ForTomorrow = () => {
                         <input
                             type="checkbox"
                             checked={task.completed}
-                            onChange={() => toggleTask(task.id)}
+                            onChange={() => onToggle(task.id)}
                             className="w-4 h-4 cursor-pointer"
                         />
 
-                         {/* Task Text */}
+                        {/* Task Text */}
                         <span className={`flex-1 ${task.completed ? 'line-through text-gray-400' : ''}`}>
                             {task.text}
                         </span>
 
-                         {/* Delete Button (shows on hover) */}
+                        {/* Delete Button (shows on hover) */}
                         <button
-                            onClick={() => DeleteTask(task.id)}
+                            onClick={() => onDelete(task.id)}
                             className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                             x
@@ -79,12 +60,12 @@ const ForTomorrow = () => {
                         type="text"
                         value={newTask}
                         onChange={(e) => setNewTask(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && addTask()}
+                        onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
                         placeholder="Add task for tomorrow..."
                         className="flex-1 px-2 py-1 border border-gray-300 rounded"
                     />
                     <button
-                        onClick={addTask}
+                        onClick={handleAdd}
                         className="px-3 py-1 bg-green-500 text-white rounded font-bold hover:bg-green-600"
                     >
                         +
