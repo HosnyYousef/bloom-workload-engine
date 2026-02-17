@@ -3,6 +3,7 @@ import TopPriorities from "./components/TopPriorities";
 import ForTomorrow from "./components/ForTomorrow";
 import DontForget from "./components/DontForget";
 import DateDisplay from "./components/DateDisplay";
+import NotesThoughts from "./components/NotesThoughts";
 
 const App = () => {
   return (
@@ -44,6 +45,7 @@ const App = () => {
             <TopPriorities />
             <ForTomorrow />
             <DontForget />
+            
             <div className="bg-yellow-100 border-2 border-black rounded-lg p-4 h-32">
               <p className="font-bold border-b-2 border-black pb-2">Notes/thoughts</p>
             </div>
