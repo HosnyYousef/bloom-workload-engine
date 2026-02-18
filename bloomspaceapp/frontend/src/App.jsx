@@ -30,7 +30,7 @@ const sortTasks = (tasks) => {
     return deadline > tomorrow && deadline <= threeDays;
   })
 
-  const dontForget = task.filter(task => {
+  const dontForget = tasks.filter(task => {
     if (!task.deadline) return task.importance === 'low' || !task.importance;
     const deadline = new Date(task.deadline);
     return deadline > threeDays;
