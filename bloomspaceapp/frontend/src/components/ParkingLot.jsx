@@ -81,9 +81,10 @@ const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete }) => {
         <thead className="bg-pink-400 border-b-2 border-black">
             <tr>
                 <th className="border-r-2 border-black p-3 text-left font-bold">ITEM</th>
-                <th>LENGTH - HOURS</th>
-                <th>DATE DUE/DAILY TIME</th>
-                <th>IMPORTANCE LEVEL</th>
+                <th className="border-r-2 border-black p-3 text-left font-bold w-32">LENGTH - HOURS</th>
+                <th className="border-r-2 border-black p-3 text-left font-bold w-40">DATE DUE/DAILY TIME</th>
+                <th className="border-r-2 border-black p-3 text-left font-bold w-36">IMPORTANCE LEVEL</th>
+                <th className="p-3 w-20"></th>
             </tr>
         </thead>
 
