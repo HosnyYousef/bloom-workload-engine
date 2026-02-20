@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Navbar = () => {
+const Navbar = ({ energyLevel, onEnergyChange }) => {
   return (
     <nav className="bg-white border-b-2 border-black">
       <div className="max-w-7xl mx-auto px-4">
@@ -24,13 +24,33 @@ const Navbar = () => {
 
           {/* Buttons */}
           <div className="flex items-center gap-2">
-            <button className="px-4 py-2 bg-gray-700 text-white border-2 border-black rounded-lg font-bold">
+            <button 
+              onClick={() => onEnergyChange('early')}
+              className={`px-4 py-2 border-2 border-black rounded-lg font-bold transition-colors ${
+                energyLevel === 'early' 
+                ? 'bg-gray-700 text-white'
+                : 'bg-white hover:bg-gray-100'
+              }`}>
               Early Start
             </button>
-            <button className="px-4 py-2 bg-green-500 text-white border-2 border-black rounded-lg font-bold">
+            <button 
+              onClick={() => onEnergyChange('typical')}
+            className={`px-4 py-2 border-2 border-black rounded-lg font-bold transition-colors ${
+                energyLevel === 'typical' 
+                  ? 'bg-green-500 text-white' 
+                  : 'bg-white hover:bg-gray-100'
+              }`}
+            >
               Typical Day
             </button>
-            <button className="px-4 py-2 bg-blue-500 text-white border-2 border-black rounded-lg font-bold">
+            <button
+              onClick={() => onEnergyChange('slow')}
+              className={`px-4 py-2 border-2 border-black rounded-lg font-bold transition-colors ${
+                energyLevel === 'slow' 
+                  ? 'bg-blue-500 text-white' 
+                  : 'bg-white hover:bg-gray-100'
+              }`}
+            >
               Slow Day
             </button>
             <div className="w-10 h-10 bg-green-600 border-2 border-black rounded-full flex items-center justify-center">
