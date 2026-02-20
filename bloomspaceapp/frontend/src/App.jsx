@@ -54,6 +54,7 @@ const sortTasks = (tasks, energyLevel) => {
     tomorrowTasks = soon.slice(0, 2)
     dontForget = later.slice(0, 2)
   }
+  return { priorities, tomorrowTasks, dontForget } 
 };
 
 const App = () => {
@@ -69,7 +70,7 @@ const App = () => {
   ])
 
   // DERIVED STATE - algorithm sorts tasks into categories
-  const { priorities, tomorrowTasks, dontForget } = sortTasks(tasks)
+  const { priorities, tomorrowTasks, dontForget } = sortTasks(tasks, energyLevel)
 
   // Function passed DOWN to components
   const toggleTask = (id) => {
