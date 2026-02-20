@@ -64,6 +64,7 @@ const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete }) => {
 
     // Table header:
 
+return (    
     <div className="bg-pink-300 border-2 border-black rounded-lg p-6 min-h-96">
         <div className="flex justify-between items-center mb-4">
             <h2 className="font-bold text-2xl">PARKING LOT</h2>
@@ -211,5 +212,7 @@ const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete }) => {
             </div>
         )}
     </div>
-
+    ); 
 }
+
+export default ParkingLot;

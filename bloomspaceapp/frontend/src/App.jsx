@@ -5,7 +5,7 @@ import ForTomorrow from "./components/ForTomorrow";
 import DontForget from "./components/DontForget";
 import DateDisplay from "./components/DateDisplay";
 import NotesThoughts from "./components/NotesThoughts";
-
+import ParkingLot from "./components/ParkingLot";
 
 // SORTING ALGORITHM
 const sortTasks = (tasks, energyLevel) => {
@@ -125,9 +125,13 @@ const App = () => {
         {/* Main Content Grid */}
         <div className="grid grid-cols-3 gap-4">
           {/* Left Side - Parking Lot */}
-          <div className="col-span-2 bg-pink-300 border-2 border-black rounded-lg p-6 min-h-96">
-            <p className="font-bold text-2xl">PARKING LOT</p>
-            {/* ParkingLot component coming next! */}
+          <div className="col-span-2">
+            <ParkingLot
+              tasks={tasks}
+              onAdd={addTask}
+              onUpdate={updateTask}
+              onDelete={deleteTask}
+            />
           </div>
 
           {/* Right Side - Task Lists (display only, fed from algorithm) */}
