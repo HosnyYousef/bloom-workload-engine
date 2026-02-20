@@ -88,8 +88,61 @@ const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete }) => {
             </tr>
         </thead>
 
-    </table>
+    <tbody>
+        {tasks.map(task => (
+            <tr key={task.id} className="border-b-2 border-black hover:bg-pink-300">
+                {editingId === task.id ? (
 
+                
+                <>
+                <td>
+                    <input 
+                    type="text" 
+                    name="" 
+                    id="" 
+                    />
+                </td>
+
+                <td>
+                    <input 
+                    type="text" 
+                    name="" 
+                    id="" 
+                    />
+                </td>
+
+                <td>
+                    <input 
+                    type="text" 
+                    name="" 
+                    id="" 
+                    />
+                </td>
+
+                <td>
+                    <input 
+                    type="text" 
+                    name="" 
+                    id="" 
+                    />
+                </td>
+
+                <td>
+                    <input 
+                    type="text" 
+                    name="" 
+                    id="" 
+                    />
+                </td>
+
+
+
+                )}
+        ))}
+    </tbody>
+
+
+    </table>
 
     </div>
 
