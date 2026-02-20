@@ -40,7 +40,8 @@ const sortTasks = (tasks) => {
 };
 
 const App = () => {
-  // SINGLE SOURCE OF TRUTH = all tasks live here
+  const [energyLevel, setEnergyLevel] = useState('typical');  
+
   const [tasks, setTasks] = useState([
     { id: 1, text: 'Help friend apply for VISA', hours: 1, deadline: '', importance: 'high', completed: false },
     { id: 2, text: 'Work on project', hours: 2, deadline: '', importance: 'high', completed: false },
