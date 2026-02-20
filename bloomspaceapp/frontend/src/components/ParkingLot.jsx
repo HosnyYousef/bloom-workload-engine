@@ -198,11 +198,63 @@ return (
                     </tr>
                 ))}
 
-                {isAdding && (
-                    <tr className="border-b-2 border-black bg-yellow-100">
-
-                    </tr>
-                )}
+{isAdding && (
+    <tr className="border-b-2 border-black bg-yellow-100">
+        <td className="border-r-2 border-black p-2">
+            <input
+                type="text"
+                value={formData.text}
+                onChange={(e) => setFormData({ ...formData, text: e.target.value })}
+                className="w-full p-1 border border-black rounded"
+                placeholder="Task name..."
+                autoFocus
+            />
+        </td>
+        <td className="border-r-2 border-black p-2">
+            <input
+                type="number"
+                step="0.5"
+                value={formData.hours}
+                onChange={(e) => setFormData({ ...formData, hours: e.target.value })}
+                className="w-full p-1 border border-black rounded"
+                placeholder="Optional"
+            />
+        </td>
+        <td className="border-r-2 border-black p-2">
+            <input
+                type="date"
+                value={formData.deadline}
+                onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+                className="w-full p-1 border border-black rounded"
+            />
+        </td>
+        <td className="border-r-2 border-black p-2">
+            <select
+                value={formData.importance}
+                onChange={(e) => setFormData({ ...formData, importance: e.target.value })}
+                className="w-full p-1 border border-black rounded"
+            >
+                <option value="high">High</option>
+                <option value="medium">Med</option>
+                <option value="low">Low</option>
+            </select>
+        </td>
+        <td className="p-2 flex gap-1">
+            <button
+                onClick={handleSaveNew}
+                className="px-2 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600"
+            >
+                ✓
+            </button>
+            <button
+                onClick={handleCancel}
+                className="px-2 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600"
+            >
+                ✕
+            </button>
+        </td>
+    </tr>
+)}
             </tbody>
         </table>
         {tasks.length === 0 && !isAdding && (
