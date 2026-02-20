@@ -54,7 +54,7 @@ const sortTasks = (tasks, energyLevel) => {
     tomorrowTasks = soon.slice(0, 2)
     dontForget = later.slice(0, 2)
   }
-  return { priorities, tomorrowTasks, dontForget } 
+  return { priorities, tomorrowTasks, dontForget }
 };
 
 const App = () => {
@@ -95,7 +95,10 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar />
+      <Navbar
+        energyLevel={energyLevel}
+        onEnergyChange={setEnergyLevel}
+      />
 
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Dashboard Stats */}
