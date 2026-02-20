@@ -204,7 +204,12 @@ const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete }) => {
                 )}
             </tbody>
         </table>
-
+        {tasks.length === 0 && !isAdding && (
+            <div className="p-8 text-center text-gray-600">
+                <p className="mb-2">No tasks yet. Click "ORGANIZE!" to add your first task.</p>
+                <p className="text-sm">Tip: Brain dump everything here, the app will organize it for you!</p>
+            </div>
+        )}
     </div>
 
 }
