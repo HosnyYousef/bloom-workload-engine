@@ -196,9 +196,13 @@ const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete }) => {
                         )}
                     </tr>
                 ))}
+
+                {isAdding && (
+                    <tr className="border-b-2 border-black bg-yellow-100">
+
+                    </tr>
+                )}
             </tbody>
-
-
         </table>
 
     </div>
