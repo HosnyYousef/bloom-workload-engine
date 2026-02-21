@@ -60,74 +60,74 @@ const sortTasks = (tasks, energyLevel) => {
 const App = () => {
   const [energyLevel, setEnergyLevel] = useState('typical');
 
-const [tasks, setTasks] = useState([
-  { 
-    id: 1, 
-    text: 'Help friend apply for VISA', 
-    hours: 1, 
-    deadline: '', 
-    importance: 'high', 
-    completed: false,
-    sorted: false,          
-    sortedCategory: null,   
-    sortedAt: null          
-  },
-  { 
-    id: 2, 
-    text: 'Work on project', 
-    hours: 2, 
-    deadline: '', 
-    importance: 'high', 
-    completed: false,
-    sorted: false,
-    sortedCategory: null,
-    sortedAt: null
-  },
-  { 
-    id: 3, 
-    text: 'Process Business Data', 
-    hours: 1, 
-    deadline: '', 
-    importance: 'medium', 
-    completed: false,
-    sorted: false,
-    sortedCategory: null,
-    sortedAt: null
-  },
-  { 
-    id: 4, 
-    text: 'Continue VISA APP', 
-    hours: 1, 
-    deadline: '', 
-    importance: 'medium', 
-    completed: false,
-    sorted: false,
-    sortedCategory: null,
-    sortedAt: null
-  },
-  { 
-    id: 5, 
-    text: 'Drive to the company', 
-    hours: 0.5, 
-    deadline: '', 
-    importance: 'low', 
-    completed: false,
-    sorted: false,
-    sortedCategory: null,
-    sortedAt: null
-  },
-  { 
-    id: 6, 
-    text: 'Dentist', 
-    hours: 1, 
-    deadline: '', 
-    importance: 'low', 
-    completed: false,
-    sorted: false,
-    sortedCategory: null,
-    sortedAt: null
-  },
-]);
+  const [tasks, setTasks] = useState([
+    {
+      id: 1,
+      text: 'Help friend apply for VISA',
+      hours: 1,
+      deadline: '',
+      importance: 'high',
+      completed: false,
+      sorted: false,
+      sortedCategory: null,
+      sortedAt: null
+    },
+    {
+      id: 2,
+      text: 'Work on project',
+      hours: 2,
+      deadline: '',
+      importance: 'high',
+      completed: false,
+      sorted: false,
+      sortedCategory: null,
+      sortedAt: null
+    },
+    {
+      id: 3,
+      text: 'Process Business Data',
+      hours: 1,
+      deadline: '',
+      importance: 'medium',
+      completed: false,
+      sorted: false,
+      sortedCategory: null,
+      sortedAt: null
+    },
+    {
+      id: 4,
+      text: 'Continue VISA APP',
+      hours: 1,
+      deadline: '',
+      importance: 'medium',
+      completed: false,
+      sorted: false,
+      sortedCategory: null,
+      sortedAt: null
+    },
+    {
+      id: 5,
+      text: 'Drive to the company',
+      hours: 0.5,
+      deadline: '',
+      importance: 'low',
+      completed: false,
+      sorted: false,
+      sortedCategory: null,
+      sortedAt: null
+    },
+    {
+      id: 6,
+      text: 'Dentist',
+      hours: 1,
+      deadline: '',
+      importance: 'low',
+      completed: false,
+      sorted: false,
+      sortedCategory: null,
+      sortedAt: null
+    },
+  ]);
 
   // DERIVED STATE - algorithm sorts tasks into categories
   const { priorities, tomorrowTasks, dontForget } = sortTasks(tasks, energyLevel)
@@ -139,16 +139,16 @@ const [tasks, setTasks] = useState([
     ))
   }
 
-const addTask = (newTask) => {
-  setTasks([...tasks, { 
-    ...newTask, 
-    id: Date.now(), 
-    completed: false,
-    sorted: false,
-    sortedCategory: null,
-    sortedAt: null
-  }]);
-};
+  const addTask = (newTask) => {
+    setTasks([...tasks, {
+      ...newTask,
+      id: Date.now(),
+      completed: false,
+      sorted: false,
+      sortedCategory: null,
+      sortedAt: null
+    }]);
+  };
 
   const deleteTask = (id) => {
     setTasks(tasks.filter(task => task.id !== id))
@@ -159,6 +159,23 @@ const addTask = (newTask) => {
       task.id === id ? { ...task, ...updates } : task
     ))
   }
+
+  const handleOrganise = () => {
+    const unsortedTasks = tasks.filter(t => !t.sorted);
+    const { priorities, tomorrowTasks, dontForget } = sortTasks(unsortedTasks, 'typical');
+    const updatedTasks = tasks.map(task => {
+      let category = null;
+      if (priorities.find(t => t.id === task.id)) category = 'priorities';
+      else if (tomorrowTasks.find(t => t.id === task.id)) category = 'tomorrow';
+      else if (dontForget.find(t => t.id === task.id)) category = 'dontForget';
+      if (category) {
+        return { ...task, sorted: true, sortedCategory: category, sortedAt: Date.now() };
+      }
+      return task;
+    })
+    setTasks(updatedTasks);
+  }
+
 
   return (
     <div className="min-h-screen bg-gray-100">

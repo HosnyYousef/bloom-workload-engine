@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete }) => {
+const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete, onOrganize }) => {
     const [isAdding, setIsAdding] = useState(false);
     const [editingId, setEditingId] = useState(null);
 
