@@ -175,8 +175,15 @@ const App = () => {
   }
 
   const updateTask = (id, updates) => {
-    setTasks(tasks.map(task =>
-      task.id === id ? { ...task, ...updates } : task
+    setTasks(tasks.map(task => {
+      if (task.id === id) {
+        if (task.sorted) {
+          return {...task, ...updates, sorted: false, sortedCategory: null};
+        }
+        return {...task, ...updates}
+      }
+      return task;
+    }
     ));
   };
 
