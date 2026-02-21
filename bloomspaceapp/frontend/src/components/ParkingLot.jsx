@@ -72,7 +72,7 @@ const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete, onOrganize }) => {
                 </div>
                 <button
                     onClick={onOrganize}
-                    className="px-4 py-2 bg-yellow-400 border-2 border-black rounded-lg font-bold hover:bg-yellow-500 flex items-center gap-2"
+                    className="px-4 py-2 bg-yellow-400 border-2 border-black rounded-lg font-bold hover:bg-yellow-500 active:scale-95 transition-transform flex items-center gap-2"
                     title="Sort tasks into Today, Tomorrow, and Later based on urgency"
                 >
                     <span className="text-xl">📝</span>
@@ -166,11 +166,10 @@ const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete, onOrganize }) => {
                                             {task.deadline || '-'}
                                         </td>
                                         <td className="border-r-2 border-black p-3 capitalize">
-                                            <span className={`px-2 py-1 rounded ${
-                                                task.importance === 'high' ? 'bg-red-200' :
+                                            <span className={`px-2 py-1 rounded ${task.importance === 'high' ? 'bg-red-200' :
                                                 task.importance === 'medium' ? 'bg-yellow-200' :
-                                                'bg-green-200'
-                                            }`}>
+                                                    'bg-green-200'
+                                                }`}>
                                                 {task.importance || 'Med'}
                                             </span>
                                         </td>
@@ -261,44 +260,104 @@ const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete, onOrganize }) => {
 
                                 {showSorted && sortedTasks.map(task => (
                                     <tr key={task.id} className="border-b-2 border-black bg-gray-100 opacity-60">
-                                        <td className="border-r-2 border-black p-3">
-                                            <span className="mr-2">✅</span>
-                                            {task.text}
-                                            <span className="ml-2 text-xs px-2 py-1 bg-blue-100 rounded">
-                                                → {task.sortedCategory === 'priorities' ? 'Top Priorities' :
-                                                   task.sortedCategory === 'tomorrow' ? 'For Tomorrow' :
-                                                   'Don\'t Forget'}
-                                            </span>
-                                        </td>
-                                        <td className="border-r-2 border-black p-3 text-center">
-                                            {task.hours || '-'}
-                                        </td>
-                                        <td className="border-r-2 border-black p-3">
-                                            {task.deadline || '-'}
-                                        </td>
-                                        <td className="border-r-2 border-black p-3 capitalize">
-                                            <span className={`px-2 py-1 rounded ${
-                                                task.importance === 'high' ? 'bg-red-200' :
-                                                task.importance === 'medium' ? 'bg-yellow-200' :
-                                                'bg-green-200'
-                                            }`}>
-                                                {task.importance || 'Med'}
-                                            </span>
-                                        </td>
-                                        <td className="p-3 flex gap-1">
-                                            <button
-                                                onClick={() => handleEdit(task)}
-                                                className="text-blue-600 hover:text-blue-800"
-                                            >
-                                                ✎
-                                            </button>
-                                            <button
-                                                onClick={() => onDelete(task.id)}
-                                                className="text-red-600 hover:text-red-800"
-                                            >
-                                                ✕
-                                            </button>
-                                        </td>
+                                        {editingId === task.id ? (
+                                            // EDIT MODE FOR SORTED TASKS
+                                            <>
+                                                <td className="border-r-2 border-black p-2">
+                                                    <input
+                                                        type="text"
+                                                        value={editForm.text}
+                                                        onChange={(e) => setEditForm({ ...editForm, text: e.target.value })}
+                                                        className="w-full p-1 border border-black rounded"
+                                                        autoFocus
+                                                    />
+                                                </td>
+                                                <td className="border-r-2 border-black p-2">
+                                                    <input
+                                                        type="number"
+                                                        step="0.5"
+                                                        value={editForm.hours}
+                                                        onChange={(e) => setEditForm({ ...editForm, hours: e.target.value })}
+                                                        className="w-full p-1 border border-black rounded"
+                                                        placeholder="Optional"
+                                                    />
+                                                </td>
+                                                <td className="border-r-2 border-black p-2">
+                                                    <input
+                                                        type="date"
+                                                        value={editForm.deadline}
+                                                        onChange={(e) => setEditForm({ ...editForm, deadline: e.target.value })}
+                                                        className="w-full p-1 border border-black rounded"
+                                                    />
+                                                </td>
+                                                <td className="border-r-2 border-black p-2">
+                                                    <select
+                                                        value={editForm.importance}
+                                                        onChange={(e) => setEditForm({ ...editForm, importance: e.target.value })}
+                                                        className="w-full p-1 border border-black rounded"
+                                                    >
+                                                        <option value="high">High</option>
+                                                        <option value="medium">Med</option>
+                                                        <option value="low">Low</option>
+                                                    </select>
+                                                </td>
+                                                <td className="p-2 flex gap-1">
+                                                    <button
+                                                        onClick={() => handleSaveEdit(task.id)}
+                                                        className="px-2 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600"
+                                                    >
+                                                        ✓
+                                                    </button>
+                                                    <button
+                                                        onClick={handleCancelEdit}
+                                                        className="px-2 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600"
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </td>
+                                            </>
+                                        ) : (
+                                            // VIEW MODE FOR SORTED TASKS
+                                            <>
+                                                <td className="border-r-2 border-black p-3">
+                                                    <span className="mr-2">✅</span>
+                                                    {task.text}
+                                                    <span className="ml-2 text-xs px-2 py-1 bg-blue-100 rounded">
+                                                        → {task.sortedCategory === 'priorities' ? 'Top Priorities' :
+                                                            task.sortedCategory === 'tomorrow' ? 'For Tomorrow' :
+                                                                'Don\'t Forget'}
+                                                    </span>
+                                                </td>
+                                                <td className="border-r-2 border-black p-3 text-center">
+                                                    {task.hours || '-'}
+                                                </td>
+                                                <td className="border-r-2 border-black p-3">
+                                                    {task.deadline || '-'}
+                                                </td>
+                                                <td className="border-r-2 border-black p-3 capitalize">
+                                                    <span className={`px-2 py-1 rounded ${task.importance === 'high' ? 'bg-red-200' :
+                                                            task.importance === 'medium' ? 'bg-yellow-200' :
+                                                                'bg-green-200'
+                                                        }`}>
+                                                        {task.importance || 'Med'}
+                                                    </span>
+                                                </td>
+                                                <td className="p-3 flex gap-1">
+                                                    <button
+                                                        onClick={() => handleEdit(task)}
+                                                        className="text-blue-600 hover:text-blue-800"
+                                                    >
+                                                        ✎
+                                                    </button>
+                                                    <button
+                                                        onClick={() => onDelete(task.id)}
+                                                        className="text-red-600 hover:text-red-800"
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </td>
+                                            </>
+                                        )}
                                     </tr>
                                 ))}
                             </>

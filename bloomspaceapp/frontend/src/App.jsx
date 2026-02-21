@@ -137,19 +137,19 @@ const App = () => {
   const allDontForget = sortedTasksOnly.filter(t => t.sortedCategory === 'dontForget');
 
   // energy level filtering to topPriorities
-   let priorities = []
-   if (energyLevel === 'early') {
-    priorities = allPriorities.slice(0, 5);
-   }else if (energyLevel === 'typical') {
+  let priorities = []
+  if (energyLevel === 'early') {
+    priorities = allPriorities.slice(0, 4);
+  } else if (energyLevel === 'typical') {
     priorities = allPriorities.slice(0, 3);
-   } else if (energyLevel === 'slow') {
+  } else if (energyLevel === 'slow') {
     const quickTasks = allPriorities.filter(t => !t.hours || t.hours <= 1)
     priorities = quickTasks.slice(0, 2)
-   }
+  }
 
-   //for tommorrow and dontForget (they stay the same)
-   const tomorrowTasks = allTomorrowTasks
-   const dontForget = allDontForget
+  //for tommorrow and dontForget (they stay the same)
+  const tomorrowTasks = allTomorrowTasks
+  const dontForget = allDontForget
 
 
   // Function passed DOWN to components
@@ -177,14 +177,14 @@ const App = () => {
   const updateTask = (id, updates) => {
     setTasks(tasks.map(task => {
       if (task.id === id) {
+        // If editing a sorted task, mark it as unsorted so it gets re-organized
         if (task.sorted) {
-          return {...task, ...updates, sorted: false, sortedCategory: null};
+          return { ...task, ...updates, sorted: false, sortedCategory: null };
         }
-        return {...task, ...updates}
+        return { ...task, ...updates };
       }
       return task;
-    }
-    ));
+    }));
   };
 
   // NEW: ORGANIZE function
