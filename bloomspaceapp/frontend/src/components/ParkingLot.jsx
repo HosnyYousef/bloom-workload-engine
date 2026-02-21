@@ -1,12 +1,18 @@
 import { useState } from "react";
 
 const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete, onOrganize }) => {
-    const [isAdding, setIsAdding] = useState(false);
+    const [showSorted, setShowSorted] = useState(false);
     const [editingId, setEditingId] = useState(null);
 
     //Form state for new/editing task
 
-    const [formData, setFormData] = useState({
+    const [newTaskForm, setNewTaskForm] = useState({
+        text: '',
+        hours: '',
+        deadline: '',
+        importance: 'medium'
+    })
+    const [editForm, setEditForm] = useState({
         text: '',
         hours: '',
         deadline: '',

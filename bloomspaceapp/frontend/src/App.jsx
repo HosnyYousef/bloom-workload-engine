@@ -154,28 +154,37 @@ const App = () => {
     setTasks(tasks.filter(task => task.id !== id))
   }
 
-  const updateTask = (id, updates) => {
+const updateTask = (id, updates) => {
     setTasks(tasks.map(task =>
       task.id === id ? { ...task, ...updates } : task
-    ))
-  }
+    ));
+  };
 
-  const handleOrganise = () => {
+  // NEW: ORGANIZE function
+  const handleOrganize = () => {
     const unsortedTasks = tasks.filter(t => !t.sorted);
+    
+    // Run sorting algorithm on unsorted tasks only
     const { priorities, tomorrowTasks, dontForget } = sortTasks(unsortedTasks, 'typical');
+    
+    // Mark tasks with their sorted category
     const updatedTasks = tasks.map(task => {
-      let category = null;
-      if (priorities.find(t => t.id === task.id)) category = 'priorities';
-      else if (tomorrowTasks.find(t => t.id === task.id)) category = 'tomorrow';
-      else if (dontForget.find(t => t.id === task.id)) category = 'dontForget';
-      if (category) {
-        return { ...task, sorted: true, sortedCategory: category, sortedAt: Date.now() };
+      if (!task.sorted) {
+        // Determine which category this task belongs to
+        let category = null;
+        if (priorities.find(t => t.id === task.id)) category = 'priorities';
+        else if (tomorrowTasks.find(t => t.id === task.id)) category = 'tomorrow';
+        else if (dontForget.find(t => t.id === task.id)) category = 'dontForget';
+        
+        if (category) {
+          return { ...task, sorted: true, sortedCategory: category, sortedAt: Date.now() };
+        }
       }
       return task;
-    })
+    });
+    
     setTasks(updatedTasks);
-  }
-
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -215,6 +224,7 @@ const App = () => {
               onAdd={addTask}
               onUpdate={updateTask}
               onDelete={deleteTask}
+              onOrganize={handleOrganize}
             />
           </div>
 
