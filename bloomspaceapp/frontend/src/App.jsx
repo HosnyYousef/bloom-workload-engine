@@ -60,14 +60,74 @@ const sortTasks = (tasks, energyLevel) => {
 const App = () => {
   const [energyLevel, setEnergyLevel] = useState('typical');
 
-  const [tasks, setTasks] = useState([
-    { id: 1, text: 'Help friend apply for VISA', hours: 1, deadline: '', importance: 'high', completed: false },
-    { id: 2, text: 'Work on project', hours: 2, deadline: '', importance: 'high', completed: false },
-    { id: 3, text: 'Process Business Data', hours: 1, deadline: '', importance: 'medium', completed: false },
-    { id: 4, text: 'Continue VISA APP', hours: 1, deadline: '', importance: 'medium', completed: false },
-    { id: 5, text: 'Drive to the company', hours: 0.5, deadline: '', importance: 'low', completed: false },
-    { id: 6, text: 'Dentist', hours: 1, deadline: '', importance: 'low', completed: false },
-  ])
+const [tasks, setTasks] = useState([
+  { 
+    id: 1, 
+    text: 'Help friend apply for VISA', 
+    hours: 1, 
+    deadline: '', 
+    importance: 'high', 
+    completed: false,
+    sorted: false,          
+    sortedCategory: null,   
+    sortedAt: null          
+  },
+  { 
+    id: 2, 
+    text: 'Work on project', 
+    hours: 2, 
+    deadline: '', 
+    importance: 'high', 
+    completed: false,
+    sorted: false,
+    sortedCategory: null,
+    sortedAt: null
+  },
+  { 
+    id: 3, 
+    text: 'Process Business Data', 
+    hours: 1, 
+    deadline: '', 
+    importance: 'medium', 
+    completed: false,
+    sorted: false,
+    sortedCategory: null,
+    sortedAt: null
+  },
+  { 
+    id: 4, 
+    text: 'Continue VISA APP', 
+    hours: 1, 
+    deadline: '', 
+    importance: 'medium', 
+    completed: false,
+    sorted: false,
+    sortedCategory: null,
+    sortedAt: null
+  },
+  { 
+    id: 5, 
+    text: 'Drive to the company', 
+    hours: 0.5, 
+    deadline: '', 
+    importance: 'low', 
+    completed: false,
+    sorted: false,
+    sortedCategory: null,
+    sortedAt: null
+  },
+  { 
+    id: 6, 
+    text: 'Dentist', 
+    hours: 1, 
+    deadline: '', 
+    importance: 'low', 
+    completed: false,
+    sorted: false,
+    sortedCategory: null,
+    sortedAt: null
+  },
+]);
 
   // DERIVED STATE - algorithm sorts tasks into categories
   const { priorities, tomorrowTasks, dontForget } = sortTasks(tasks, energyLevel)
