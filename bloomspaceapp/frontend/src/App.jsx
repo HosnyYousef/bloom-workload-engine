@@ -139,9 +139,16 @@ const [tasks, setTasks] = useState([
     ))
   }
 
-  const addTask = (newTask) => {
-    setTasks([...tasks, { ...newTask, id: Date.now(), completed: false }])
-  }
+const addTask = (newTask) => {
+  setTasks([...tasks, { 
+    ...newTask, 
+    id: Date.now(), 
+    completed: false,
+    sorted: false,
+    sortedCategory: null,
+    sortedAt: null
+  }]);
+};
 
   const deleteTask = (id) => {
     setTasks(tasks.filter(task => task.id !== id))
