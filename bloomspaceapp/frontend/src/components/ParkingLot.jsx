@@ -63,7 +63,7 @@ const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete, onOrganize }) => {
     };
 
     return (
-        <div className="bg-pink-300 border-2 border-black rounded-lg p-6 min-h-[600px] flex flex-col">
+        <div className="bg-pink-300 border-2 border-black rounded-lg p-6 min-h-150 flex flex-col">
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
                 <div>

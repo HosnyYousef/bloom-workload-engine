@@ -129,8 +129,28 @@ const App = () => {
     },
   ]);
 
-  // DERIVED STATE - algorithm sorts tasks into categories
-  const { priorities, tomorrowTasks, dontForget } = sortTasks(tasks, energyLevel)
+  // DERIVED STATE - show SORTED tasks in the right panels
+  const sortedTasksOnly = tasks.filter(t => t.sorted)
+
+  const allPriorities = sortedTasksOnly.filter(t => t.sortedCategory === 'priorities')
+  const allTomorrowTasks = sortedTasksOnly.filter(t => t.sortedCategory === 'tomorrow');
+  const allDontForget = sortedTasksOnly.filter(t => t.sortedCategory === 'dontForget');
+
+  // energy level filtering to topPriorities
+   let priorities = []
+   if (energyLevel === 'early') {
+    priorities = allPriorities.slice(0, 5);
+   }else if (energyLevel === 'typical') {
+    priorities = allPriorities.slice(0, 3);
+   } else if (energyLevel === 'slow') {
+    const quickTasks = allPriorities.filter(t => !t.hours || t.hours <= 1)
+    priorities = quickTasks.slice(0, 2)
+   }
+
+   //for tommorrow and dontForget (they stay the same)
+   const tomorrowTasks = allTomorrowTasks
+   const dontForget = allDontForget
+
 
   // Function passed DOWN to components
   const toggleTask = (id) => {
@@ -154,7 +174,7 @@ const App = () => {
     setTasks(tasks.filter(task => task.id !== id))
   }
 
-const updateTask = (id, updates) => {
+  const updateTask = (id, updates) => {
     setTasks(tasks.map(task =>
       task.id === id ? { ...task, ...updates } : task
     ));
@@ -163,10 +183,10 @@ const updateTask = (id, updates) => {
   // NEW: ORGANIZE function
   const handleOrganize = () => {
     const unsortedTasks = tasks.filter(t => !t.sorted);
-    
+
     // Run sorting algorithm on unsorted tasks only
     const { priorities, tomorrowTasks, dontForget } = sortTasks(unsortedTasks, 'typical');
-    
+
     // Mark tasks with their sorted category
     const updatedTasks = tasks.map(task => {
       if (!task.sorted) {
@@ -175,14 +195,14 @@ const updateTask = (id, updates) => {
         if (priorities.find(t => t.id === task.id)) category = 'priorities';
         else if (tomorrowTasks.find(t => t.id === task.id)) category = 'tomorrow';
         else if (dontForget.find(t => t.id === task.id)) category = 'dontForget';
-        
+
         if (category) {
           return { ...task, sorted: true, sortedCategory: category, sortedAt: Date.now() };
         }
       }
       return task;
     });
-    
+
     setTasks(updatedTasks);
   };
 
