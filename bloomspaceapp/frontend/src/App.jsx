@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import TopPriorities from "./components/TopPriorities";
 import ForTomorrow from "./components/ForTomorrow";
@@ -128,6 +128,21 @@ const App = () => {
       sortedAt: null
     },
   ]);
+
+useEffect(() => {
+  const savedTasks = localStorage.getItem('bloompsace-tasks')
+
+  if (savedTasks) {
+    try{
+      const parsed = JSON.parse(savedTasks);
+      setTasks(parsed);
+      console.log('✅ Loaded tasks from localStorage:', parsed.length, 'tasks')
+    } catch (error) {
+      console.error('❌ Error loading tasks from localStorage:', error)
+    }
+  }
+}, [])
+
 
   // DERIVED STATE - show SORTED tasks in the right panels
   const sortedTasksOnly = tasks.filter(t => t.sorted)
