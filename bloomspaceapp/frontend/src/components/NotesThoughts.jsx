@@ -11,7 +11,8 @@ const NotesThoughts = () => {
             </div>
 
             <textarea
-                value={(e) => setNotes(e.target.value)}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
                 placeholder='Random thoughts, ideas, reminders... (auto-saves)'
                 className='w-full h-32 p-2 border border-gray-300 rounded resize-none focus:outline-none focus:ring-2 focus:ring-yellow-500 font-mono'
                 style={{ fontFamily: 'Comic Sans MS, cursive' }} // Casual, handwritten feel
