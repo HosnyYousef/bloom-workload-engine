@@ -9,22 +9,22 @@ dotenv.config()
 // Connect to database
 connectDB()
 
-// initalize Express app
+// Initialize Express app
 const app = express()
 
 // Middleware
 app.use(cors()); // Enable CORS for frontend
-app.use(express.json()) // Prase JSON bodies
+app.use(express.json()) // Parse JSON bodies
 app.use(express.urlencoded({ extended: false }));
-
-// API Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/tasks', require('./routes/tasks'));
 
 // Test route
 app.get('/', (req, res) => {
     res.json({ message: 'BloomSpace API is running!'})
 })
+
+// API Routes (AFTER middleware)
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/tasks', require('./routes/tasks'));
 
 // Start server
 const PORT = process.env.PORT || 5001;

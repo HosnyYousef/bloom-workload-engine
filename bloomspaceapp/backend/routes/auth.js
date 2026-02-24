@@ -1,3 +1,5 @@
+console.log('✅ Auth routes file loaded');
+
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -14,6 +16,9 @@ const generateToken = (id) => {
 // @desc    Register new user
 // @access  Public
 router.post('/register', async (req, res) => {
+  console.log('📝 Register route hit');
+  console.log('Body:', req.body);
+  
   try {
     const { name, email, password } = req.body;
 
@@ -31,6 +36,8 @@ router.post('/register', async (req, res) => {
       password
     });
 
+    console.log('✅ User created:', user._id);
+
     // Return user data + token
     res.status(201).json({
       _id: user._id,
@@ -39,6 +46,7 @@ router.post('/register', async (req, res) => {
       token: generateToken(user._id)
     });
   } catch (error) {
+    console.error('❌ Register error:', error);
     res.status(500).json({ message: error.message });
   }
 });
