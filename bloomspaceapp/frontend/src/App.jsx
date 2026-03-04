@@ -258,7 +258,7 @@ const App = () => {
 
   if (!user) {
     return (
-      <div>
+      <>
         {authScreen === 'login' ? (
           <Login onLogin={handleLogin} />
         ) : (
@@ -277,11 +277,12 @@ const App = () => {
             <p>
               Already have an account?{' '}
               <button onClick={() => setAuthScreen('login')} className="text-blue-500 underline">
+              Log in
               </button>
             </p>
           )}
         </div>
-      </div>
+      </>
     )
   }
 

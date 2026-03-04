@@ -2,7 +2,7 @@ import { useState } from 'react';
 import api from '../services/api'
 
 export default function Login({ onLogin }) {
-    const [formData, setFormData] = useState({ email: '', password: ' ' });
+    const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('')
 
     const handleChange = (e) => {
