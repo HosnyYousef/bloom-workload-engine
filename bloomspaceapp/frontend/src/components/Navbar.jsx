@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Navbar = ({ energyLevel, onEnergyChange }) => {
+const Navbar = ({ energyLevel, onEnergyChange, onLogout }) => {
   return (
     <nav className="bg-white border-b-2 border-black">
       <div className="max-w-7xl mx-auto px-4">
@@ -52,6 +52,9 @@ const Navbar = ({ energyLevel, onEnergyChange }) => {
               }`}
             >
               Slow Day
+            </button>
+            <button onClick={onLogout} className='text-sm text-red-500 hover:underline'>
+               Log out
             </button>
             <div className="w-10 h-10 bg-green-600 border-2 border-black rounded-full flex items-center justify-center">
               <span className="text-white">👤</span>
