@@ -6,6 +6,8 @@ import DontForget from "./components/DontForget";
 import DateDisplay from "./components/DateDisplay";
 import NotesThoughts from "./components/NotesThoughts";
 import ParkingLot from "./components/ParkingLot";
+import Login from "./components/Login"
+import Register from "./components/Register"
 
 // SORTING ALGORITHM
 const sortTasks = (tasks, energyLevel) => {
@@ -60,7 +62,27 @@ const sortTasks = (tasks, energyLevel) => {
 const App = () => {
   const [energyLevel, setEnergyLevel] = useState('typical');
 
+  const [user, setUser] = useState(() => {
+    const token = localStorage.getItem('token')
+    const name = localStorage.getItem('userName')
+    return token && name ? { token, name } : null
+  })
+
+  const [authScreen, setAuthScreen] = useState('login')
+
+  const handleLogin = ({ name, token }) => {
+    localStorage.setItem('userName', name)
+    setUser({ name, token })
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('userName')
+    setUser(null)
+  }
+
   const [tasks, setTasks] = useState(() => {
+
 
     const savedTasks = localStorage.getItem('bloomspace-tasks')
 
@@ -234,11 +256,41 @@ const App = () => {
     setTasks(updatedTasks);
   };
 
+  if (!user) {
+    return (
+      <div>
+        {authScreen === 'login' ? (
+          <Login onLogin={handleLogin} />
+        ) : (
+          <Register onLogin={handleLogin} />
+        )}
+
+        <div className="text-center mt-4">
+          {authScreen === 'login' ? (
+            <p>
+              Don't have an account?{' '}
+              <button onClick={() => setAuthScreen('register')} className="text-blue-500 underline">
+                Sign up
+              </button>
+            </p>
+          ) : (
+            <p>
+              Already have an account?{' '}
+              <button onClick={() => setAuthScreen('login')} className="text-blue-500 underline">
+              </button>
+            </p>
+          )}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar
         energyLevel={energyLevel}
         onEnergyChange={setEnergyLevel}
+        onLogout={handleLogout}
       />
 
       <div className="max-w-7xl mx-auto px-4 py-6">
