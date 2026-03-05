@@ -63,7 +63,7 @@ export default function Register({ onLogin }) {
                     {/* PASSWORD FIELD */}
                     <input
                         type="password"
-                        name='passoword'
+                        name='password'
                         placeholder='Password'
                         value={formData.password}
                         onChange={handleChange}
