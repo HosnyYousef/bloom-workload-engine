@@ -72,88 +72,8 @@ const App = () => {
 
   const [authScreen, setAuthScreen] = useState('login')
 
-  const [tasks, setTasks] = useState(() => {
+const [tasks, setTasks] = useState([]);
 
-    
-    const savedTasks = localStorage.getItem('bloomspace-tasks')
-
-    if (savedTasks) {
-      try {
-        return JSON.parse(savedTasks)
-      } catch (error) {
-        console.error('Error loading tasks:', error)
-      }
-    }
-
-    return [
-      {
-        id: 1,
-        text: 'Help friend apply for VISA',
-        hours: 1,
-        deadline: '',
-        importance: 'high',
-        completed: false,
-        sorted: false,
-        sortedCategory: null,
-        sortedAt: null
-      },
-      {
-        id: 2,
-        text: 'Work on project',
-        hours: 2,
-        deadline: '',
-        importance: 'high',
-        completed: false,
-        sorted: false,
-        sortedCategory: null,
-        sortedAt: null
-      },
-      {
-        id: 3,
-        text: 'Process Business Data',
-        hours: 1,
-        deadline: '',
-        importance: 'medium',
-        completed: false,
-        sorted: false,
-        sortedCategory: null,
-        sortedAt: null
-      },
-      {
-        id: 4,
-        text: 'Continue VISA APP',
-        hours: 1,
-        deadline: '',
-        importance: 'medium',
-        completed: false,
-        sorted: false,
-        sortedCategory: null,
-        sortedAt: null
-      },
-      {
-        id: 5,
-        text: 'Drive to the company',
-        hours: 0.5,
-        deadline: '',
-        importance: 'low',
-        completed: false,
-        sorted: false,
-        sortedCategory: null,
-        sortedAt: null
-      },
-      {
-        id: 6,
-        text: 'Dentist',
-        hours: 1,
-        deadline: '',
-        importance: 'low',
-        completed: false,
-        sorted: false,
-        sortedCategory: null,
-        sortedAt: null
-      },
-    ]
-  });
 
   const handleLogin = ({ name, token }) => {
     localStorage.setItem('userName', name)
@@ -165,13 +85,6 @@ const App = () => {
     localStorage.removeItem('userName')
     setUser(null)
   }
-
-  useEffect(() => {
-    if (tasks.length === 0) return;
-
-    localStorage.setItem('bloomspace-tasks', JSON.stringify(tasks));
-    console.log('💾 Saved tasks to localStorage:', tasks.length, 'tasks')
-  }, [tasks])
 
 
   // DERIVED STATE - show SORTED tasks in the right panels
