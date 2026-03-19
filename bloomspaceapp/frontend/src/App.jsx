@@ -9,6 +9,8 @@ import ParkingLot from "./components/ParkingLot";
 import Login from "./components/Login"
 import Register from "./components/Register"
 
+import api from "./services/api";
+
 // SORTING ALGORITHM
 const sortTasks = (tasks, energyLevel) => {
   const today = new Date();
@@ -70,20 +72,9 @@ const App = () => {
 
   const [authScreen, setAuthScreen] = useState('login')
 
-  const handleLogin = ({ name, token }) => {
-    localStorage.setItem('userName', name)
-    setUser({ name, token })
-  }
-
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('userName')
-    setUser(null)
-  }
-
   const [tasks, setTasks] = useState(() => {
 
-
+    
     const savedTasks = localStorage.getItem('bloomspace-tasks')
 
     if (savedTasks) {
@@ -163,6 +154,17 @@ const App = () => {
       },
     ]
   });
+
+  const handleLogin = ({ name, token }) => {
+    localStorage.setItem('userName', name)
+    setUser({ name, token })
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('userName')
+    setUser(null)
+  }
 
   useEffect(() => {
     if (tasks.length === 0) return;
