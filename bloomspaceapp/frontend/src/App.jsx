@@ -72,7 +72,10 @@ const App = () => {
 
   const [authScreen, setAuthScreen] = useState('login')
 
-const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+
 
 
   const handleLogin = ({ name, token }) => {
@@ -84,7 +87,27 @@ const [tasks, setTasks] = useState([]);
     localStorage.removeItem('token')
     localStorage.removeItem('userName')
     setUser(null)
+    setTasks([])
   }
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchTasks = async () => {
+      setLoading(true)
+      try {
+        const response = await api.get('/tasks')
+        setTasks(response.data)
+        console.log('✅ Tasks loaded:', response.data.length, 'tasks')
+      } catch (err) {
+        console.error('❌ Failed to load tasks:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchTasks()
+  }, [user])
 
 
   // DERIVED STATE - show SORTED tasks in the right panels
@@ -192,7 +215,7 @@ const [tasks, setTasks] = useState([]);
             <p>
               Already have an account?{' '}
               <button onClick={() => setAuthScreen('login')} className="text-blue-500 underline">
-              Log in
+                Log in
               </button>
             </p>
           )}
