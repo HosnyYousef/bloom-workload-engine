@@ -140,32 +140,37 @@ const App = () => {
     ))
   }
 
-  const addTask = (newTask) => {
-    setTasks([...tasks, {
-      ...newTask,
-      id: Date.now(),
-      completed: false,
-      sorted: false,
-      sortedCategory: null,
-      sortedAt: null
-    }]);
+  const addTask = async (newTask) => {
+    try {
+      const response = await api.post('/tasks', {
+        ...newTask,
+        completed: false,
+        sorted: false,
+        sortedCategory: null,
+        sortedAt: null
+      })
+      setTasks([...tasks, response.data])
+    } catch (err) {
+      console.error('❌ Failed to add task:', err)
+    }
   };
 
-  const deleteTask = (id) => {
-    setTasks(tasks.filter(task => task.id !== id))
+  const deleteTask = async (id) => {
+    try {
+      await api.delete(`/tasks/${id}`)
+      setTasks(tasks.filter(task => task._id !== id))
+    } catch (err) {
+      console.error('❌ Failed to delete task:', err)
+    }
   }
 
-  const updateTask = (id, updates) => {
-    setTasks(tasks.map(task => {
-      if (task.id === id) {
-        // If editing a sorted task, mark it as unsorted so it gets re-organized
-        if (task.sorted) {
-          return { ...task, ...updates, sorted: false, sortedCategory: null };
-        }
-        return { ...task, ...updates };
-      }
-      return task;
-    }));
+  const updateTask = async (id, updates) => {
+    try {
+      const response = await api.put(`/tasks/${id}`, updates)
+      setTasks(tasks.map(task => task._id === id ? response.data : task))
+    } catch (err) {
+      console.error('❌ Failed to update task:', err)
+    }
   };
 
   // NEW: ORGANIZE function
