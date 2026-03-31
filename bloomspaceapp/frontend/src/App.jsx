@@ -76,8 +76,6 @@ const App = () => {
 
   const [loading, setLoading] = useState(false);
 
-
-
   const handleLogin = ({ name, token }) => {
     localStorage.setItem('userName', name)
     setUser({ name, token })
@@ -109,7 +107,6 @@ const App = () => {
     fetchTasks()
   }, [user])
 
-
   // DERIVED STATE - show SORTED tasks in the right panels
   const sortedTasksOnly = tasks.filter(t => t.sorted)
 
@@ -117,7 +114,6 @@ const App = () => {
   const allTomorrowTasks = sortedTasksOnly.filter(t => t.sortedCategory === 'tomorrow');
   const allDontForget = sortedTasksOnly.filter(t => t.sortedCategory === 'dontForget');
 
-  // energy level filtering to topPriorities
   let priorities = []
   if (energyLevel === 'early') {
     priorities = allPriorities.slice(0, 4);
@@ -128,15 +124,12 @@ const App = () => {
     priorities = quickTasks.slice(0, 2)
   }
 
-  //for tommorrow and dontForget (they stay the same)
   const tomorrowTasks = allTomorrowTasks
   const dontForget = allDontForget
 
-
-  // Function passed DOWN to components
   const toggleTask = (id) => {
     setTasks(tasks.map(task =>
-      task.id === id ? { ...task, completed: !task.completed } : task
+      task._id === id ? { ...task, completed: !task.completed } : task
     ))
   }
 
@@ -173,30 +166,34 @@ const App = () => {
     }
   };
 
-  // NEW: ORGANIZE function
-  const handleOrganize = () => {
+  const handleOrganize = async () => {
     const unsortedTasks = tasks.filter(t => !t.sorted);
 
-    // Run sorting algorithm on unsorted tasks only
-    const { priorities, tomorrowTasks, dontForget } = sortTasks(unsortedTasks, 'typical');
+    const { priorities, tomorrowTasks, dontForget } = sortTasks(unsortedTasks, energyLevel);
 
-    // Mark tasks with their sorted category
-    const updatedTasks = tasks.map(task => {
-      if (!task.sorted) {
-        // Determine which category this task belongs to
-        let category = null;
-        if (priorities.find(t => t.id === task.id)) category = 'priorities';
-        else if (tomorrowTasks.find(t => t.id === task.id)) category = 'tomorrow';
-        else if (dontForget.find(t => t.id === task.id)) category = 'dontForget';
+    const sortedResults = [
+      ...priorities.map(t => ({ id: t._id, category: 'priorities' })),
+      ...tomorrowTasks.map(t => ({ id: t._id, category: 'tomorrow' })),
+      ...dontForget.map(t => ({ id: t._id, category: 'dontForget' })),
+    ];
 
-        if (category) {
-          return { ...task, sorted: true, sortedCategory: category, sortedAt: Date.now() };
-        }
+    await Promise.all(
+      sortedResults.map(({ id, category }) =>
+        api.put(`/tasks/${id}`, {
+          sorted: true,
+          sortedCategory: category,
+          sortedAt: Date.now()
+        })
+      )
+    );
+
+    setTasks(tasks.map(task => {
+      const result = sortedResults.find(r => r.id === task._id);
+      if (result) {
+        return { ...task, sorted: true, sortedCategory: result.category, sortedAt: Date.now() };
       }
       return task;
-    });
-
-    setTasks(updatedTasks);
+    }));
   };
 
   if (!user) {
@@ -238,7 +235,6 @@ const App = () => {
       />
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Dashboard Stats */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="bg-white border-2 border-black rounded-lg p-4 h-40">
             <p className="font-bold">DONE VS TO-DO</p>
@@ -251,7 +247,6 @@ const App = () => {
           </div>
         </div>
 
-        {/* Date Section */}
         <div className="flex justify-between items-center mb-6">
           <div className="bg-blue-200 border-2 border-black rounded-full px-6 py-2">
             <span className="font-bold">TODAY ×</span>
@@ -259,9 +254,7 @@ const App = () => {
           <DateDisplay />
         </div>
 
-        {/* Main Content Grid */}
         <div className="grid grid-cols-3 gap-4">
-          {/* Left Side - Parking Lot */}
           <div className="col-span-2">
             <ParkingLot
               tasks={tasks}
@@ -272,7 +265,6 @@ const App = () => {
             />
           </div>
 
-          {/* Right Side - Task Lists (display only, fed from algorithm) */}
           <div className="space-y-4">
             <TopPriorities
               tasks={priorities}
@@ -296,7 +288,6 @@ const App = () => {
           </div>
         </div>
 
-        {/* Daily Motivation */}
         <div className="mt-6">
           <p className="font-bold mb-4"> ♥ DAILY MOTIVATION</p>
           <div className="grid grid-cols-4 gap-4">
