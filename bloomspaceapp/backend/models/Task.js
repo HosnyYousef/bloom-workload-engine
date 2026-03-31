@@ -9,13 +9,14 @@ const taskSchema = new mongoose.Schema({
     hours: {
         type: Number,
         default: 0
-    },deadline: {
+    },
+    deadline: {
         type: String,
         default: ''
     },
     importance: {
         type: String,
-        emum: ['high', 'medium', 'low'],
+        enum: ['high', 'medium', 'low'],
         default: 'medium'
     },
     completed: {
@@ -28,12 +29,23 @@ const taskSchema = new mongoose.Schema({
     },
     sortedCategory: {
         type: String,
-        emum: ['priorties', 'tomorrow', 'dontForget', null],
+        enum: ['priorities', 'tomorrow', 'dontForget', null],
         default: null
     },
     sortedAt: {
         type: Number,
         default: null
+    },
+    goal: {
+        type: String,
+        default: 'Personal'
+    },
+    smart: {
+        specific: { type: Boolean, default: false },
+        measurable: { type: Boolean, default: false },
+        achievable: { type: Boolean, default: false },
+        relevant: { type: Boolean, default: false },
+        timeBound: { type: Boolean, default: false }
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
