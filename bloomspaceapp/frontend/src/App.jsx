@@ -76,6 +76,12 @@ const App = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const [selectedTask, setSelectedTask] = useState(null);
+
+  const handleSelectTask = (task) => {
+    setSelectedTask(task);
+  };
+
   const handleLogin = ({ name, token }) => {
     localStorage.setItem('userName', name)
     setUser({ name, token })
@@ -262,6 +268,8 @@ const App = () => {
               onUpdate={updateTask}
               onDelete={deleteTask}
               onOrganize={handleOrganize}
+              onSelect={handleSelectTask}
+              selectedTaskId={selectedTask?._id}
             />
           </div>
 
