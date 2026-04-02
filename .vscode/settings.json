@@ -4,7 +4,7 @@
       {
         "name": "Hide Env Secrets",
         "scope": [
-          "source.env",
+          // "source.env",
           "string.quoted.single.ini",
           "string.quoted.double.ini",
           "constant.numeric.ini"
