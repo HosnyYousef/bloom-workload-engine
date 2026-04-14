@@ -445,7 +445,7 @@ const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete, onOrganize, onSelect, se
                         <p className="text-sm">💡 Tip: Just brain dump - we'll organize it for you!</p>
                     </div>
                 )}
-            </div>
+            </div> 
         </div>
     );
 };
