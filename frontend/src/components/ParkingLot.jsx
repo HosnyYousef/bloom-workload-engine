@@ -450,5 +450,4 @@ const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete, onOrganize, onSelect, se
     );
 };
 
-
 export default ParkingLot;
