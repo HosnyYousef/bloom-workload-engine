@@ -2,6 +2,38 @@ import { useState } from "react";
 
 const DEFAULT_GOALS = ['Health', 'Career', 'Finance', 'Personal', 'Social'];
 
+    const GoalSelect = ({ value, onChange, showCustom, setShowCustom, customValue, setCustomValue }) => (
+        <div className="flex flex-col gap-1">
+            <select
+                value={showCustom ? 'custom' : value}
+                onChange={(e) => {
+                    if (e.target.value === 'custom') {
+                        setShowCustom(true);
+                    } else {
+                        setShowCustom(false);
+                        onChange(e.target.value);
+                    }
+                }}
+                className="w-full p-1 border border-black rounded text-sm"
+            >
+                {DEFAULT_GOALS.map(g => (
+                    <option key={g} value={g}>{g}</option>
+                ))}
+                <option value="custom">+ Custom...</option>
+            </select>
+            {showCustom && (
+                <input
+                    type="text"
+                    value={customValue}
+                    onChange={(e) => setCustomValue(e.target.value)}
+                    placeholder="Type goal..."
+                    className="w-full p-1 border border-black rounded text-sm"
+                    autoFocus
+                />
+            )}
+        </div>
+    );
+
 const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete, onOrganize, onSelect, selectedTaskId }) => {
     const [editingId, setEditingId] = useState(null);
     const [showSorted, setShowSorted] = useState(false);
@@ -75,38 +107,6 @@ const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete, onOrganize, onSelect, se
         setEditShowCustomInput(false);
         setEditCustomGoal('');
     };
-
-    const GoalSelect = ({ value, onChange, showCustom, setShowCustom, customValue, setCustomValue }) => (
-        <div className="flex flex-col gap-1">
-            <select
-                value={showCustom ? 'custom' : value}
-                onChange={(e) => {
-                    if (e.target.value === 'custom') {
-                        setShowCustom(true);
-                    } else {
-                        setShowCustom(false);
-                        onChange(e.target.value);
-                    }
-                }}
-                className="w-full p-1 border border-black rounded text-sm"
-            >
-                {DEFAULT_GOALS.map(g => (
-                    <option key={g} value={g}>{g}</option>
-                ))}
-                <option value="custom">+ Custom...</option>
-            </select>
-            {showCustom && (
-                <input
-                    type="text"
-                    value={customValue}
-                    onChange={(e) => setCustomValue(e.target.value)}
-                    placeholder="Type goal..."
-                    className="w-full p-1 border border-black rounded text-sm"
-                    autoFocus
-                />
-            )}
-        </div>
-    );
 
     return (
         <div className="bg-pink-300 border-2 border-black rounded-lg p-6 min-h-150 flex flex-col">
