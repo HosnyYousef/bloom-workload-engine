@@ -31,7 +31,7 @@ const DEFAULT_GOALS = ['Health', 'Career', 'Finance', 'Personal', 'Social'];
                     autoFocus
                 />
             )}
-        </div>
+        </div> 
     );
 
 const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete, onOrganize, onSelect, selectedTaskId }) => {
