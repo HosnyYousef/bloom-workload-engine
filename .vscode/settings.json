@@ -1,0 +1,18 @@
+{
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "name": "Hide Env Secrets",
+        "scope": [
+          "source.env",
+          "string.quoted.single.ini",
+          "string.quoted.double.ini",
+          "constant.numeric.ini"
+        ],
+        "settings": {
+          "foreground": "#00000000"
+        }
+      }
+    ]
+  }
+}
