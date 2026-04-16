@@ -1,5 +1,8 @@
 console.log('✅ Auth routes file loaded');
 
+const Task = require("../models/Task"); // adjust path if your model lives elsewhere
+const demoSeed = require("../seed/demoSeed");
+
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -81,6 +84,49 @@ router.post('/login', async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+// POST /api/auth/demo
+// One-click demo login for recruiters. No credentials required.
+// Resets the demo user's tasks to a clean seed on every call.
+router.post("/demo", async (req, res) => {
+  try {
+    // Find the demo account by a flag rather than email so it's explicit
+    const demoUser = await User.findOne({ isDemo: true });
+
+    if (!demoUser) {
+      return res.status(404).json({ message: "Demo account not configured" });
+    }
+
+    // Wipe all existing tasks for the demo user so each recruiter starts fresh
+    await Task.deleteMany({ userId: demoUser._id });
+
+    // Insert the seed tasks, attaching them to the demo user's ID
+    const seededTasks = demoSeed.map((task) => ({
+      ...task,
+      userId: demoUser._id,
+    }));
+    await Task.insertMany(seededTasks);
+
+    // Issue a normal JWT — the rest of the app treats this as a regular session
+    const token = jwt.sign(
+      { userId: demoUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "2h" } // shorter expiry for demo sessions
+    );
+
+    res.json({
+      token,
+      user: {
+        id: demoUser._id,
+        name: demoUser.name,
+        email: demoUser.email,
+      },
+    });
+  } catch (err) {
+    console.error("Demo login error:", err);
+    res.status(500).json({ message: "Demo login failed" });
   }
 });
 
