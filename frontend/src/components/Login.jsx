@@ -13,19 +13,30 @@ export default function Login({ onLogin }) {
         e.preventDefault()
         setError('')
 
-
         try {
             const response = await api.post('/auth/login', formData)
             const { token, name } = response.data;
 
-            // Save token so interceptor can use it
             localStorage.setItem('token', token)
-
-            // Tell app.jsx login succeeded
             onLogin({ name, token })
 
         } catch (err) {
             setError(err.response?.data?.message || 'Login failed')
+        }
+    }
+
+    // Calls demo endpoint, resets seed data, logs in without credentials
+    const handleDemoLogin = async () => {
+        setError('')
+        try {
+            const response = await api.post('/auth/demo')
+            const { token, user } = response.data;
+
+            localStorage.setItem('token', token)
+            onLogin({ name: user.name, token })
+
+        } catch (err) {
+            setError(err.response?.data?.message || 'Demo login failed')
         }
     }
 
@@ -66,6 +77,22 @@ export default function Login({ onLogin }) {
                         Log In
                     </button>
                 </form>
+
+                {/* Divider */}
+                <div className="flex items-center my-4">
+                    <div className="flex-1 border-t border-gray-200" />
+                    <span className="mx-3 text-sm text-gray-400">or</span>
+                    <div className="flex-1 border-t border-gray-200" />
+                </div>
+
+                {/* One-click demo login for recruiters */}
+                <button
+                    type="button"
+                    onClick={handleDemoLogin}
+                    className="w-full border border-blue-400 text-blue-500 py-3 rounded-lg font-semibold hover:bg-blue-50 transition"
+                >
+                    Try Demo
+                </button>
             </div>
         </div>
     )

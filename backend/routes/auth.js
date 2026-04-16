@@ -1,55 +1,55 @@
-console.log('✅ Auth routes file loaded');
+console.log("✅ Auth routes file loaded");
 
 const Task = require("../models/Task"); // adjust path if your model lives elsewhere
 const demoSeed = require("../seed/demoSeed");
 
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
 // Generate JWT token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '30d'
+    expiresIn: "30d",
   });
 };
 
 // @route   POST /api/auth/register
 // @desc    Register new user
 // @access  Public
-router.post('/register', async (req, res) => {
-  console.log('📝 Register route hit');
-  console.log('Body:', req.body);
-  
+router.post("/register", async (req, res) => {
+  console.log("📝 Register route hit");
+  console.log("Body:", req.body);
+
   try {
     const { name, email, password } = req.body;
 
     // Check if user already exists
     const userExists = await User.findOne({ email });
-    
+
     if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ message: "User already exists" });
     }
 
     // Create user
     const user = await User.create({
       name,
       email,
-      password
+      password,
     });
 
-    console.log('✅ User created:', user._id);
+    console.log("✅ User created:", user._id);
 
     // Return user data + token
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      token: generateToken(user._id)
+      token: generateToken(user._id),
     });
   } catch (error) {
-    console.error('❌ Register error:', error);
+    console.error("❌ Register error:", error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -57,22 +57,22 @@ router.post('/register', async (req, res) => {
 // @route   POST /api/auth/login
 // @desc    Login user
 // @access  Public
-router.post('/login', async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
     // Find user by email (include password this time)
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
 
     // Check password
     const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
 
     // Return user data + token
@@ -80,7 +80,7 @@ router.post('/login', async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      token: generateToken(user._id)
+      token: generateToken(user._id),
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -109,12 +109,8 @@ router.post("/demo", async (req, res) => {
     }));
     await Task.insertMany(seededTasks);
 
-    // Issue a normal JWT — the rest of the app treats this as a regular session
-    const token = jwt.sign(
-      { userId: demoUser._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "2h" } // shorter expiry for demo sessions
-    );
+    // Use same payload shape as generateToken so auth middleware decodes it correctly
+    const token = generateToken(demoUser._id);
 
     res.json({
       token,
