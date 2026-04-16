@@ -100,12 +100,12 @@ router.post("/demo", async (req, res) => {
     }
 
     // Wipe all existing tasks for the demo user so each recruiter starts fresh
-    await Task.deleteMany({ userId: demoUser._id });
+    await Task.deleteMany({ user: demoUser._id }); // was userId, schema field is user
 
     // Insert the seed tasks, attaching them to the demo user's ID
     const seededTasks = demoSeed.map((task) => ({
       ...task,
-      userId: demoUser._id,
+      user: demoUser._id, // was userId, schema field is user
     }));
     await Task.insertMany(seededTasks);
 
