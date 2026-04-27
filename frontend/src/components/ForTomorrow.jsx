@@ -18,7 +18,7 @@ const ForTomorrow = ({ tasks, onToggle, onDelete, onAdd }) => {
     };
 
     return (
-        <div className="bg-orange-100 dark:bg-[#1c0d00] border-2 border-black dark:border-gray-700 rounded-lg p-4 h-auto min-h-44 transition-colors">
+        <div className="bg-orange-100 dark:bg-[#1c0d00] border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-44 transition-colors">
             {/* Header */}
             <div className="flex justify-between items-center border-b-2 border-black dark:border-orange-900 pb-2 mb-3">
                 <p className="font-bold dark:text-orange-100">For Tomorrow</p>
@@ -33,7 +33,7 @@ const ForTomorrow = ({ tasks, onToggle, onDelete, onAdd }) => {
                             type="checkbox"
                             checked={task.completed}
                             onChange={() => onToggle(task._id)}
-                            className="w-5 h-5 cursor-pointer flex-shrink-0 accent-orange-500"
+                            className="cursor-pointer"
                         />
                         <span className={`flex-1 dark:text-orange-100 ${task.completed ? 'line-through text-gray-400 dark:text-orange-900' : ''}`}>
                             {task.text}

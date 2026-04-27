@@ -115,7 +115,7 @@ const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete, onOrganize, onSelect, se
     };
 
     return (
-        <div className="bg-pink-300 dark:bg-[#200a12] border-2 border-black dark:border-gray-700 rounded-lg p-6 min-h-150 flex flex-col transition-colors">
+        <div className="bg-pink-300 dark:bg-[#200a12] border-2 border-black dark:border-gray-700 rounded-2xl p-6 min-h-150 flex flex-col transition-colors">
             <div className="flex justify-between items-center mb-4">
                 <div>
                     <h2 className="font-bold text-2xl dark:text-gray-100">PARKING LOT</h2>
@@ -130,7 +130,7 @@ const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete, onOrganize, onSelect, se
                 </button>
             </div>
 
-            <div className="bg-pink-200 dark:bg-[#17080f] border-2 border-black dark:border-gray-700 rounded-lg overflow-hidden flex-1 flex flex-col">
+            <div className="bg-pink-200 dark:bg-[#17080f] border-2 border-black dark:border-gray-700 rounded-2xl overflow-hidden flex-1 flex flex-col">
                 <table className="w-full">
                     <thead className="bg-pink-400 dark:bg-[#2e0f1a] border-b-2 border-black dark:border-gray-700">
                         <tr>

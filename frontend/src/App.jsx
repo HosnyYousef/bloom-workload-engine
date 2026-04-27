@@ -63,6 +63,7 @@ const sortTasks = (tasks, energyLevel) => {
 
 const App = () => {
   const [energyLevel, setEnergyLevel] = useState('typical');
+  const [statsOpen, setStatsOpen] = useState(false);
 
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') !== 'false');
 
@@ -255,39 +256,41 @@ const App = () => {
       />
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-lg p-4 h-40">
-            <p className="font-bold dark:text-gray-100">DONE VS TO-DO</p>
+
+        {/* Stats — always visible on desktop, collapsible on mobile */}
+        <div className="mb-5">
+          <div className="flex items-center justify-between mb-2 sm:hidden">
+            <span className="text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">📊 Stats</span>
+            <button
+              onClick={() => setStatsOpen(o => !o)}
+              className="text-xs px-3 py-1 rounded-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800"
+            >
+              {statsOpen ? 'Hide ▲' : 'Show ▼'}
+            </button>
           </div>
-          <div className="bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-lg p-4 h-40">
-            <p className="font-bold dark:text-gray-100">TASK COMPLETION</p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-lg p-4 h-40">
-            <p className="font-bold dark:text-gray-100">GOALS DISTRIBUTION</p>
+          <div className={`grid grid-cols-3 gap-3 ${statsOpen ? 'grid' : 'hidden sm:grid'}`}>
+            <div className="bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-3 h-14 sm:h-40 flex items-start">
+              <p className="font-bold dark:text-gray-100 text-xs sm:text-sm leading-tight">DONE VS TO-DO</p>
+            </div>
+            <div className="bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-3 h-14 sm:h-40 flex items-start">
+              <p className="font-bold dark:text-gray-100 text-xs sm:text-sm leading-tight">TASK COMPLETION</p>
+            </div>
+            <div className="bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-3 h-14 sm:h-40 flex items-start">
+              <p className="font-bold dark:text-gray-100 text-xs sm:text-sm leading-tight">GOALS DISTRIBUTION</p>
+            </div>
           </div>
         </div>
 
-        <div className="flex justify-between items-center mb-6">
-          <div className="bg-blue-200 dark:bg-blue-900 border-2 border-black dark:border-blue-700 rounded-full px-6 py-2">
-            <span className="font-bold dark:text-blue-100">TODAY ×</span>
+        <div className="flex justify-between items-center mb-5">
+          <div className="bg-blue-200 dark:bg-blue-900 border-2 border-black dark:border-blue-700 rounded-full px-5 py-2">
+            <span className="font-bold dark:text-blue-100 text-sm">TODAY ×</span>
           </div>
           <DateDisplay />
         </div>
 
+        {/* Main layout — checklist FIRST on mobile, parking lot second */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2">
-            <ParkingLot
-              tasks={tasks}
-              onAdd={addTask}
-              onUpdate={updateTask}
-              onDelete={deleteTask}
-              onOrganize={handleOrganize}
-              onSelect={handleSelectTask}
-              selectedTaskId={selectedTask?._id}
-            />
-          </div>
-
-          <div className="space-y-4">
+          <div className="space-y-4 order-1 lg:order-2">
             <TopPriorities
               tasks={priorities}
               onToggle={toggleTask}
@@ -308,15 +311,27 @@ const App = () => {
             />
             <NotesThoughts />
           </div>
+
+          <div className="lg:col-span-2 order-2 lg:order-1">
+            <ParkingLot
+              tasks={tasks}
+              onAdd={addTask}
+              onUpdate={updateTask}
+              onDelete={deleteTask}
+              onOrganize={handleOrganize}
+              onSelect={handleSelectTask}
+              selectedTaskId={selectedTask?._id}
+            />
+          </div>
         </div>
 
         <div className="mt-6">
           <p className="font-bold mb-4 dark:text-gray-100"> ♥ DAILY MOTIVATION</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="bg-gray-300 dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-lg h-48"></div>
-            <div className="bg-gray-300 dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-lg h-48"></div>
-            <div className="bg-gray-300 dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-lg h-48"></div>
-            <div className="bg-gray-300 dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-lg h-48"></div>
+            <div className="bg-gray-300 dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl h-48"></div>
+            <div className="bg-gray-300 dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl h-48"></div>
+            <div className="bg-gray-300 dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl h-48"></div>
+            <div className="bg-gray-300 dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl h-48"></div>
           </div>
         </div>
       </div>
