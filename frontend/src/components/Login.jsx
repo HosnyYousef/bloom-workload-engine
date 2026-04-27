@@ -4,6 +4,7 @@ import api from '../services/api'
 export default function Login({ onLogin }) {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('')
+    const [isDemoLoading, setIsDemoLoading] = useState(false)
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -28,6 +29,8 @@ export default function Login({ onLogin }) {
     // Calls demo endpoint, resets seed data, logs in without credentials
     const handleDemoLogin = async () => {
         setError('')
+        setIsDemoLoading(true)
+
         try {
             const response = await api.post('/auth/demo')
             const { token, user } = response.data;
@@ -37,6 +40,8 @@ export default function Login({ onLogin }) {
 
         } catch (err) {
             setError(err.response?.data?.message || 'Demo login failed')
+        } finally {
+            setIsDemoLoading(false)
         }
     }
 
@@ -89,9 +94,16 @@ export default function Login({ onLogin }) {
                 <button
                     type="button"
                     onClick={handleDemoLogin}
-                    className="w-full border border-blue-400 text-blue-500 py-3 rounded-lg font-semibold hover:bg-blue-50 transition"
+                    disabled={isDemoLoading}
+                    className="w-full border border-blue-400 text-blue-500 py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2 hover:bg-blue-50 disabled:cursor-wait disabled:opacity-70 disabled:hover:bg-white"
                 >
-                    Try Demo
+                    {isDemoLoading && (
+                        <span
+                            className="h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"
+                            aria-hidden="true"
+                        />
+                    )}
+                    {isDemoLoading ? 'Loading Demo...' : 'Try Demo'}
                 </button>
             </div>
         </div>
