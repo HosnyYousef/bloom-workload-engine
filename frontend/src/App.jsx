@@ -288,8 +288,9 @@ const App = () => {
           <DateDisplay />
         </div>
 
-        {/* Main layout — checklist FIRST on mobile, parking lot second */}
+        {/* Main layout — checklist first, parking lot second, notes last on mobile */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Sidebar: checklist panels + Notes on desktop */}
           <div className="space-y-4 order-1 lg:order-2">
             <TopPriorities
               tasks={priorities}
@@ -309,9 +310,13 @@ const App = () => {
               onDelete={deleteTask}
               onAdd={addTask}
             />
-            <NotesThoughts />
+            {/* Notes visible in sidebar on desktop only */}
+            <div className="hidden lg:block">
+              <NotesThoughts onAdd={addTask} />
+            </div>
           </div>
 
+          {/* Parking Lot */}
           <div className="lg:col-span-2 order-2 lg:order-1">
             <ParkingLot
               tasks={tasks}
@@ -322,6 +327,11 @@ const App = () => {
               onSelect={handleSelectTask}
               selectedTaskId={selectedTask?._id}
             />
+          </div>
+
+          {/* Notes below Parking Lot on mobile only */}
+          <div className="order-3 lg:hidden">
+            <NotesThoughts onAdd={addTask} />
           </div>
         </div>
 
