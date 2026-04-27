@@ -8,7 +8,7 @@ const DateDisplay = () => {
     const year = today.getFullYear()
 
     return (
-        <div className="font-bold">
+        <div className="font-bold dark:text-gray-100 text-sm sm:text-base">
             DATE: {day} {month}, {year}
         </div>
     )
