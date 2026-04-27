@@ -1,6 +1,35 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Nunito everywhere */
+* {
+  font-family: 'Nunito', sans-serif;
+}
+
+/* Neo-brutalist offset shadow for cards */
+.card {
+  box-shadow: 4px 4px 0px 0px #000;
+}
+.dark .card {
+  box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.8);
+}
+
+/* Buttons with press-down effect */
+.btn {
+  box-shadow: 3px 3px 0px 0px #000;
+  transition: box-shadow 0.08s ease, transform 0.08s ease;
+}
+.btn:active {
+  box-shadow: 1px 1px 0px 0px #000;
+  transform: translate(2px, 2px);
+}
+.dark .btn {
+  box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 0.7);
+}
+.dark .btn:active {
+  box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 0.7);
+}
+
 /* Custom checkboxes — consistent across light/dark, no glare */
 input[type="checkbox"] {
   -webkit-appearance: none;

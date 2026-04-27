@@ -269,21 +269,21 @@ const App = () => {
             </button>
           </div>
           <div className={`grid grid-cols-3 gap-3 ${statsOpen ? 'grid' : 'hidden sm:grid'}`}>
-            <div className="bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-3 h-14 sm:h-40 flex items-start">
+            <div className="card bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-3 h-14 sm:h-40 flex items-start">
               <p className="font-bold dark:text-gray-100 text-xs sm:text-sm leading-tight">DONE VS TO-DO</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-3 h-14 sm:h-40 flex items-start">
+            <div className="card bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-3 h-14 sm:h-40 flex items-start">
               <p className="font-bold dark:text-gray-100 text-xs sm:text-sm leading-tight">TASK COMPLETION</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-3 h-14 sm:h-40 flex items-start">
+            <div className="card bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-3 h-14 sm:h-40 flex items-start">
               <p className="font-bold dark:text-gray-100 text-xs sm:text-sm leading-tight">GOALS DISTRIBUTION</p>
             </div>
           </div>
         </div>
 
         <div className="flex justify-between items-center mb-5">
-          <div className="bg-blue-200 dark:bg-blue-900 border-2 border-black dark:border-blue-700 rounded-full px-5 py-2">
-            <span className="font-bold dark:text-blue-100 text-sm">TODAY ×</span>
+          <div className="btn bg-blue-200 dark:bg-blue-900 border-2 border-black dark:border-blue-700 rounded-full px-5 py-2 cursor-default">
+            <span className="font-extrabold dark:text-blue-100 text-sm">TODAY ×</span>
           </div>
           <DateDisplay />
         </div>

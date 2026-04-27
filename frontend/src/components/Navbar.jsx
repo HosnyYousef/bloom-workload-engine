@@ -38,7 +38,7 @@ const Navbar = ({ energyLevel, onEnergyChange, onLogout, darkMode, onToggleDark 
               <button
                 key={key}
                 onClick={() => onEnergyChange(key)}
-                className={`px-4 py-2 border-2 border-black dark:border-gray-600 rounded-lg font-bold transition-colors ${energyLevel === key ? activeClass : inactiveBtn}`}
+                className={`btn px-4 py-2 border-2 border-black dark:border-gray-600 rounded-xl font-bold transition-colors ${energyLevel === key ? activeClass : inactiveBtn}`}
               >
                 {label}
               </button>
@@ -46,7 +46,7 @@ const Navbar = ({ energyLevel, onEnergyChange, onLogout, darkMode, onToggleDark 
             <button
               onClick={onToggleDark}
               title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-              className="w-10 h-10 flex items-center justify-center border-2 border-black dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-lg"
+              className="btn w-10 h-10 flex items-center justify-center border-2 border-black dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-lg"
             >
               {darkMode ? '☀️' : '🌙'}
             </button>
@@ -97,7 +97,7 @@ const Navbar = ({ energyLevel, onEnergyChange, onLogout, darkMode, onToggleDark 
                 <button
                   key={key}
                   onClick={() => { onEnergyChange(key); setMenuOpen(false); }}
-                  className={`flex-1 py-2 border-2 border-black dark:border-gray-600 rounded-lg font-bold text-sm transition-colors ${energyLevel === key ? activeClass : inactiveBtn}`}
+                  className={`btn flex-1 py-2 border-2 border-black dark:border-gray-600 rounded-xl font-bold text-sm transition-colors ${energyLevel === key ? activeClass : inactiveBtn}`}
                 >
                   {label}
                 </button>
