@@ -246,7 +246,7 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-950 transition-colors">
+    <div className="min-h-screen bg-[#F7F5F2] dark:bg-[#111113] transition-colors">
       <Navbar
         energyLevel={energyLevel}
         onEnergyChange={setEnergyLevel}
@@ -269,14 +269,14 @@ const App = () => {
             </button>
           </div>
           <div className={`grid grid-cols-3 gap-3 ${statsOpen ? 'grid' : 'hidden sm:grid'}`}>
-            <div className="card bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-3 h-14 sm:h-40 flex items-start">
-              <p className="font-bold dark:text-gray-100 text-xs sm:text-sm leading-tight">DONE VS TO-DO</p>
+            <div className="bg-white/60 dark:bg-gray-800/40 border border-gray-200 dark:border-gray-700/50 rounded-2xl p-3 h-14 sm:h-40 flex items-start">
+              <p className="font-bold text-gray-400 dark:text-gray-600 text-xs sm:text-sm leading-tight">DONE VS TO-DO</p>
             </div>
-            <div className="card bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-3 h-14 sm:h-40 flex items-start">
-              <p className="font-bold dark:text-gray-100 text-xs sm:text-sm leading-tight">TASK COMPLETION</p>
+            <div className="bg-white/60 dark:bg-gray-800/40 border border-gray-200 dark:border-gray-700/50 rounded-2xl p-3 h-14 sm:h-40 flex items-start">
+              <p className="font-bold text-gray-400 dark:text-gray-600 text-xs sm:text-sm leading-tight">TASK COMPLETION</p>
             </div>
-            <div className="card bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-3 h-14 sm:h-40 flex items-start">
-              <p className="font-bold dark:text-gray-100 text-xs sm:text-sm leading-tight">GOALS DISTRIBUTION</p>
+            <div className="bg-white/60 dark:bg-gray-800/40 border border-gray-200 dark:border-gray-700/50 rounded-2xl p-3 h-14 sm:h-40 flex items-start">
+              <p className="font-bold text-gray-400 dark:text-gray-600 text-xs sm:text-sm leading-tight">GOALS DISTRIBUTION</p>
             </div>
           </div>
         </div>
@@ -288,60 +288,54 @@ const App = () => {
           <DateDisplay />
         </div>
 
-        {/* Main layout — checklist first, parking lot second, notes last on mobile */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Sidebar: checklist panels + Notes on desktop */}
-          <div className="space-y-4 order-1 lg:order-2">
+        {/* Main layout — action area is the focal point, brain dump is secondary */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+          {/* Action area — 2/3 width, what to work on today */}
+          <div className="lg:col-span-2 space-y-4 order-1">
             <TopPriorities
               tasks={priorities}
               onToggle={toggleTask}
               onDelete={deleteTask}
               onAdd={addTask}
             />
-            <ForTomorrow
-              tasks={tomorrowTasks}
-              onToggle={toggleTask}
-              onDelete={deleteTask}
-              onAdd={addTask}
-            />
-            <DontForget
-              tasks={dontForget}
-              onToggle={toggleTask}
-              onDelete={deleteTask}
-              onAdd={addTask}
-            />
-            {/* Notes visible in sidebar on desktop only */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <ForTomorrow
+                tasks={tomorrowTasks}
+                onToggle={toggleTask}
+                onDelete={deleteTask}
+                onAdd={addTask}
+              />
+              <DontForget
+                tasks={dontForget}
+                onToggle={toggleTask}
+                onDelete={deleteTask}
+                onAdd={addTask}
+              />
+            </div>
             <div className="hidden lg:block">
               <NotesThoughts onAdd={addTask} />
             </div>
           </div>
 
-          {/* Parking Lot */}
-          <div className="lg:col-span-2 order-2 lg:order-1">
-            <ParkingLot
-              tasks={tasks}
-              onAdd={addTask}
-              onUpdate={updateTask}
-              onDelete={deleteTask}
-              onOrganize={handleOrganize}
-              onSelect={handleSelectTask}
-              selectedTaskId={selectedTask?._id}
-            />
+          {/* Brain dump — 1/3 width, secondary capture tool */}
+          <div className="order-2">
+            <div className="lg:sticky lg:top-6">
+              <ParkingLot
+                tasks={tasks}
+                onAdd={addTask}
+                onUpdate={updateTask}
+                onDelete={deleteTask}
+                onOrganize={handleOrganize}
+                onSelect={handleSelectTask}
+                selectedTaskId={selectedTask?._id}
+              />
+            </div>
           </div>
 
-          {/* Notes below Parking Lot on mobile only */}
+          {/* Notes on mobile only */}
           <div className="order-3 lg:hidden">
             <NotesThoughts onAdd={addTask} />
-          </div>
-        </div>
-
-        <div className="mt-6">
-          <p className="font-bold mb-4 dark:text-gray-100"> ♥ DAILY MOTIVATION</p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="bg-gray-300 dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl h-48"></div>
-            <div className="bg-gray-300 dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl h-48"></div>
-            <div className="bg-gray-300 dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl h-48"></div>
-            <div className="bg-gray-300 dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl h-48"></div>
           </div>
         </div>
       </div>

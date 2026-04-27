@@ -14,7 +14,7 @@ const GoalSelect = ({ value, onChange, showCustom, setShowCustom, customValue, s
                     onChange(e.target.value);
                 }
             }}
-            className="w-full p-1 border border-black dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            className="w-full p-1 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white/50 dark:bg-gray-800/30 text-gray-600 dark:text-gray-400"
         >
             {DEFAULT_GOALS.map(g => (
                 <option key={g} value={g}>{g}</option>
@@ -27,14 +27,20 @@ const GoalSelect = ({ value, onChange, showCustom, setShowCustom, customValue, s
                 value={customValue}
                 onChange={(e) => setCustomValue(e.target.value)}
                 placeholder="Type goal..."
-                className="w-full p-1 border border-black dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className="w-full p-1 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white/50 dark:bg-gray-800/30 text-gray-600 dark:text-gray-400"
                 autoFocus
             />
         )}
     </div>
 );
 
-const inputCls = "w-full p-1 border border-black dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100";
+const editInputCls = "w-full px-2 py-1 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100";
+
+const importanceDot = (importance) => {
+    if (importance === 'high') return 'bg-red-400';
+    if (importance === 'medium') return 'bg-yellow-400';
+    return 'bg-emerald-400';
+};
 
 const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete, onOrganize, onSelect, selectedTaskId }) => {
     const [editingId, setEditingId] = useState(null);
@@ -108,222 +114,191 @@ const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete, onOrganize, onSelect, se
         setEditCustomGoal('');
     };
 
-    const importanceBadge = (importance) => {
-        if (importance === 'high') return 'bg-red-200 dark:bg-red-900 dark:text-red-200';
-        if (importance === 'medium') return 'bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-200';
-        return 'bg-green-200 dark:bg-green-900 dark:text-green-200';
-    };
-
     return (
-        <div className="card bg-pink-300 dark:bg-[#200a12] border-2 border-black dark:border-gray-700 rounded-2xl p-6 min-h-150 flex flex-col transition-colors">
-            <div className="flex justify-between items-center mb-4">
+        <div className="parking-lot-card bg-[#EDECEA] dark:bg-[#1A1A1E] border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-4 flex flex-col transition-colors">
+
+            {/* Header */}
+            <div className="flex justify-between items-start mb-4">
                 <div>
-                    <h2 className="font-bold text-2xl dark:text-gray-100">PARKING LOT</h2>
-                    <p className="text-sm text-gray-700 dark:text-gray-400">Brain dump everything here - we'll organize it for you!</p>
+                    <h2 className="font-bold text-sm uppercase tracking-widest text-gray-400 dark:text-gray-500">Brain Dump</h2>
+                    <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5">Get it out of your head</p>
                 </div>
                 <button
                     onClick={onOrganize}
-                    className="btn px-4 py-2 bg-yellow-400 border-2 border-black dark:border-yellow-600 rounded-xl font-bold hover:bg-yellow-500 flex items-center gap-2 dark:text-gray-900"
+                    className="btn px-3 py-1.5 bg-yellow-400 border-2 border-black dark:border-yellow-600 rounded-xl font-bold hover:bg-yellow-500 text-xs flex items-center gap-1 dark:text-gray-900 flex-shrink-0 ml-2"
                 >
-                    <span className="text-xl">📝</span>
-                    ORGANIZE!
+                    <span>📝</span>
+                    Organize
                 </button>
             </div>
 
-            <div className="bg-pink-200 dark:bg-[#17080f] border-2 border-black dark:border-gray-700 rounded-2xl overflow-hidden flex-1 flex flex-col">
-                <table className="w-full">
-                    <thead className="bg-pink-400 dark:bg-[#2e0f1a] border-b-2 border-black dark:border-gray-700">
-                        <tr>
-                            <th className="border-r-2 border-black dark:border-gray-700 p-3 text-left font-bold dark:text-gray-100">ITEM</th>
-                            <th className="border-r-2 border-black dark:border-gray-700 p-3 text-left font-bold w-24 dark:text-gray-100">HOURS</th>
-                            <th className="border-r-2 border-black dark:border-gray-700 p-3 text-left font-bold w-36 dark:text-gray-100">DUE DATE</th>
-                            <th className="border-r-2 border-black dark:border-gray-700 p-3 text-left font-bold w-28 dark:text-gray-100">IMPORTANCE</th>
-                            <th className="border-r-2 border-black dark:border-gray-700 p-3 text-left font-bold w-32 dark:text-gray-100">GOAL</th>
-                            <th className="p-3 w-20"></th>
-                        </tr>
-                    </thead>
+            {/* Quick-add form */}
+            <div className="mb-4">
+                <div className="flex gap-2 mb-2">
+                    <input
+                        type="text"
+                        value={newTaskForm.text}
+                        onChange={(e) => setNewTaskForm({ ...newTaskForm, text: e.target.value })}
+                        onKeyDown={(e) => e.key === 'Enter' && handleAddNew()}
+                        placeholder="What's on your mind?"
+                        className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-xl text-sm bg-white/70 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:border-gray-400 dark:focus:border-gray-500"
+                    />
+                    <button
+                        onClick={handleAddNew}
+                        className="px-3 py-2 bg-white/70 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-500 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 font-bold text-sm transition-colors"
+                    >
+                        +
+                    </button>
+                </div>
+                {/* Detail fields */}
+                <div className="grid grid-cols-2 gap-1.5">
+                    <input
+                        type="number" step="0.5"
+                        value={newTaskForm.hours}
+                        onChange={(e) => setNewTaskForm({ ...newTaskForm, hours: e.target.value })}
+                        placeholder="Hours"
+                        className="px-2 py-1 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white/50 dark:bg-gray-800/30 text-gray-600 dark:text-gray-400 placeholder-gray-400 dark:placeholder-gray-600"
+                    />
+                    <input
+                        type="date"
+                        value={newTaskForm.deadline}
+                        onChange={(e) => setNewTaskForm({ ...newTaskForm, deadline: e.target.value })}
+                        className="px-2 py-1 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white/50 dark:bg-gray-800/30 text-gray-600 dark:text-gray-400"
+                    />
+                    <select
+                        value={newTaskForm.importance}
+                        onChange={(e) => setNewTaskForm({ ...newTaskForm, importance: e.target.value })}
+                        className="px-2 py-1 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white/50 dark:bg-gray-800/30 text-gray-600 dark:text-gray-400"
+                    >
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                    <GoalSelect
+                        value={newTaskForm.goal}
+                        onChange={(val) => setNewTaskForm({ ...newTaskForm, goal: val })}
+                        showCustom={showCustomInput}
+                        setShowCustom={setShowCustomInput}
+                        customValue={customGoal}
+                        setCustomValue={setCustomGoal}
+                    />
+                </div>
+            </div>
 
-                    <tbody>
-                        {/* UNSORTED TASKS */}
-                        {unsortedTasks.map(task => (
-                            <tr
+            {/* Task list */}
+            <div className="flex-1 space-y-1.5">
+                {unsortedTasks.length === 0 && sortedTasks.length === 0 && (
+                    <div className="py-8 text-center">
+                        <p className="text-sm text-gray-400 dark:text-gray-600">Nothing here yet.</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-600 mt-1">Type above — we'll sort it for you.</p>
+                    </div>
+                )}
+
+                {unsortedTasks.map(task => (
+                    editingId === task._id ? (
+                        <div key={task._id} className="bg-white/80 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-600 rounded-xl p-2.5 space-y-1.5">
+                            <input
+                                type="text"
+                                value={editForm.text}
+                                onChange={(e) => setEditForm({ ...editForm, text: e.target.value })}
+                                className={editInputCls}
+                                autoFocus
+                            />
+                            <div className="grid grid-cols-2 gap-1">
+                                <input
+                                    type="number" step="0.5"
+                                    value={editForm.hours}
+                                    onChange={(e) => setEditForm({ ...editForm, hours: e.target.value })}
+                                    placeholder="Hours"
+                                    className="px-2 py-1 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                                />
+                                <input
+                                    type="date"
+                                    value={editForm.deadline}
+                                    onChange={(e) => setEditForm({ ...editForm, deadline: e.target.value })}
+                                    className="px-2 py-1 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                                />
+                                <select
+                                    value={editForm.importance}
+                                    onChange={(e) => setEditForm({ ...editForm, importance: e.target.value })}
+                                    className="px-2 py-1 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                                >
+                                    <option value="high">High</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="low">Low</option>
+                                </select>
+                                <GoalSelect
+                                    value={editForm.goal}
+                                    onChange={(val) => setEditForm({ ...editForm, goal: val })}
+                                    showCustom={editShowCustomInput}
+                                    setShowCustom={setEditShowCustomInput}
+                                    customValue={editCustomGoal}
+                                    setCustomValue={setEditCustomGoal}
+                                />
+                            </div>
+                            <div className="flex gap-1 justify-end pt-0.5">
+                                <button onClick={() => handleSaveEdit(task._id)} className="px-3 py-1 bg-green-500 text-white rounded-lg text-xs hover:bg-green-600">Save</button>
+                                <button onClick={handleCancelEdit} className="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg text-xs hover:bg-gray-300 dark:hover:bg-gray-600">Cancel</button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div
+                            key={task._id}
+                            className={`border rounded-xl px-3 py-2 flex items-center gap-2 group cursor-pointer transition-colors ${
+                                selectedTaskId === task._id
+                                    ? 'border-yellow-400 dark:border-yellow-600 bg-yellow-50/80 dark:bg-yellow-900/20'
+                                    : 'border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-white/5 hover:bg-white/90 dark:hover:bg-white/10'
+                            }`}
+                            onClick={() => onSelect(task)}
+                        >
+                            <span className={`w-2 h-2 rounded-full flex-shrink-0 ${importanceDot(task.importance)}`} />
+                            <span className="flex-1 text-sm text-gray-600 dark:text-gray-400 truncate">{task.text}</span>
+                            {task.deadline && (
+                                <span className="text-xs text-gray-400 dark:text-gray-600 flex-shrink-0">
+                                    {task.deadline.slice(5)}
+                                </span>
+                            )}
+                            <div className="opacity-0 group-hover:opacity-100 flex gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
+                                <button onClick={() => handleEdit(task)} className="text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 text-xs">✎</button>
+                                <button onClick={() => onDelete(task._id)} className="text-gray-400 hover:text-red-500 dark:hover:text-red-400 text-xs">✕</button>
+                            </div>
+                        </div>
+                    )
+                ))}
+
+                {/* Sorted tasks */}
+                {sortedTasks.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-dashed border-gray-200 dark:border-gray-700">
+                        <button
+                            onClick={() => setShowSorted(!showSorted)}
+                            className="w-full text-left text-xs text-gray-400 dark:text-gray-600 flex items-center gap-1.5 hover:text-gray-500 dark:hover:text-gray-500 transition-colors mb-1.5"
+                        >
+                            <span>{showSorted ? '▲' : '▼'}</span>
+                            {sortedTasks.length} already organized
+                        </button>
+
+                        {showSorted && sortedTasks.map(task => (
+                            <div
                                 key={task._id}
-                                className={`border-b-2 border-black dark:border-gray-700 cursor-pointer transition-colors ${
+                                className={`border border-dashed rounded-xl px-3 py-2 flex items-center gap-2 group cursor-pointer opacity-50 hover:opacity-70 mb-1.5 transition-opacity ${
                                     selectedTaskId === task._id
-                                        ? 'bg-yellow-200 dark:bg-yellow-900 border-l-4 border-l-yellow-500 dark:border-l-yellow-600'
-                                        : 'hover:bg-pink-300 dark:hover:bg-[#2a0f1a]'
+                                        ? 'border-yellow-300 dark:border-yellow-700 bg-yellow-50/50 dark:bg-yellow-900/10 opacity-80'
+                                        : 'border-gray-200 dark:border-gray-800 bg-transparent'
                                 }`}
                                 onClick={() => onSelect(task)}
                             >
-                                {editingId === task._id ? (
-                                    <>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                            <input type="text" value={editForm.text} onChange={(e) => setEditForm({ ...editForm, text: e.target.value })} className={inputCls} autoFocus />
-                                        </td>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                            <input type="number" step="0.5" value={editForm.hours} onChange={(e) => setEditForm({ ...editForm, hours: e.target.value })} className={inputCls} placeholder="Optional" />
-                                        </td>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                            <input type="date" value={editForm.deadline} onChange={(e) => setEditForm({ ...editForm, deadline: e.target.value })} className={inputCls} />
-                                        </td>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                            <select value={editForm.importance} onChange={(e) => setEditForm({ ...editForm, importance: e.target.value })} className={inputCls}>
-                                                <option value="high">High</option>
-                                                <option value="medium">Med</option>
-                                                <option value="low">Low</option>
-                                            </select>
-                                        </td>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                            <GoalSelect value={editForm.goal} onChange={(val) => setEditForm({ ...editForm, goal: val })} showCustom={editShowCustomInput} setShowCustom={setEditShowCustomInput} customValue={editCustomGoal} setCustomValue={setEditCustomGoal} />
-                                        </td>
-                                        <td className="p-2 flex gap-1" onClick={e => e.stopPropagation()}>
-                                            <button onClick={() => handleSaveEdit(task._id)} className="px-2 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600">✓</button>
-                                            <button onClick={handleCancelEdit} className="px-2 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600">✕</button>
-                                        </td>
-                                    </>
-                                ) : (
-                                    <>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-3 dark:text-gray-200">
-                                            <span className="mr-2">🔴</span>
-                                            {task.text}
-                                        </td>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-3 text-center dark:text-gray-300">
-                                            {task.hours || '-'}
-                                        </td>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-3 dark:text-gray-300">
-                                            {task.deadline || '-'}
-                                        </td>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-3 capitalize">
-                                            <span className={`px-2 py-1 rounded ${importanceBadge(task.importance)}`}>
-                                                {task.importance || 'Med'}
-                                            </span>
-                                        </td>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-3 text-sm dark:text-gray-300">
-                                            {task.goal || 'Personal'}
-                                        </td>
-                                        <td className="p-3 flex gap-1" onClick={e => e.stopPropagation()}>
-                                            <button onClick={() => handleEdit(task)} className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">✎</button>
-                                            <button onClick={() => onDelete(task._id)} className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300">✕</button>
-                                        </td>
-                                    </>
-                                )}
-                            </tr>
+                                <span className="text-xs text-gray-400 dark:text-gray-600">✓</span>
+                                <span className="flex-1 text-xs text-gray-500 dark:text-gray-500 truncate">{task.text}</span>
+                                <span className="text-xs text-gray-400 dark:text-gray-600 flex-shrink-0">
+                                    → {task.sortedCategory === 'priorities' ? 'Today' :
+                                        task.sortedCategory === 'tomorrow' ? 'Tomorrow' : "Don't Forget"}
+                                </span>
+                                <div className="opacity-0 group-hover:opacity-100 flex gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
+                                    <button onClick={() => handleEdit(task)} className="text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 text-xs">✎</button>
+                                    <button onClick={() => onDelete(task._id)} className="text-gray-400 hover:text-red-500 dark:hover:text-red-400 text-xs">✕</button>
+                                </div>
+                            </div>
                         ))}
-
-                        {/* ADD FORM */}
-                        <tr className="border-b-2 border-black dark:border-gray-700 bg-yellow-50 dark:bg-gray-800/60">
-                            <td className="border-r-2 border-black dark:border-gray-700 p-2">
-                                <input type="text" value={newTaskForm.text} onChange={(e) => setNewTaskForm({ ...newTaskForm, text: e.target.value })} onKeyDown={(e) => e.key === 'Enter' && handleAddNew()} className={inputCls} placeholder="Add task..." />
-                            </td>
-                            <td className="border-r-2 border-black dark:border-gray-700 p-2">
-                                <input type="number" step="0.5" value={newTaskForm.hours} onChange={(e) => setNewTaskForm({ ...newTaskForm, hours: e.target.value })} className={inputCls} placeholder="Hours" />
-                            </td>
-                            <td className="border-r-2 border-black dark:border-gray-700 p-2">
-                                <input type="date" value={newTaskForm.deadline} onChange={(e) => setNewTaskForm({ ...newTaskForm, deadline: e.target.value })} className={inputCls} />
-                            </td>
-                            <td className="border-r-2 border-black dark:border-gray-700 p-2">
-                                <select value={newTaskForm.importance} onChange={(e) => setNewTaskForm({ ...newTaskForm, importance: e.target.value })} className={inputCls}>
-                                    <option value="high">High</option>
-                                    <option value="medium">Med</option>
-                                    <option value="low">Low</option>
-                                </select>
-                            </td>
-                            <td className="border-r-2 border-black dark:border-gray-700 p-2">
-                                <GoalSelect value={newTaskForm.goal} onChange={(val) => setNewTaskForm({ ...newTaskForm, goal: val })} showCustom={showCustomInput} setShowCustom={setShowCustomInput} customValue={customGoal} setCustomValue={setCustomGoal} />
-                            </td>
-                            <td className="p-2">
-                                <button onClick={handleAddNew} className="w-full px-2 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600">✓</button>
-                            </td>
-                        </tr>
-
-                        {/* SORTED TASKS */}
-                        {sortedTasks.length > 0 && (
-                            <>
-                                <tr className="bg-gray-200 dark:bg-gray-800 border-b-2 border-black dark:border-gray-700">
-                                    <td colSpan="6" className="p-2">
-                                        <button onClick={() => setShowSorted(!showSorted)} className="w-full text-left font-bold flex items-center gap-2 dark:text-gray-300">
-                                            {showSorted ? '▲' : '▼'}
-                                            {showSorted ? 'Hide' : 'Show'} Sorted Tasks ({sortedTasks.length} organized)
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                {showSorted && sortedTasks.map(task => (
-                                    <tr
-                                        key={task._id}
-                                        className={`border-b-2 border-black dark:border-gray-700 bg-gray-100 dark:bg-gray-800/50 opacity-60 cursor-pointer ${
-                                            selectedTaskId === task._id ? 'bg-yellow-200 dark:bg-yellow-900 opacity-100' : 'hover:bg-gray-200 dark:hover:bg-gray-700/50'
-                                        }`}
-                                        onClick={() => onSelect(task)}
-                                    >
-                                        {editingId === task._id ? (
-                                            <>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                                    <input type="text" value={editForm.text} onChange={(e) => setEditForm({ ...editForm, text: e.target.value })} className={inputCls} autoFocus />
-                                                </td>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                                    <input type="number" step="0.5" value={editForm.hours} onChange={(e) => setEditForm({ ...editForm, hours: e.target.value })} className={inputCls} />
-                                                </td>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                                    <input type="date" value={editForm.deadline} onChange={(e) => setEditForm({ ...editForm, deadline: e.target.value })} className={inputCls} />
-                                                </td>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                                    <select value={editForm.importance} onChange={(e) => setEditForm({ ...editForm, importance: e.target.value })} className={inputCls}>
-                                                        <option value="high">High</option>
-                                                        <option value="medium">Med</option>
-                                                        <option value="low">Low</option>
-                                                    </select>
-                                                </td>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                                    <GoalSelect value={editForm.goal} onChange={(val) => setEditForm({ ...editForm, goal: val })} showCustom={editShowCustomInput} setShowCustom={setEditShowCustomInput} customValue={editCustomGoal} setCustomValue={setEditCustomGoal} />
-                                                </td>
-                                                <td className="p-2 flex gap-1" onClick={e => e.stopPropagation()}>
-                                                    <button onClick={() => handleSaveEdit(task._id)} className="px-2 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600">✓</button>
-                                                    <button onClick={handleCancelEdit} className="px-2 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600">✕</button>
-                                                </td>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-3 dark:text-gray-400">
-                                                    <span className="mr-2">✅</span>
-                                                    {task.text}
-                                                    <span className="ml-2 text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/50 dark:text-blue-300 rounded">
-                                                        → {task.sortedCategory === 'priorities' ? 'Top Priorities' :
-                                                            task.sortedCategory === 'tomorrow' ? 'For Tomorrow' :
-                                                            "Don't Forget"}
-                                                    </span>
-                                                </td>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-3 text-center dark:text-gray-400">
-                                                    {task.hours || '-'}
-                                                </td>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-3 dark:text-gray-400">
-                                                    {task.deadline || '-'}
-                                                </td>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-3 capitalize">
-                                                    <span className={`px-2 py-1 rounded ${importanceBadge(task.importance)}`}>
-                                                        {task.importance || 'Med'}
-                                                    </span>
-                                                </td>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-3 text-sm dark:text-gray-400">
-                                                    {task.goal || 'Personal'}
-                                                </td>
-                                                <td className="p-3 flex gap-1" onClick={e => e.stopPropagation()}>
-                                                    <button onClick={() => handleEdit(task)} className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">✎</button>
-                                                    <button onClick={() => onDelete(task._id)} className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300">✕</button>
-                                                </td>
-                                            </>
-                                        )}
-                                    </tr>
-                                ))}
-                            </>
-                        )}
-                    </tbody>
-                </table>
-
-                {unsortedTasks.length === 0 && sortedTasks.length === 0 && (
-                    <div className="p-8 text-center text-gray-600 dark:text-gray-400">
-                        <p className="mb-2">No tasks yet. Start by adding your first task below!</p>
-                        <p className="text-sm">💡 Tip: Just brain dump - we'll organize it for you!</p>
                     </div>
                 )}
             </div>

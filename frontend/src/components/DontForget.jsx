@@ -15,15 +15,20 @@ const DontForget = ({ tasks, onToggle, onDelete, onAdd }) => {
     }
 
     return (
-        <div className="card bg-green-200 dark:bg-[#072010] border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-44 transition-colors">
+        <div className="card bg-emerald-50 dark:bg-[#091A0F] border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto transition-colors">
             {/* Header */}
-            <div className="flex justify-between items-center border-b-2 border-black dark:border-green-900 pb-2 mb-3">
-                <p className="font-bold dark:text-green-100">Don't Forget</p>
-                <button className="text-sm underline dark:text-green-300/60">See all...</button>
+            <div className="flex justify-between items-center border-b-2 border-black dark:border-emerald-900/50 pb-2 mb-3">
+                <div>
+                    <p className="font-extrabold dark:text-emerald-100">Don't Forget</p>
+                    <p className="text-xs text-gray-500 dark:text-emerald-400/60">The little things matter too</p>
+                </div>
             </div>
 
             {/* Task List */}
             <div className="space-y-2">
+                {tasks.length === 0 && (
+                    <p className="text-sm text-gray-400 dark:text-emerald-800/70 py-2">Nothing here yet.</p>
+                )}
                 {tasks.map(task => (
                     <div key={task._id} className="flex items-center gap-2 group">
                         <input
@@ -32,14 +37,14 @@ const DontForget = ({ tasks, onToggle, onDelete, onAdd }) => {
                             onChange={() => onToggle(task._id)}
                             className="cursor-pointer"
                         />
-                        <span className={`flex-1 dark:text-green-100 ${task.completed ? 'line-through text-gray-400 dark:text-green-900' : ''}`}>
+                        <span className={`flex-1 dark:text-emerald-100 ${task.completed ? 'line-through text-gray-400 dark:text-emerald-900' : ''}`}>
                             {task.text}
                         </span>
                         <button
                             onClick={() => onDelete(task._id)}
-                            className="text-red-500 dark:text-red-400 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+                            className="text-red-400 dark:text-red-400 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity text-xs"
                         >
-                            x
+                            ✕
                         </button>
                     </div>
                 ))}

@@ -15,15 +15,25 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd}) => {
     }
 
     return (
-        <div className='card bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-44 transition-colors'>
+        <div className='card bg-rose-50 dark:bg-[#1C0A10] border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto transition-colors'>
             {/* Header */}
             <div className='flex justify-between items-center border-b-2 border-black dark:border-gray-600 pb-2 mb-3'>
-                <p className='font-bold dark:text-gray-100'>Top Priorities</p>
-                <button className='text-sm underline dark:text-gray-400'>See all...</button>
+                <div>
+                    <p className='font-extrabold text-lg dark:text-gray-100'>Today's Focus</p>
+                    <p className='text-xs text-gray-500 dark:text-gray-400'>Your most important tasks — do these first</p>
+                </div>
+                {tasks.length > 0 && (
+                    <span className='text-xs font-bold bg-rose-200 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 px-2 py-1 rounded-full'>
+                        {tasks.filter(t => !t.completed).length} left
+                    </span>
+                )}
             </div>
 
             {/* Task List */}
             <div className="space-y-2">
+                {tasks.length === 0 && (
+                    <p className='text-sm text-gray-400 dark:text-gray-600 py-2'>Nothing here yet — hit Organize to fill this in.</p>
+                )}
                 {tasks.map(task => (
                     <div key={task._id} className='flex items-center gap-2 group'>
                         <input
@@ -32,14 +42,14 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd}) => {
                             onChange={() => onToggle(task._id)}
                             className='cursor-pointer'
                         />
-                        <span className={`flex-1 dark:text-gray-200 ${task.completed ? 'line-through text-gray-400 dark:text-gray-500' : ''}`}>
+                        <span className={`flex-1 font-medium dark:text-gray-200 ${task.completed ? 'line-through text-gray-400 dark:text-gray-500' : ''}`}>
                             {task.text}
                         </span>
                         <button
                             onClick={() => onDelete(task._id)}
-                            className='text-red-500 dark:text-red-400 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity'
+                            className='text-red-400 dark:text-red-400 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity text-xs'
                         >
-                            x
+                            ✕
                         </button>
                     </div>
                 ))}

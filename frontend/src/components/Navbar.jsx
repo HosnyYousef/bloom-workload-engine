@@ -12,7 +12,7 @@ const Navbar = ({ energyLevel, onEnergyChange, onLogout, darkMode, onToggleDark 
   const inactiveBtn = 'bg-white dark:bg-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700';
 
   return (
-    <nav className="bg-white dark:bg-gray-900 border-b-2 border-black dark:border-gray-700 transition-colors relative z-50">
+    <nav className="bg-[#F7F5F2] dark:bg-[#111113] border-b border-gray-200 dark:border-gray-800 transition-colors relative z-50">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
 
@@ -87,7 +87,7 @@ const Navbar = ({ energyLevel, onEnergyChange, onLogout, darkMode, onToggleDark 
 
       {/* Mobile dropdown menu */}
       {menuOpen && (
-        <div className="lg:hidden border-t-2 border-black dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-4 space-y-3">
+        <div className="lg:hidden border-t border-gray-200 dark:border-gray-800 bg-[#F7F5F2] dark:bg-[#111113] px-4 py-4 space-y-3">
           {/* Search */}
           <input
             type="text"

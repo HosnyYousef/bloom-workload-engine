@@ -6,12 +6,17 @@
   font-family: 'Nunito', sans-serif;
 }
 
-/* Neo-brutalist offset shadow for cards */
+/* Neo-brutalist offset shadow for action cards */
 .card {
   box-shadow: 4px 4px 0px 0px #000;
 }
 .dark .card {
   box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.8);
+}
+
+/* Parking lot is a secondary capture tool — no hard shadow */
+.parking-lot-card {
+  box-shadow: none;
 }
 
 /* Buttons with press-down effect */
