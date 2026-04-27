@@ -25,7 +25,7 @@ const Navbar = ({ energyLevel, onEnergyChange, onLogout, darkMode, onToggleDark 
           </div>
 
           {/* Desktop: search + controls */}
-          <div className="hidden md:flex items-center flex-1 gap-2 ml-8">
+          <div className="hidden lg:flex items-center flex-1 gap-2 ml-8">
             <input
               type="text"
               placeholder="Search thoughts..."
@@ -33,7 +33,7 @@ const Navbar = ({ energyLevel, onEnergyChange, onLogout, darkMode, onToggleDark 
             />
           </div>
 
-          <div className="hidden md:flex items-center gap-2 ml-2">
+          <div className="hidden lg:flex items-center gap-2 ml-2">
             {energyButtons.map(({ key, label, activeClass }) => (
               <button
                 key={key}
@@ -59,7 +59,7 @@ const Navbar = ({ energyLevel, onEnergyChange, onLogout, darkMode, onToggleDark 
           </div>
 
           {/* Mobile: dark toggle + hamburger */}
-          <div className="flex md:hidden items-center gap-2">
+          <div className="flex lg:hidden items-center gap-2">
             <button
               onClick={onToggleDark}
               className="w-10 h-10 flex items-center justify-center border-2 border-black dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-lg"
@@ -81,7 +81,7 @@ const Navbar = ({ energyLevel, onEnergyChange, onLogout, darkMode, onToggleDark 
 
       {/* Mobile dropdown menu */}
       {menuOpen && (
-        <div className="md:hidden border-t-2 border-black dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-4 space-y-3">
+        <div className="lg:hidden border-t-2 border-black dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-4 space-y-3">
           {/* Search */}
           <input
             type="text"
