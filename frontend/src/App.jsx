@@ -64,6 +64,13 @@ const sortTasks = (tasks, energyLevel) => {
 const App = () => {
   const [energyLevel, setEnergyLevel] = useState('typical');
 
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') !== 'false');
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode);
+    localStorage.setItem('darkMode', darkMode);
+  }, [darkMode]);
+
   const [user, setUser] = useState(() => {
     const token = localStorage.getItem('token')
     const name = localStorage.getItem('userName')
@@ -133,10 +140,15 @@ const App = () => {
   const tomorrowTasks = allTomorrowTasks
   const dontForget = allDontForget
 
-  const toggleTask = (id) => {
-    setTasks(tasks.map(task =>
-      task._id === id ? { ...task, completed: !task.completed } : task
-    ))
+  const toggleTask = async (id) => {
+    const task = tasks.find(t => t._id === id);
+    if (!task) return;
+    try {
+      const response = await api.put(`/tasks/${id}`, { completed: !task.completed });
+      setTasks(tasks.map(t => t._id === id ? response.data : t));
+    } catch (err) {
+      console.error('❌ Failed to toggle task:', err);
+    }
   }
 
   const addTask = async (newTask) => {
@@ -233,35 +245,37 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-950 transition-colors">
       <Navbar
         energyLevel={energyLevel}
         onEnergyChange={setEnergyLevel}
         onLogout={handleLogout}
+        darkMode={darkMode}
+        onToggleDark={() => setDarkMode(d => !d)}
       />
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-white border-2 border-black rounded-lg p-4 h-40">
-            <p className="font-bold">DONE VS TO-DO</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div className="bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-lg p-4 h-40">
+            <p className="font-bold dark:text-gray-100">DONE VS TO-DO</p>
           </div>
-          <div className="bg-white border-2 border-black rounded-lg p-4 h-40">
-            <p className="font-bold">TASK COMPLETION</p>
+          <div className="bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-lg p-4 h-40">
+            <p className="font-bold dark:text-gray-100">TASK COMPLETION</p>
           </div>
-          <div className="bg-white border-2 border-black rounded-lg p-4 h-40">
-            <p className="font-bold">GOALS DISTRIBUTION</p>
+          <div className="bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-lg p-4 h-40">
+            <p className="font-bold dark:text-gray-100">GOALS DISTRIBUTION</p>
           </div>
         </div>
 
         <div className="flex justify-between items-center mb-6">
-          <div className="bg-blue-200 border-2 border-black rounded-full px-6 py-2">
-            <span className="font-bold">TODAY ×</span>
+          <div className="bg-blue-200 dark:bg-blue-900 border-2 border-black dark:border-blue-700 rounded-full px-6 py-2">
+            <span className="font-bold dark:text-blue-100">TODAY ×</span>
           </div>
           <DateDisplay />
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
-          <div className="col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2">
             <ParkingLot
               tasks={tasks}
               onAdd={addTask}
@@ -297,12 +311,12 @@ const App = () => {
         </div>
 
         <div className="mt-6">
-          <p className="font-bold mb-4"> ♥ DAILY MOTIVATION</p>
-          <div className="grid grid-cols-4 gap-4">
-            <div className="bg-gray-300 border-2 border-black rounded-lg h-48"></div>
-            <div className="bg-gray-300 border-2 border-black rounded-lg h-48"></div>
-            <div className="bg-gray-300 border-2 border-black rounded-lg h-48"></div>
-            <div className="bg-gray-300 border-2 border-black rounded-lg h-48"></div>
+          <p className="font-bold mb-4 dark:text-gray-100"> ♥ DAILY MOTIVATION</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="bg-gray-300 dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-lg h-48"></div>
+            <div className="bg-gray-300 dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-lg h-48"></div>
+            <div className="bg-gray-300 dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-lg h-48"></div>
+            <div className="bg-gray-300 dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-lg h-48"></div>
           </div>
         </div>
       </div>

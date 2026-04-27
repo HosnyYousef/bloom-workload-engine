@@ -46,12 +46,12 @@ export default function Login({ onLogin }) {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-            <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-6 text-center">Welcome Back</h2>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 transition-colors">
+            <div className="bg-white dark:bg-gray-900 p-8 rounded-xl shadow-md w-full max-w-md border dark:border-gray-700">
+                <h2 className="text-2xl font-bold mb-6 text-center dark:text-white">Welcome Back</h2>
 
                 {error && (
-                    <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-sm">
+                    <div className="bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 p-3 rounded mb-4 text-sm">
                         {error}
                     </div>
                 )}
@@ -64,7 +64,7 @@ export default function Login({ onLogin }) {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                     <input
                         type="password"
@@ -73,7 +73,7 @@ export default function Login({ onLogin }) {
                         value={formData.password}
                         onChange={handleChange}
                         required
-                        className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                     <button
                         type='submit'
@@ -85,9 +85,9 @@ export default function Login({ onLogin }) {
 
                 {/* Divider */}
                 <div className="flex items-center my-4">
-                    <div className="flex-1 border-t border-gray-200" />
-                    <span className="mx-3 text-sm text-gray-400">or</span>
-                    <div className="flex-1 border-t border-gray-200" />
+                    <div className="flex-1 border-t border-gray-200 dark:border-gray-700" />
+                    <span className="mx-3 text-sm text-gray-400 dark:text-gray-500">or</span>
+                    <div className="flex-1 border-t border-gray-200 dark:border-gray-700" />
                 </div>
 
                 {/* One-click demo login for recruiters */}
@@ -95,7 +95,7 @@ export default function Login({ onLogin }) {
                     type="button"
                     onClick={handleDemoLogin}
                     disabled={isDemoLoading}
-                    className="w-full border border-blue-400 text-blue-500 py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2 hover:bg-blue-50 disabled:cursor-wait disabled:opacity-70 disabled:hover:bg-white"
+                    className="w-full border border-blue-400 dark:border-blue-500 text-blue-500 dark:text-blue-400 py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2 hover:bg-blue-50 dark:hover:bg-blue-500/10 disabled:cursor-wait disabled:opacity-70 disabled:hover:bg-transparent"
                 >
                     {isDemoLoading && (
                         <span
