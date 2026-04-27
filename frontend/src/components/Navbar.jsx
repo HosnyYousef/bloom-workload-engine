@@ -58,17 +58,23 @@ const Navbar = ({ energyLevel, onEnergyChange, onLogout, darkMode, onToggleDark 
             </div>
           </div>
 
-          {/* Mobile: dark toggle + hamburger */}
+          {/* Mobile: avatar + logout always visible + dark toggle + hamburger */}
           <div className="flex lg:hidden items-center gap-2">
+            <button onClick={onLogout} className="text-sm text-red-500 dark:text-red-400 hover:underline font-bold">
+              Log out
+            </button>
+            <div className="w-9 h-9 bg-green-600 border-2 border-black dark:border-gray-600 rounded-full flex items-center justify-center">
+              <span className="text-white text-sm">👤</span>
+            </div>
             <button
               onClick={onToggleDark}
-              className="w-10 h-10 flex items-center justify-center border-2 border-black dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-lg"
+              className="w-9 h-9 flex items-center justify-center border-2 border-black dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-base"
             >
               {darkMode ? '☀️' : '🌙'}
             </button>
             <button
               onClick={() => setMenuOpen(o => !o)}
-              className="w-10 h-10 flex flex-col items-center justify-center gap-1.5 border-2 border-black dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800"
+              className="w-9 h-9 flex flex-col items-center justify-center gap-1.5 border-2 border-black dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800"
               aria-label="Menu"
             >
               <span className={`block w-5 h-0.5 bg-gray-900 dark:bg-gray-100 transition-all ${menuOpen ? 'rotate-45 translate-y-2' : ''}`} />
@@ -96,7 +102,7 @@ const Navbar = ({ energyLevel, onEnergyChange, onLogout, darkMode, onToggleDark 
               {energyButtons.map(({ key, label, activeClass }) => (
                 <button
                   key={key}
-                  onClick={() => { onEnergyChange(key); setMenuOpen(false); }}
+                  onClick={() => onEnergyChange(key)}
                   className={`btn flex-1 py-2 border-2 border-black dark:border-gray-600 rounded-xl font-bold text-sm transition-colors ${energyLevel === key ? activeClass : inactiveBtn}`}
                 >
                   {label}
@@ -105,12 +111,6 @@ const Navbar = ({ energyLevel, onEnergyChange, onLogout, darkMode, onToggleDark 
             </div>
           </div>
 
-          {/* Logout */}
-          <div className="pt-1 border-t border-gray-200 dark:border-gray-700">
-            <button onClick={onLogout} className="text-sm text-red-500 dark:text-red-400 hover:underline">
-              Log out
-            </button>
-          </div>
         </div>
       )}
     </nav>
