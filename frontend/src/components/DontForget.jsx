@@ -15,7 +15,7 @@ const DontForget = ({ tasks, onToggle, onDelete, onAdd }) => {
     }
 
     return (
-        <div className="bg-green-200 dark:bg-[#072010] border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-44 transition-colors">
+        <div className="card bg-green-200 dark:bg-[#072010] border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-44 transition-colors">
             {/* Header */}
             <div className="flex justify-between items-center border-b-2 border-black dark:border-green-900 pb-2 mb-3">
                 <p className="font-bold dark:text-green-100">Don't Forget</p>
@@ -58,7 +58,7 @@ const DontForget = ({ tasks, onToggle, onDelete, onAdd }) => {
                     />
                     <button
                         onClick={handleAdd}
-                        className="px-3 py-1 bg-green-500 text-white rounded font-bold hover:bg-green-600"
+                        className="btn px-3 py-1 bg-green-500 text-white rounded-lg font-bold hover:bg-green-600 border-2 border-black dark:border-gray-700"
                     >
                         +
                     </button>

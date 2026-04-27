@@ -15,7 +15,7 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd}) => {
     }
 
     return (
-        <div className='bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-44 transition-colors'>
+        <div className='card bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-44 transition-colors'>
             {/* Header */}
             <div className='flex justify-between items-center border-b-2 border-black dark:border-gray-600 pb-2 mb-3'>
                 <p className='font-bold dark:text-gray-100'>Top Priorities</p>
@@ -58,7 +58,7 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd}) => {
                     />
                     <button
                         onClick={handleAdd}
-                        className='px-3 py-1 bg-green-500 text-white rounded font-bold hover:bg-green-600'
+                        className='btn px-3 py-1 bg-green-500 text-white rounded-lg font-bold hover:bg-green-600 border-2 border-black dark:border-gray-700'
                     >
                         +
                     </button>

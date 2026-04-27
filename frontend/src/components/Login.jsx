@@ -47,7 +47,7 @@ export default function Login({ onLogin }) {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 transition-colors">
-            <div className="bg-white dark:bg-gray-900 p-8 rounded-xl shadow-md w-full max-w-md border dark:border-gray-700">
+            <div className="card bg-white dark:bg-gray-900 p-8 rounded-2xl w-full max-w-md border-2 border-black dark:border-gray-700">
                 <h2 className="text-2xl font-bold mb-6 text-center dark:text-white">Welcome Back</h2>
 
                 {error && (
@@ -77,7 +77,7 @@ export default function Login({ onLogin }) {
                     />
                     <button
                         type='submit'
-                        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition"
+                        className="btn w-full bg-blue-500 text-white py-3 rounded-xl font-bold hover:bg-blue-600 border-2 border-black dark:border-gray-600"
                     >
                         Log In
                     </button>

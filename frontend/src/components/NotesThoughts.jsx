@@ -18,13 +18,13 @@ const NotesThoughts = ({ onAdd }) => {
     };
 
     return (
-        <div className="bg-yellow-100 dark:bg-[#15110a] border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-32 transition-colors">
+        <div className="card bg-yellow-100 dark:bg-[#15110a] border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-32 transition-colors">
             <div className="flex justify-between items-center border-b-2 border-black dark:border-yellow-900 pb-2 mb-3">
                 <p className="dark:text-yellow-100 font-semibold">Notes/Thoughts</p>
                 <button
                     onClick={handleSendToParking}
                     disabled={!notes.trim()}
-                    className="text-xs px-3 py-1 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="btn text-xs px-3 py-1 bg-green-500 text-white rounded-lg font-bold hover:bg-green-600 disabled:opacity-40 disabled:cursor-not-allowed border-2 border-black dark:border-gray-700"
                 >
                     → Parking Lot
                 </button>
