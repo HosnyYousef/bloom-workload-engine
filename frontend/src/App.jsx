@@ -288,11 +288,27 @@ const App = () => {
           <DateDisplay />
         </div>
 
-        {/* Main layout — action area is the focal point, brain dump is secondary */}
+        {/* Main layout — brain dump is the primary capture surface on desktop, action area on the right.
+            Mobile keeps the original stacking order: actions first, then brain dump, then notes. */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
-          {/* Action area — 2/3 width, what to work on today */}
-          <div className="lg:col-span-2 space-y-4 order-1">
+          {/* Brain dump — left on desktop, second on mobile */}
+          <div className="order-2 lg:order-1">
+            <div className="lg:sticky lg:top-6">
+              <ParkingLot
+                tasks={tasks}
+                onAdd={addTask}
+                onUpdate={updateTask}
+                onDelete={deleteTask}
+                onOrganize={handleOrganize}
+                onSelect={handleSelectTask}
+                selectedTaskId={selectedTask?._id}
+              />
+            </div>
+          </div>
+
+          {/* Action area — right on desktop, first on mobile */}
+          <div className="lg:col-span-2 space-y-4 order-1 lg:order-2">
             <TopPriorities
               tasks={priorities}
               onToggle={toggleTask}
@@ -315,21 +331,6 @@ const App = () => {
             </div>
             <div className="hidden lg:block">
               <NotesThoughts onAdd={addTask} />
-            </div>
-          </div>
-
-          {/* Brain dump — 1/3 width, secondary capture tool */}
-          <div className="order-2">
-            <div className="lg:sticky lg:top-6">
-              <ParkingLot
-                tasks={tasks}
-                onAdd={addTask}
-                onUpdate={updateTask}
-                onDelete={deleteTask}
-                onOrganize={handleOrganize}
-                onSelect={handleSelectTask}
-                selectedTaskId={selectedTask?._id}
-              />
             </div>
           </div>
 
