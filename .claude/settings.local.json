@@ -2,9 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(npm run *)",
-      "Bash(pkill -f \"vite --port 3001\")",
-      "Bash(git *)",
-      "Bash(npm install *)"
+      "Bash(pkill -f \"vite --port 3001\")"
     ]
   }
 }
