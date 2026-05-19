@@ -82,8 +82,6 @@ const App = () => {
 
   const [tasks, setTasks] = useState([]);
 
-  const [loading, setLoading] = useState(false);
-
   const [selectedTask, setSelectedTask] = useState(null);
 
   const handleSelectTask = (task) => {
@@ -106,15 +104,12 @@ const App = () => {
     if (!user) return;
 
     const fetchTasks = async () => {
-      setLoading(true)
       try {
         const response = await api.get('/tasks')
         setTasks(response.data)
         console.log('✅ Tasks loaded:', response.data.length, 'tasks')
       } catch (err) {
         console.error('❌ Failed to load tasks:', err)
-      } finally {
-        setLoading(false)
       }
     }
 
