@@ -2,7 +2,23 @@
   "permissions": {
     "allow": [
       "Bash(npm run *)",
-      "Bash(pkill -f \"vite --port 3001\")"
+      "Bash(pkill -f \"vite --port 3001\")",
+      "Bash(npm install *)",
+      "Bash(npx playwright *)",
+      "Bash(mkdir -p /Users/yh/Desktop/codingCloud/projects/TodoListADHD/BloomSpace/frontend/src/utils/__tests__)",
+      "Bash(mkdir -p /Users/yh/Desktop/codingCloud/projects/TodoListADHD/BloomSpace/frontend/src/components/__tests__)",
+      "Bash(mkdir -p /Users/yh/Desktop/codingCloud/projects/TodoListADHD/BloomSpace/frontend/src/test)",
+      "Bash(mkdir -p /Users/yh/Desktop/codingCloud/projects/TodoListADHD/BloomSpace/frontend/tests/e2e)",
+      "Bash(mkdir -p /Users/yh/Desktop/codingCloud/projects/TodoListADHD/BloomSpace/backend/__tests__)",
+      "Bash(npm uninstall *)",
+      "Bash(npm test *)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('exports:', json.dumps\\(d.get\\('exports',{}\\), indent=2\\)\\); print\\('main:', d.get\\('main','none'\\)\\)\")",
+      "Bash(node *)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(kill %1)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }
