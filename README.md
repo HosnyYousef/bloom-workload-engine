@@ -14,6 +14,18 @@ BloomSpace removes that friction. You dump tasks into a Parking Lot, no structur
 
 ---
 
+## Recommendation Engine
+
+BloomSpace is in active development, and the core of it is the recommendation pipeline in `backend/engine/`:
+
+1. **Parse.** A freeform Parking Lot entry ("pay the electricity bill") becomes a structured task: a suggested deadline (explicit date words win, otherwise the task type sets the horizon), an effort estimate, an energy demand, and 3 to 5 small starter steps.
+2. **Score.** Every open task gets a 0 to 1 score from four weighted components: deadline urgency, alignment with the user's yearly/monthly/weekly goals, fit with today's energy level (Early Start / Typical Day / Slow Day), and fit with the hours left in the day. The energy input is pluggable; the frontend selector supplies it today, and any future measurement method can replace it.
+3. **Recommend.** Exactly the top 3 tasks become Today's focus. Everything else lands in For Tomorrow or Don't Forget.
+
+Endpoints: `POST /api/tasks/parse`, `POST /api/tasks/recommend`, `GET/PUT /api/goals`. The heuristics and weights are starting points, documented as reviewable assumptions in `backend/engine/README.md`.
+
+---
+
 ## Tech Stack
 
 Built on the MERN stack:

@@ -23,16 +23,16 @@ After coding:
 
 ## Current Next Step
 
-Initialize the Expo React Native TypeScript app.
+Restore the database connection: the Atlas hostname in `backend/.env`
+no longer resolves (`cluster0.m4qnvex.mongodb.net` is NXDOMAIN). Create
+or locate the cluster in MongoDB Atlas and update `MONGODB_URI`.
 
-Suggested command:
+After that, review the recommendation engine assumptions listed in
+`backend/engine/README.md` (deadline horizons, scoring weights, energy
+fit matrix) and adjust the constants where they feel wrong.
+
+Suggested command to verify once the URI is fixed:
 
 ```bash
-npx create-expo-app@latest bloomspace
-```
-
-Then enter the folder:
-
-```bash
-cd bloomspace
+cd backend && npm run dev
 ```

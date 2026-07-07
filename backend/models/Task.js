@@ -14,6 +14,24 @@ const taskSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    // Where the deadline came from: picked by the user, found in the text,
+    // or inferred from the task category. Lets the UI mark suggestions.
+    deadlineSource: {
+        type: String,
+        enum: ['user', 'explicit', 'inferred', 'none', ''],
+        default: ''
+    },
+    // How much focus the task needs. Set by the parser, editable by the user.
+    energyRequired: {
+        type: String,
+        enum: ['low', 'medium', 'high'],
+        default: 'medium'
+    },
+    // Small sub-steps the parser suggests so starting feels doable
+    steps: [{
+        text: { type: String, required: true },
+        done: { type: Boolean, default: false }
+    }],
     importance: {
         type: String,
         enum: ['high', 'medium', 'low'],

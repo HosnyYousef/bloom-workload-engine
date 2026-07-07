@@ -11,6 +11,7 @@ import Register from "./components/Register"
 
 import api from "./services/api";
 import { sortTasks } from "./utils/sortTasks";
+import { applyRecommendations } from "./utils/applyRecommendations";
 
 const App = () => {
   const [energyLevel, setEnergyLevel] = useState('typical');
@@ -74,15 +75,9 @@ const App = () => {
   const allTomorrowTasks = sortedTasksOnly.filter(t => t.sortedCategory === 'tomorrow');
   const allDontForget = sortedTasksOnly.filter(t => t.sortedCategory === 'dontForget');
 
-  let priorities = []
-  if (energyLevel === 'early') {
-    priorities = allPriorities.slice(0, 4);
-  } else if (energyLevel === 'typical') {
-    priorities = allPriorities.slice(0, 3);
-  } else if (energyLevel === 'slow') {
-    const quickTasks = allPriorities.filter(t => !t.hours || t.hours <= 1)
-    priorities = quickTasks.slice(0, 2)
-  }
+  // The engine already picks exactly 3 for today (energy level changes
+  // which 3 via scoring), so no extra slicing here.
+  const priorities = allPriorities
 
   const tomorrowTasks = allTomorrowTasks
   const dontForget = allDontForget
@@ -100,14 +95,40 @@ const App = () => {
 
   const addTask = async (newTask) => {
     try {
+      let taskData = { ...newTask };
+
+      if (taskData.deadline) {
+        taskData.deadlineSource = 'user';
+      } else if (taskData.text) {
+        // No deadline given: ask the engine to structure the entry.
+        // Best effort only; if parse fails the task saves as typed.
+        try {
+          const { data: parsed } = await api.post('/tasks/parse', { text: taskData.text });
+          taskData = {
+            ...taskData,
+            deadline: parsed.deadline,
+            deadlineSource: parsed.deadlineSource,
+            hours: taskData.hours || parsed.hours,
+            energyRequired: parsed.energyRequired,
+            steps: parsed.steps.map(text => ({ text, done: false })),
+            // Keep the user's pick when they changed it off the default
+            importance: taskData.importance && taskData.importance !== 'medium'
+              ? taskData.importance
+              : parsed.importance,
+          };
+        } catch {
+          // Parse endpoint unavailable, keep the raw entry
+        }
+      }
+
       const response = await api.post('/tasks', {
-        ...newTask,
+        ...taskData,
         completed: false,
         sorted: false,
         sortedCategory: null,
         sortedAt: null
       })
-      setTasks([...tasks, response.data])
+      setTasks(prev => [...prev, response.data])
     } catch (err) {
       console.error('❌ Failed to add task:', err)
     }
@@ -132,6 +153,22 @@ const App = () => {
   };
 
   const handleOrganize = async () => {
+    try {
+      // The engine scores every open task (urgency, goal alignment, energy
+      // fit, time left today) and returns the top 3 plus the other buckets.
+      // persist: true writes the categories server-side in the same call.
+      const { data } = await api.post('/tasks/recommend', {
+        energyLevel,
+        persist: true
+      });
+      setTasks(prev => applyRecommendations(prev, data));
+      return;
+    } catch (err) {
+      console.error('❌ Recommend endpoint failed, using local sort:', err);
+    }
+
+    // Fallback: the old client-side threshold sort, so ORGANIZE still
+    // works if the engine endpoint is unreachable
     const unsortedTasks = tasks.filter(t => !t.sorted);
 
     const { priorities, tomorrowTasks, dontForget } = sortTasks(unsortedTasks, energyLevel);

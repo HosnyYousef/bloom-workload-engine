@@ -25,6 +25,13 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false, // only the one demo account gets this set to true
     },
+    // Goal statements the recommendation engine matches tasks against.
+    // Weekly goals weigh more than monthly, monthly more than yearly.
+    goals: {
+      yearly: { type: [String], default: [] },
+      monthly: { type: [String], default: [] },
+      weekly: { type: [String], default: [] },
+    },
   },
   {
     timestamps: true,

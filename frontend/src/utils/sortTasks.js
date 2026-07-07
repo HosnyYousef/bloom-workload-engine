@@ -1,3 +1,11 @@
+// Deadlines are local YYYY-MM-DD strings from the date input. Parse them in
+// local time; new Date('YYYY-MM-DD') would read UTC midnight and shift the
+// day in timezones ahead of UTC.
+const parseLocalDate = (s) => {
+  const m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(s);
+};
+
 // Pure function — no side effects, deterministic output given the same inputs.
 // Extracted from App.jsx so it can be unit-tested independently.
 export const sortTasks = (tasks, energyLevel) => {
@@ -12,19 +20,19 @@ export const sortTasks = (tasks, energyLevel) => {
 
   const urgent = tasks.filter(task => {
     if (!task.deadline) return task.importance === 'high';
-    const deadline = new Date(task.deadline);
+    const deadline = parseLocalDate(task.deadline);
     return deadline <= tomorrow && task.importance !== 'low';
   });
 
   const soon = tasks.filter(task => {
     if (!task.deadline) return task.importance === 'medium';
-    const deadline = new Date(task.deadline);
+    const deadline = parseLocalDate(task.deadline);
     return deadline > tomorrow && deadline <= threeDays;
   });
 
   const later = tasks.filter(task => {
     if (!task.deadline) return task.importance === 'low' || !task.importance;
-    const deadline = new Date(task.deadline);
+    const deadline = parseLocalDate(task.deadline);
     return deadline > threeDays;
   });
 

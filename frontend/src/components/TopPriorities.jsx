@@ -25,22 +25,40 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd}) => {
             {/* Task List */}
             <div className="space-y-2">
                 {tasks.map(task => (
-                    <div key={task._id} className='flex items-center gap-2 group'>
-                        <input
-                            type="checkbox"
-                            checked={task.completed}
-                            onChange={() => onToggle(task._id)}
-                            className='cursor-pointer'
-                        />
-                        <span className={`flex-1 dark:text-gray-200 ${task.completed ? 'line-through text-gray-400 dark:text-gray-500' : ''}`}>
-                            {task.text}
-                        </span>
-                        <button
-                            onClick={() => onDelete(task._id)}
-                            className='text-red-500 dark:text-red-400 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity'
-                        >
-                            x
-                        </button>
+                    <div key={task._id}>
+                        <div className='flex items-center gap-2 group'>
+                            <input
+                                type="checkbox"
+                                checked={task.completed}
+                                onChange={() => onToggle(task._id)}
+                                className='cursor-pointer'
+                            />
+                            <span className={`flex-1 dark:text-gray-200 ${task.completed ? 'line-through text-gray-400 dark:text-gray-500' : ''}`}>
+                                {task.text}
+                            </span>
+                            <button
+                                onClick={() => onDelete(task._id)}
+                                className='text-red-500 dark:text-red-400 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity'
+                            >
+                                x
+                            </button>
+                        </div>
+                        {/* Sub-steps suggested by the engine, collapsed by default */}
+                        {task.steps?.length > 0 && !task.completed && (
+                            <details className='ml-6 mt-1'>
+                                <summary className='text-xs text-gray-500 dark:text-gray-400 cursor-pointer select-none'>
+                                    {task.steps.length} small steps
+                                </summary>
+                                <ul className='mt-1 space-y-1'>
+                                    {task.steps.map((step, i) => (
+                                        <li key={i} className='text-xs text-gray-600 dark:text-gray-300 flex gap-1'>
+                                            <span className='text-gray-400'>{i + 1}.</span>
+                                            <span>{step.text}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </details>
+                        )}
                     </div>
                 ))}
             </div>

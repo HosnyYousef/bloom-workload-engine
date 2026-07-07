@@ -18,7 +18,13 @@
       "Bash(kill %1)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(npx jest *)",
+      "Bash(npx vitest *)",
+      "Bash(nslookup -type=SRV _mongodb._tcp.cluster0.m4qnvex.mongodb.net)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" --max-time 5 https://www.google.com)",
+      "Bash(npx vite *)",
+      "Bash(npx eslint *)"
     ]
   }
 }

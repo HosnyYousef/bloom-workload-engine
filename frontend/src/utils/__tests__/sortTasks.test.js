@@ -1,10 +1,15 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { sortTasks } from '../sortTasks';
 
+// Local-time YYYY-MM-DD, matching what the app's date input produces.
+// toISOString() would give the UTC date, which is a different day in
+// timezones ahead of UTC.
 const daysFromNow = (n) => {
   const d = new Date();
   d.setDate(d.getDate() + n);
-  return d.toISOString().split('T')[0];
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${m}-${day}`;
 };
 
 describe('sortTasks', () => {

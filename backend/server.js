@@ -36,6 +36,7 @@ app.get('/', (req, res) => {
 // API Routes (AFTER middleware)
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/tasks', require('./routes/tasks'));
+app.use('/api/goals', require('./routes/goals'));
 
 // Sentry error handler — must be the last middleware before the generic error handler
 app.use(Sentry.expressErrorHandler())
