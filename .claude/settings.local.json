@@ -26,7 +26,9 @@
       "Bash(npx vite *)",
       "Bash(npx eslint *)",
       "Bash(cp \"/var/folders/6z/r1nq709d31b126_0vg623qwh0000gn/T/TemporaryItems/NSIRD_screencaptureui_fFnsCc/Screenshot 2026-07-06 at 6.56.26 PM.png\" /Users/yh/.claude/jobs/395b8e04/tmp/screenshots/)",
-      "Bash(cp \"/var/folders/6z/r1nq709d31b126_0vg623qwh0000gn/T/TemporaryItems/NSIRD_screencaptureui_6KM7I7/Screenshot 2026-07-06 at 6.59.09 PM.png\" /Users/yh/.claude/jobs/395b8e04/tmp/screenshots/)"
+      "Bash(cp \"/var/folders/6z/r1nq709d31b126_0vg623qwh0000gn/T/TemporaryItems/NSIRD_screencaptureui_6KM7I7/Screenshot 2026-07-06 at 6.59.09 PM.png\" /Users/yh/.claude/jobs/395b8e04/tmp/screenshots/)",
+      "Bash(dig @8.8.8.8 SRV _mongodb._tcp.cluster0.m4qnvex.mongodb.net +short)",
+      "Bash(curl *)"
     ]
   }
 }
