@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import api from '../services/api'
+import ProgressBar from './ProgressBar'
 
 export default function Login({ onLogin }) {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('')
+    const [isLoginLoading, setIsLoginLoading] = useState(false)
     const [isDemoLoading, setIsDemoLoading] = useState(false)
 
     const handleChange = (e) => {
@@ -13,6 +15,7 @@ export default function Login({ onLogin }) {
     const handleSubmit = async (e) => {
         e.preventDefault()
         setError('')
+        setIsLoginLoading(true)
 
         try {
             const response = await api.post('/auth/login', formData)
@@ -23,6 +26,8 @@ export default function Login({ onLogin }) {
 
         } catch (err) {
             setError(err.response?.data?.message || 'Login failed')
+        } finally {
+            setIsLoginLoading(false)
         }
     }
 
@@ -77,10 +82,12 @@ export default function Login({ onLogin }) {
                     />
                     <button
                         type='submit'
-                        className="btn w-full bg-blue-500 text-white py-3 rounded-xl font-bold hover:bg-blue-600 border-2 border-black dark:border-gray-600"
+                        disabled={isLoginLoading}
+                        className="btn w-full bg-blue-500 text-white py-3 rounded-xl font-bold hover:bg-blue-600 border-2 border-black dark:border-gray-600 disabled:opacity-70 disabled:cursor-wait"
                     >
-                        Log In
+                        {isLoginLoading ? 'Logging In...' : 'Log In'}
                     </button>
+                    {isLoginLoading && <ProgressBar />}
                 </form>
 
                 {/* Divider */}
@@ -97,14 +104,9 @@ export default function Login({ onLogin }) {
                     disabled={isDemoLoading}
                     className="w-full border border-blue-400 dark:border-blue-500 text-blue-500 dark:text-blue-400 py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2 hover:bg-blue-50 dark:hover:bg-blue-500/10 disabled:cursor-wait disabled:opacity-70 disabled:hover:bg-transparent"
                 >
-                    {isDemoLoading && (
-                        <span
-                            className="h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"
-                            aria-hidden="true"
-                        />
-                    )}
                     {isDemoLoading ? 'Loading Demo...' : 'Try Demo'}
                 </button>
+                {isDemoLoading && <div className="mt-2"><ProgressBar /></div>}
             </div>
         </div>
     )

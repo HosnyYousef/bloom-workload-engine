@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import api from '../services/api';
+import ProgressBar from './ProgressBar'
 
 export default function Register({ onLogin }) {
     const [formData, setFormData] = useState({ name: '', email: '', password: '' })
     const [error, setError] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
 
 
     const handleChange = (e) => {
@@ -13,6 +15,7 @@ export default function Register({ onLogin }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('')
+        setIsLoading(true)
 
         try {
             const response = await api.post('/auth/register', formData);
@@ -21,6 +24,8 @@ export default function Register({ onLogin }) {
             onLogin({ name, token })
         } catch (err) {
             setError(err.response?.data?.message || 'Registration failed')
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -65,10 +70,12 @@ export default function Register({ onLogin }) {
                     />
                     <button
                         type='submit'
-                        className="btn w-full bg-green-500 text-white py-3 rounded-xl font-bold hover:bg-green-600 border-2 border-black dark:border-gray-600"
+                        disabled={isLoading}
+                        className="btn w-full bg-green-500 text-white py-3 rounded-xl font-bold hover:bg-green-600 border-2 border-black dark:border-gray-600 disabled:opacity-70 disabled:cursor-wait"
                     >
-                        Create Account
+                        {isLoading ? 'Creating Account...' : 'Create Account'}
                     </button>
+                    {isLoading && <ProgressBar />}
                 </form>
             </div>
         </div>

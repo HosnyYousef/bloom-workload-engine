@@ -8,6 +8,7 @@ import NotesThoughts from "./components/NotesThoughts";
 import ParkingLot from "./components/ParkingLot";
 import Login from "./components/Login"
 import Register from "./components/Register"
+import ProgressBar from "./components/ProgressBar"
 
 import api from "./services/api";
 import { sortTasks } from "./utils/sortTasks";
@@ -33,6 +34,7 @@ const App = () => {
   const [authScreen, setAuthScreen] = useState('login')
 
   const [tasks, setTasks] = useState([]);
+  const [tasksLoading, setTasksLoading] = useState(false);
 
   const [selectedTask, setSelectedTask] = useState(null);
 
@@ -56,12 +58,15 @@ const App = () => {
     if (!user) return;
 
     const fetchTasks = async () => {
+      setTasksLoading(true)
       try {
         const response = await api.get('/tasks')
         setTasks(response.data)
         console.log('✅ Tasks loaded:', response.data.length, 'tasks')
       } catch (err) {
         console.error('❌ Failed to load tasks:', err)
+      } finally {
+        setTasksLoading(false)
       }
     }
 
@@ -225,6 +230,18 @@ const App = () => {
           )}
         </div>
       </>
+    )
+  }
+
+  // First load after login: tasks haven't arrived yet, nothing useful to show
+  if (tasksLoading && tasks.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-950 transition-colors">
+        <div className="w-full max-w-xs px-4">
+          <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-3">Loading your Parking Lot...</p>
+          <ProgressBar />
+        </div>
+      </div>
     )
   }
 

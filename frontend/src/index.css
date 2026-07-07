@@ -72,3 +72,13 @@ input[type="checkbox"]:checked::after {
   background-color: #22c55e;
   border-color: #22c55e;
 }
+
+/* Indeterminate progress bar fill: sweeps left to right and loops */
+@keyframes progress-sweep {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(150%); }
+  100% { transform: translateX(150%); }
+}
+.animate-progress-sweep {
+  animation: progress-sweep 1.2s ease-in-out infinite;
+}
