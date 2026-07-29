@@ -45,6 +45,7 @@ What changed:
   Tab and Shift+Tab indent and outdent list items while the editor is focused.
 * Kept the writing area at a stable height and made long notes scroll inside it
   instead of expanding the entire Parking Lot card.
+* Added a contrasting scrollbar that remains visible in light and dark mode.
 
 What works: the production frontend build and lint check pass.
 

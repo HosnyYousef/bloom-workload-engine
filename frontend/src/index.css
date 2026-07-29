@@ -99,3 +99,35 @@ input[type="checkbox"]:checked::after {
   list-style: decimal;
   padding-left: 1.5rem;
 }
+
+.parking-lot-editor {
+  scrollbar-color: #64748b #fce7f3;
+  scrollbar-width: auto;
+}
+
+.dark .parking-lot-editor {
+  scrollbar-color: #94a3b8 #240d16;
+}
+
+.parking-lot-editor::-webkit-scrollbar {
+  width: 12px;
+}
+
+.parking-lot-editor::-webkit-scrollbar-track {
+  background: #fce7f3;
+}
+
+.parking-lot-editor::-webkit-scrollbar-thumb {
+  background: #64748b;
+  border: 3px solid #fce7f3;
+  border-radius: 999px;
+}
+
+.dark .parking-lot-editor::-webkit-scrollbar-track {
+  background: #240d16;
+}
+
+.dark .parking-lot-editor::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-color: #240d16;
+}
