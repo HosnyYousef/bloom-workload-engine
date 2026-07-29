@@ -13,7 +13,9 @@ const ParkingLot = ({
     onSelect,
     selectedTaskId,
 }) => {
-    const initialDraft = sanitizeEditorHtml(localStorage.getItem(DRAFT_KEY) || '');
+    // Restore once. Re-reading this after every input makes React replace the
+    // editable HTML and resets the caret, which causes new text to appear backwards.
+    const [initialDraft] = useState(() => sanitizeEditorHtml(localStorage.getItem(DRAFT_KEY) || ''));
     const editorRef = useRef(null);
     const [draftText, setDraftText] = useState(() => {
         const holder = document.createElement('div');
@@ -42,6 +44,21 @@ const ParkingLot = ({
     const handlePaste = (event) => {
         event.preventDefault();
         document.execCommand('insertText', false, event.clipboardData.getData('text/plain'));
+        saveDraft();
+    };
+
+    const handleKeyDown = (event) => {
+        if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
+
+        const formattingCommands = {
+            b: 'bold',
+            i: 'italic',
+        };
+        const command = formattingCommands[event.key.toLowerCase()];
+        if (!command) return;
+
+        event.preventDefault();
+        formatDraft(command);
     };
 
     const handleExecute = async () => {
@@ -113,9 +130,9 @@ const ParkingLot = ({
             </div>
 
             <div className="bg-pink-100 dark:bg-[#17080f] border-2 border-black dark:border-gray-700 rounded-2xl overflow-hidden">
-                <div className="flex flex-wrap gap-1 px-4 py-2 border-b border-pink-300 dark:border-gray-700" aria-label="Parking Lot formatting">
-                    <button type="button" onClick={() => formatDraft('bold')} aria-label="Bold" className="w-9 h-8 rounded font-bold hover:bg-pink-200 dark:hover:bg-gray-800">B</button>
-                    <button type="button" onClick={() => formatDraft('italic')} aria-label="Italic" className="w-9 h-8 rounded italic hover:bg-pink-200 dark:hover:bg-gray-800">I</button>
+                <div className="flex flex-wrap gap-1 px-4 py-2 border-b border-pink-300 dark:border-gray-700 text-gray-900 dark:text-gray-100" aria-label="Parking Lot formatting">
+                    <button type="button" onClick={() => formatDraft('bold')} aria-label="Bold" title="Bold (Ctrl/Cmd+B)" className="w-9 h-8 rounded font-bold hover:bg-pink-200 dark:hover:bg-gray-800">B</button>
+                    <button type="button" onClick={() => formatDraft('italic')} aria-label="Italic" title="Italic (Ctrl/Cmd+I)" className="w-9 h-8 rounded italic hover:bg-pink-200 dark:hover:bg-gray-800">I</button>
                     <button type="button" onClick={() => formatDraft('insertUnorderedList')} aria-label="Bulleted list" className="px-3 h-8 rounded hover:bg-pink-200 dark:hover:bg-gray-800">• List</button>
                     <button type="button" onClick={() => formatDraft('insertOrderedList')} aria-label="Numbered list" className="px-3 h-8 rounded hover:bg-pink-200 dark:hover:bg-gray-800">1. List</button>
                 </div>
@@ -127,12 +144,14 @@ const ParkingLot = ({
                     onInput={saveDraft}
                     onBlur={saveDraft}
                     onPaste={handlePaste}
+                    onKeyDown={handleKeyDown}
+                    dir="ltr"
                     data-placeholder={'Type anything here...\n\nCall the dentist\nMaybe look into that design course\nFinish the report by Friday'}
                     aria-label="Parking Lot notes"
                     className="parking-lot-editor w-full min-h-80 p-5 bg-transparent text-gray-900 dark:text-gray-100 focus:outline-none leading-7"
                 />
                 <div className="px-5 py-2 border-t border-pink-300 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-400">
-                    Saved on this device
+                    Saved on this device · Ctrl/Cmd+Z undo · Shift+Ctrl/Cmd+Z redo · standard cut, copy, paste, and select-all shortcuts work
                 </div>
             </div>
 

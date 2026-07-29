@@ -24,11 +24,13 @@ After coding:
 ## Current Next Step
 
 Manually test and accept item 3 in `agent/BACKLOG.md`: type and format notes,
-refresh the page, and confirm the writing remains. After acceptance, item 4 is
-Parking Lot execution and undo.
+refresh the page, confirm the writing remains, and verify keyboard shortcuts.
+Also confirm typed characters remain in the expected order. After acceptance,
+item 4 is Parking Lot execution and undo.
 
-The beta tester feedback box and optional cognitive-load breakdown are saved as
-items 17 and 18. They should not be built until the core MVP is stable.
+The beta tester feedback box, optional cognitive-load breakdown, and daily
+history/calendar search are saved as items 17 through 19. They should not be
+built until the core MVP is stable.
 
 Suggested command after the change:
 

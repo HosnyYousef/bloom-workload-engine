@@ -156,6 +156,15 @@ of each step, then spread heavy work across appropriate days instead of filling
 one day with too much difficult work. Keep breakdown optional because simple
 tasks should not receive unnecessary steps.
 
+### 19. Daily history, calendar navigation, and search
+
+Status: Future task after the core MVP
+
+Let users move backward and forward through dates to review what they worked on
+each day. Add a calendar picker and direct date entry for jumping to a specific
+day. Add Apple Calendar-style search that can find a past task by its text and
+open the day where it appeared.
+
 ## Core Loop Acceptance Test
 
 Before design work, confirm this complete flow:

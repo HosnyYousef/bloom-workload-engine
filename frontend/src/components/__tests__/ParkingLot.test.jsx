@@ -18,6 +18,7 @@ describe('ParkingLot', () => {
   beforeEach(() => {
     localStorage.clear();
     vi.clearAllMocks();
+    document.execCommand = vi.fn();
   });
 
   it('restores an autosaved free-writing draft', () => {
@@ -34,6 +35,30 @@ describe('ParkingLot', () => {
     fireEvent.input(editor);
 
     expect(localStorage.getItem('bloomspace.parkingLotDraft')).toBe('Messy thought');
+  });
+
+  it('does not replace the editor HTML after autosaving and rerendering', () => {
+    const { rerender } = render(<ParkingLot {...defaultProps} />);
+    const editor = screen.getByRole('textbox', { name: 'Parking Lot notes' });
+    editor.innerHTML = 'Typed in order';
+    fireEvent.input(editor);
+
+    rerender(<ParkingLot {...defaultProps} tasks={[{ _id: '1', text: 'Another task', sorted: true }]} />);
+
+    expect(editor.innerHTML).toBe('Typed in order');
+  });
+
+  it('supports Ctrl/Cmd formatting shortcuts without blocking native editing shortcuts', () => {
+    render(<ParkingLot {...defaultProps} />);
+    const editor = screen.getByRole('textbox', { name: 'Parking Lot notes' });
+
+    fireEvent.keyDown(editor, { key: 'b', ctrlKey: true });
+    fireEvent.keyDown(editor, { key: 'i', metaKey: true });
+    fireEvent.keyDown(editor, { key: 'z', metaKey: true });
+
+    expect(document.execCommand).toHaveBeenCalledWith('bold', false);
+    expect(document.execCommand).toHaveBeenCalledWith('italic', false);
+    expect(document.execCommand).not.toHaveBeenCalledWith('undo', false);
   });
 
   it('executes each non-empty line and clears the draft after success', async () => {

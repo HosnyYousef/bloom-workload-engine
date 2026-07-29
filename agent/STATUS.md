@@ -34,8 +34,16 @@ What changed:
 * Added bold, italic, bulleted-list, and numbered-list controls.
 * Kept each visible line compatible with Turn into tasks.
 * Sanitized saved formatting and pasted text.
+* Fixed typing that appeared backwards by preventing caret-resetting rerenders.
+* Made formatting controls readable in dark mode.
+* Added Ctrl/Cmd+B and Ctrl/Cmd+I while preserving native undo, redo, cut,
+  copy, paste, and select-all shortcuts.
 
 What works: the production frontend build and lint check pass.
+
+Automated test note: the focused Vitest command starts but hangs before running
+tests in this environment. The editor still needs the manual acceptance checks
+listed in `agent/NEXT.md`.
 
 What is broken: no confirmed failure. The editor needs manual acceptance.
 
