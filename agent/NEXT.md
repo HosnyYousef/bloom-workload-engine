@@ -23,9 +23,9 @@ After coding:
 
 ## Current Next Step
 
-Complete item 1 in `agent/BACKLOG.md`: make Demo Mode loading progress easy to
-see and add a calm retry state. Do not begin the next backlog item until this
-change is tested and accepted.
+Manually test and accept item 1 in `agent/BACKLOG.md`: Demo Mode loading
+progress. After acceptance, complete item 2 by making the recommendation
+sections and task placement clear.
 
 Suggested command after the change:
 

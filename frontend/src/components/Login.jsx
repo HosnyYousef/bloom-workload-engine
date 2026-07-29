@@ -7,6 +7,9 @@ export default function Login({ onLogin }) {
     const [error, setError] = useState('')
     const [isLoginLoading, setIsLoginLoading] = useState(false)
     const [isDemoLoading, setIsDemoLoading] = useState(false)
+    const [demoProgress, setDemoProgress] = useState(0)
+    const [demoProgressLabel, setDemoProgressLabel] = useState('')
+    const [demoFailed, setDemoFailed] = useState(false)
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -35,16 +38,31 @@ export default function Login({ onLogin }) {
     const handleDemoLogin = async () => {
         setError('')
         setIsDemoLoading(true)
+        setDemoFailed(false)
+        setDemoProgress(10)
+        setDemoProgressLabel('Connecting to Demo Mode')
 
         try {
             const response = await api.post('/auth/demo')
             const { token, user } = response.data;
 
             localStorage.setItem('token', token)
-            onLogin({ name: user.name, token })
+            setDemoProgress(65)
+            setDemoProgressLabel('Loading example tasks')
+
+            const tasksResponse = await api.get('/tasks')
+
+            setDemoProgress(100)
+            setDemoProgressLabel('Ready')
+            await new Promise(resolve => setTimeout(resolve, 300))
+            onLogin({ name: user.name, token, tasks: tasksResponse.data })
 
         } catch (err) {
+            localStorage.removeItem('token')
             setError(err.response?.data?.message || 'Demo login failed')
+            setDemoFailed(true)
+            setDemoProgress(0)
+            setDemoProgressLabel('')
         } finally {
             setIsDemoLoading(false)
         }
@@ -104,9 +122,13 @@ export default function Login({ onLogin }) {
                     disabled={isDemoLoading}
                     className="w-full border border-blue-400 dark:border-blue-500 text-blue-500 dark:text-blue-400 py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2 hover:bg-blue-50 dark:hover:bg-blue-500/10 disabled:cursor-wait disabled:opacity-70 disabled:hover:bg-transparent"
                 >
-                    {isDemoLoading ? 'Loading Demo...' : 'Try Demo'}
+                    {isDemoLoading ? 'Loading Demo...' : demoFailed ? 'Try Demo Again' : 'Try Demo'}
                 </button>
-                {isDemoLoading && <div className="mt-2"><ProgressBar /></div>}
+                {isDemoLoading && (
+                    <div className="mt-3" aria-live="polite">
+                        <ProgressBar label={demoProgressLabel} progress={demoProgress} />
+                    </div>
+                )}
             </div>
         </div>
     )

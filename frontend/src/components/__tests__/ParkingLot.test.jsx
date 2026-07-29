@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import ParkingLot, { splitEntries } from '../ParkingLot';
+import ParkingLot from '../ParkingLot';
+import { splitEntries } from '../../utils/splitParkingLotEntries';
 
 const defaultProps = {
   tasks: [],

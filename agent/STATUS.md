@@ -26,6 +26,23 @@ Phase 1: MVP Foundation
 
 ## Session Log
 
+### 2026-07-28: Demo Mode progress
+
+What changed:
+
+* Added a visible percentage bar tied to completed Demo Mode stages.
+* Demo Mode now loads its example tasks before opening the dashboard.
+* Added a clear retry label after a failed attempt.
+* Added focused progress-bar tests.
+
+What works: the production frontend build and lint check pass.
+
+What is broken: Vitest could not start its worker in this environment, so the
+new focused tests still need a clean run.
+
+What needs to happen next: manually accept the Demo Mode progress display, then
+complete item 2 in `agent/BACKLOG.md`.
+
 ### 2026-07-28: Repository audit and Demo Mode review
 
 What changed:

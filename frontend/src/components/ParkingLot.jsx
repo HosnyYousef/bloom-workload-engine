@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
+import { splitEntries } from "../utils/splitParkingLotEntries";
 
 const DRAFT_KEY = 'bloomspace.parkingLotDraft';
-
-const splitEntries = (draft) => draft
-    .split(/\n+/)
-    .map(line => line.replace(/^\s*(?:[-*•]|\d+[.)])\s*/, '').trim())
-    .filter(Boolean);
 
 const ParkingLot = ({
     tasks,
@@ -144,5 +140,4 @@ const ParkingLot = ({
     );
 };
 
-export { splitEntries };
 export default ParkingLot;

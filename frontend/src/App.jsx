@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Navbar from "./components/Navbar";
 import TopPriorities from "./components/TopPriorities";
 import ForTomorrow from "./components/ForTomorrow";
@@ -35,6 +35,7 @@ const App = () => {
 
   const [tasks, setTasks] = useState([]);
   const [tasksLoading, setTasksLoading] = useState(false);
+  const skipNextTaskFetch = useRef(false);
 
   const [selectedTask, setSelectedTask] = useState(null);
   const [organizeUndoSnapshot, setOrganizeUndoSnapshot] = useState(null);
@@ -43,8 +44,12 @@ const App = () => {
     setSelectedTask(task);
   };
 
-  const handleLogin = ({ name, token }) => {
+  const handleLogin = ({ name, token, tasks: preloadedTasks }) => {
     localStorage.setItem('userName', name)
+    if (Array.isArray(preloadedTasks)) {
+      setTasks(preloadedTasks)
+      skipNextTaskFetch.current = true
+    }
     setUser({ name, token })
   }
 
@@ -57,6 +62,10 @@ const App = () => {
 
   useEffect(() => {
     if (!user) return;
+    if (skipNextTaskFetch.current) {
+      skipNextTaskFetch.current = false;
+      return;
+    }
 
     const fetchTasks = async () => {
       setTasksLoading(true)

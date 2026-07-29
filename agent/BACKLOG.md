@@ -9,7 +9,7 @@ Do not begin the next item until the current item is tested and accepted.
 
 ### 1. Demo Mode loading feedback
 
-Status: Next
+Status: Implemented, awaiting manual acceptance
 
 Add a clear loading bar after the user clicks **Try Demo**. Keep the button
 disabled during loading. Show a calm error with a retry action if loading fails.
@@ -37,6 +37,8 @@ account. Older notes and tests may call these **seeded tasks**.
 ## Parking Lot
 
 ### 2. Clarify task sections
+
+Status: Next
 
 Make it clear that **Top Priorities**, **For Tomorrow**, and **Don't Forget**
 are the three recommendation sections. Explain where a task went after
