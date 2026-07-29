@@ -52,6 +52,24 @@ const ParkingLot = ({
     };
 
     const handleKeyDown = (event) => {
+        if (event.key === 'Tab') {
+            event.preventDefault();
+            const selection = window.getSelection();
+            const selectedNode = selection?.anchorNode;
+            const selectedElement = selectedNode?.nodeType === Node.ELEMENT_NODE
+                ? selectedNode
+                : selectedNode?.parentElement;
+            const isInsideListItem = Boolean(selectedElement?.closest('li'));
+
+            if (isInsideListItem) {
+                document.execCommand(event.shiftKey ? 'outdent' : 'indent', false);
+            } else {
+                document.execCommand('insertText', false, '    ');
+            }
+            saveDraft();
+            return;
+        }
+
         if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
 
         const formattingCommands = {
@@ -151,10 +169,10 @@ const ParkingLot = ({
                     dir="ltr"
                     data-placeholder={'Type anything here...\n\nCall the dentist\nMaybe look into that design course\nFinish the report by Friday'}
                     aria-label="Parking Lot notes"
-                    className="parking-lot-editor w-full min-h-80 p-5 bg-transparent text-gray-900 dark:text-gray-100 focus:outline-none leading-7"
+                    className="parking-lot-editor w-full min-h-80 p-5 bg-transparent text-gray-900 dark:text-gray-100 focus:outline-none leading-7 whitespace-pre-wrap"
                 />
                 <div className="px-5 py-2 border-t border-pink-300 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-400">
-                    Saved on this device · Ctrl/Cmd+Z undo · Shift+Ctrl/Cmd+Z redo · standard cut, copy, paste, and select-all shortcuts work
+                    Saved on this device · Enter adds a line · Tab indents · Ctrl/Cmd+Z undo · standard editing shortcuts work
                 </div>
             </div>
 

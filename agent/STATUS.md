@@ -41,6 +41,8 @@ What changed:
 * Made formatting controls readable in dark mode.
 * Added Ctrl/Cmd+B and Ctrl/Cmd+I while preserving native undo, redo, cut,
   copy, paste, and select-all shortcuts.
+* Kept Enter's conventional new-line behavior and made Tab indent plain text;
+  Tab and Shift+Tab indent and outdent list items while the editor is focused.
 
 What works: the production frontend build and lint check pass.
 

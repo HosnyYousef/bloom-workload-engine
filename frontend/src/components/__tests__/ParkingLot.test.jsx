@@ -74,6 +74,15 @@ describe('ParkingLot', () => {
     expect(document.execCommand).not.toHaveBeenCalledWith('undo', false);
   });
 
+  it('keeps Tab inside the editor as an indent', () => {
+    render(<ParkingLot {...defaultProps} />);
+    const editor = screen.getByRole('textbox', { name: 'Parking Lot notes' });
+
+    fireEvent.keyDown(editor, { key: 'Tab' });
+
+    expect(document.execCommand).toHaveBeenCalledWith('insertText', false, '    ');
+  });
+
   it('executes each non-empty line and clears the draft after success', async () => {
     const onExecute = vi.fn(async () => true);
     render(<ParkingLot {...defaultProps} onExecute={onExecute} />);
