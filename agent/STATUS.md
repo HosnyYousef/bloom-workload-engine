@@ -34,6 +34,8 @@ What changed:
 * Added a result message showing how many tasks entered each section.
 * Tasks added inside a section now remain in that section.
 * Shelved the beta tester feedback box idea in `agent/BACKLOG.md`.
+* Recorded the 3-task daily target, 4-task Early Start limit, and deferred
+  cognitive-load scheduling rules.
 
 What works: the production frontend build and lint check pass.
 

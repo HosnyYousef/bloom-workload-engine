@@ -78,49 +78,56 @@ completion of the main task.
 
 ## Recommendations
 
-### 8. Explain why a task was selected
+### 8. Set daily focus capacity
+
+Status: Required for MVP
+
+Recommend 3 tasks on a Typical Day or Slow Day. Allow up to 4 tasks when the
+user chooses Early Start. Keep the daily list intentionally short.
+
+### 9. Explain why a task was selected
 
 Add an optional short reason such as **Due tomorrow** or **Supports your weekly
 goal**. Do not show a scoring essay.
 
-### 9. Improve urgency and consequence detection
+### 10. Improve urgency and consequence detection
 
 Use due dates on the same line when present. When no date exists, estimate
 consequence and importance from the task wording and context. Do not assume the
 first written line is the first task to complete.
 
-### 10. Add standing goals and daily focus
+### 11. Add standing goals and daily focus
 
 Finish the standing-goal interface and add the short start-of-session focus
 question. Feed both signals into recommendations and prove they can change the
 top three.
 
-### 11. Formalize energy signal sources
+### 12. Formalize energy signal sources
 
 Keep manual energy selection as the fallback. Add a small source interface so
 time patterns and HealthKit can be added later without rewriting scoring.
 
 ## Later Work
 
-### 12. Connect real dashboard stats
+### 13. Connect real dashboard stats
 
 Replace the empty stat cards with live task and goal data.
 
-### 13. Design pass
+### 14. Design pass
 
 Polish layout, colors, spacing, accessibility, mobile responsiveness, and calm
 session flow after the core loop works.
 
-### 14. Choose monetization
+### 15. Choose monetization
 
 Select the RevenueCat purchase model before finalizing mobile architecture.
 
-### 15. Build and publish the mobile app
+### 16. Build and publish the mobile app
 
 Build the React Native app, connect it to the shared backend, add RevenueCat,
 test purchases, and prepare the store submission package.
 
-### 16. Beta tester feedback box
+### 17. Beta tester feedback box
 
 Status: Shelved for later
 
@@ -137,6 +144,15 @@ Possible directions to review before building:
 
 Write and review a focused feature prompt before implementation. Do not build
 this until the core loop is stable.
+
+### 18. Optional task breakdown and cognitive-load scheduling
+
+Status: Shelved for after the MVP
+
+Add a **Break down task** action for large tasks. Estimate the cognitive load
+of each step, then spread heavy work across appropriate days instead of filling
+one day with too much difficult work. Keep breakdown optional because simple
+tasks should not receive unnecessary steps.
 
 ## Core Loop Acceptance Test
 
