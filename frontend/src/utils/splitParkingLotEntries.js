@@ -56,6 +56,14 @@ const nestedStepTexts = (item) => [...item.children]
         return [text, ...nestedStepTexts(step)].filter(Boolean);
     }));
 
+const allListItemTexts = (list) => [...list.children].flatMap(child => {
+    if (child.tagName === 'LI') {
+        const text = cleanEntryText(listItemOwnText(child));
+        return [text, ...nestedStepTexts(child)].filter(Boolean);
+    }
+    return ['UL', 'OL'].includes(child.tagName) ? allListItemTexts(child) : [];
+});
+
 export const structuredEntriesFromElement = (element) => {
     if (!element) return [];
     const entries = [];
@@ -66,9 +74,17 @@ export const structuredEntriesFromElement = (element) => {
 
     for (const node of element.childNodes) {
         if (['UL', 'OL'].includes(node.nodeName)) {
+            let previousEntry = null;
             for (const item of node.children) {
-                const text = cleanEntryText(listItemOwnText(item));
-                if (text) entries.push({ text, steps: nestedStepTexts(item) });
+                if (item.tagName === 'LI') {
+                    const text = cleanEntryText(listItemOwnText(item));
+                    if (text) {
+                        previousEntry = { text, steps: nestedStepTexts(item) };
+                        entries.push(previousEntry);
+                    }
+                } else if (['UL', 'OL'].includes(item.tagName) && previousEntry) {
+                    previousEntry.steps.push(...allListItemTexts(item));
+                }
             }
         } else if (node.nodeName === 'BR') {
             continue;

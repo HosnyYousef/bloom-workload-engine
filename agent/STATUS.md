@@ -52,6 +52,10 @@ What changed:
 * Made nested list items explicit small steps under their parent task during
   Turn into tasks, rather than creating a separate task for each sub-bullet.
 * Added automatic numbered-list creation after typing `1.` followed by Space.
+* Fixed conversion of browser-generated sibling nested lists so indented items
+  remain steps under the preceding parent task.
+* Added indent/outdent toolbar buttons, Ctrl/Cmd+] and Ctrl/Cmd+[ shortcuts,
+  and Ctrl/Cmd+Enter to run Turn into tasks while the editor is focused.
 
 What works: the production frontend build and lint check pass.
 

@@ -52,6 +52,12 @@ const ParkingLot = ({
     };
 
     const handleKeyDown = (event) => {
+        if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+            event.preventDefault();
+            if (!isExecuting && !isUndoing) handleExecute();
+            return;
+        }
+
         if (event.key === ' ' && !(event.metaKey || event.ctrlKey || event.altKey)) {
             const selection = window.getSelection();
             const selectedNode = selection?.anchorNode;
@@ -91,6 +97,12 @@ const ParkingLot = ({
         }
 
         if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
+
+        if (event.key === '[' || event.key === ']') {
+            event.preventDefault();
+            formatDraft(event.key === '[' ? 'outdent' : 'indent');
+            return;
+        }
 
         if (event.shiftKey && (event.key === '7' || event.key === '8')) {
             event.preventDefault();
@@ -183,6 +195,8 @@ const ParkingLot = ({
                     <button type="button" onClick={() => formatDraft('italic')} aria-label="Italic" title="Italic (Ctrl/Cmd+I)" className="w-9 h-8 rounded italic hover:bg-pink-200 dark:hover:bg-gray-800">I</button>
                     <button type="button" onClick={() => formatDraft('insertUnorderedList')} aria-label="Bulleted list" title="Bulleted list (Ctrl/Cmd+Shift+8)" className="px-3 h-8 rounded hover:bg-pink-200 dark:hover:bg-gray-800">• List</button>
                     <button type="button" onClick={() => formatDraft('insertOrderedList')} aria-label="Numbered list" title="Numbered list (Ctrl/Cmd+Shift+7)" className="px-3 h-8 rounded hover:bg-pink-200 dark:hover:bg-gray-800">1. List</button>
+                    <button type="button" onClick={() => formatDraft('outdent')} aria-label="Decrease indent" title="Decrease indent (Ctrl/Cmd+[ or Shift+Tab)" className="px-3 h-8 rounded hover:bg-pink-200 dark:hover:bg-gray-800">← Indent</button>
+                    <button type="button" onClick={() => formatDraft('indent')} aria-label="Increase indent" title="Increase indent (Ctrl/Cmd+] or Tab)" className="px-3 h-8 rounded hover:bg-pink-200 dark:hover:bg-gray-800">Indent →</button>
                 </div>
                 <div
                     ref={editorRef}
@@ -198,7 +212,7 @@ const ParkingLot = ({
                     className="parking-lot-editor w-full h-80 overflow-y-auto p-5 bg-transparent text-gray-900 dark:text-gray-100 focus:outline-none leading-7 whitespace-pre-wrap"
                 />
                 <div className="px-5 py-2 border-t border-pink-300 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-400">
-                    Saved on this device · Enter adds a line · Tab indents · “- ” starts a list · Ctrl/Cmd+Z undo
+                    Saved · Tab indents · “- ” starts a list · Ctrl/Cmd+Enter turns into tasks · Ctrl/Cmd+Z undo
                 </div>
             </div>
 

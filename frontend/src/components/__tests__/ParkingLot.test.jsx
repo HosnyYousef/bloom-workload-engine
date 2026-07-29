@@ -133,6 +133,31 @@ describe('ParkingLot', () => {
     expect(document.execCommand).toHaveBeenCalledWith('insertText', false, '    ');
   });
 
+  it('supports bracket shortcuts for indent and outdent', () => {
+    render(<ParkingLot {...defaultProps} />);
+    const editor = screen.getByRole('textbox', { name: 'Parking Lot notes' });
+
+    fireEvent.keyDown(editor, { key: ']', metaKey: true });
+    fireEvent.keyDown(editor, { key: '[', ctrlKey: true });
+
+    expect(document.execCommand).toHaveBeenCalledWith('indent', false);
+    expect(document.execCommand).toHaveBeenCalledWith('outdent', false);
+  });
+
+  it('turns notes into tasks with Ctrl/Cmd+Enter while the editor is focused', async () => {
+    const onExecute = vi.fn(async () => true);
+    render(<ParkingLot {...defaultProps} onExecute={onExecute} />);
+    const editor = screen.getByRole('textbox', { name: 'Parking Lot notes' });
+    editor.textContent = 'Keyboard task';
+    fireEvent.input(editor);
+
+    fireEvent.keyDown(editor, { key: 'Enter', metaKey: true });
+
+    await waitFor(() => expect(onExecute).toHaveBeenCalledWith([
+      { text: 'Keyboard task', steps: [] },
+    ]));
+  });
+
   it('executes each non-empty line and clears the draft after success', async () => {
     const onExecute = vi.fn(async () => true);
     render(<ParkingLot {...defaultProps} onExecute={onExecute} />);
@@ -187,6 +212,15 @@ describe('splitEntries', () => {
     expect(structuredEntriesFromElement(editor)).toEqual([
       { text: 'Plan trip', steps: ['Book hotel', 'Pack bags'] },
       { text: 'Call Mom', steps: [] },
+    ]);
+  });
+
+  it('handles browser-generated sibling nested lists as parent steps', () => {
+    const editor = document.createElement('div');
+    editor.innerHTML = '<ol><li>Test</li><ol><li>One</li><li>Two</li></ol></ol>';
+
+    expect(structuredEntriesFromElement(editor)).toEqual([
+      { text: 'Test', steps: ['One', 'Two'] },
     ]);
   });
 
