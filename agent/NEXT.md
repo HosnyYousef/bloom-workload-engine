@@ -23,16 +23,12 @@ After coding:
 
 ## Current Next Step
 
-Restore the database connection: the Atlas hostname in `backend/.env`
-no longer resolves (`cluster0.m4qnvex.mongodb.net` is NXDOMAIN). Create
-or locate the cluster in MongoDB Atlas and update `MONGODB_URI`.
+Complete item 1 in `agent/BACKLOG.md`: make Demo Mode loading progress easy to
+see and add a calm retry state. Do not begin the next backlog item until this
+change is tested and accepted.
 
-After that, review the recommendation engine assumptions listed in
-`backend/engine/README.md` (deadline horizons, scoring weights, energy
-fit matrix) and adjust the constants where they feel wrong.
-
-Suggested command to verify once the URI is fixed:
+Suggested command after the change:
 
 ```bash
-cd backend && npm run dev
+cd frontend && npm test
 ```

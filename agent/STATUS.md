@@ -26,6 +26,23 @@ Phase 1: MVP Foundation
 
 ## Session Log
 
+### 2026-07-28: Repository audit and Demo Mode review
+
+What changed:
+
+* Audited the MERN repository against the full project handoff.
+* Verified the deployed Demo Mode API and completed the manual Demo Mode flow.
+* Added `agent/BACKLOG.md` to preserve ordered product work across sessions.
+* Recorded partial, uncommitted Parking Lot work for review before continuation.
+
+What works: Demo login, demo task reset, task creation, and task completion.
+
+What is broken: no confirmed Demo Mode failure. Loading feedback is too easy to
+miss. The stats cards are placeholders.
+
+What needs to happen next: complete item 1 in `agent/BACKLOG.md`, Demo Mode
+loading feedback.
+
 ### 2026-07-06: Recommendation engine
 
 What changed:
