@@ -48,6 +48,19 @@ describe('ParkingLot', () => {
     expect(editor.innerHTML).toBe('Typed in order');
   });
 
+  it('allows a restored draft to be deleted', () => {
+    localStorage.setItem('bloomspace.parkingLotDraft', 'Old saved text');
+    render(<ParkingLot {...defaultProps} />);
+    const editor = screen.getByRole('textbox', { name: 'Parking Lot notes' });
+
+    editor.innerHTML = '';
+    fireEvent.input(editor);
+
+    expect(editor.innerHTML).toBe('');
+    expect(localStorage.getItem('bloomspace.parkingLotDraft')).toBe('');
+    expect(screen.getByRole('button', { name: 'Turn into tasks' })).toBeDisabled();
+  });
+
   it('supports Ctrl/Cmd formatting shortcuts without blocking native editing shortcuts', () => {
     render(<ParkingLot {...defaultProps} />);
     const editor = screen.getByRole('textbox', { name: 'Parking Lot notes' });

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { editorTextFromElement, sanitizeEditorHtml, splitEntries } from "../utils/splitParkingLotEntries";
 
 const DRAFT_KEY = 'bloomspace.parkingLotDraft';
@@ -26,6 +26,10 @@ const ParkingLot = ({
     const [isExecuting, setIsExecuting] = useState(false);
     const [isUndoing, setIsUndoing] = useState(false);
     const [error, setError] = useState('');
+
+    useLayoutEffect(() => {
+        if (editorRef.current) editorRef.current.innerHTML = initialDraft;
+    }, [initialDraft]);
 
     const saveDraft = () => {
         const editor = editorRef.current;
@@ -140,7 +144,6 @@ const ParkingLot = ({
                     ref={editorRef}
                     contentEditable
                     suppressContentEditableWarning
-                    dangerouslySetInnerHTML={{ __html: initialDraft }}
                     onInput={saveDraft}
                     onBlur={saveDraft}
                     onPaste={handlePaste}

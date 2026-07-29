@@ -35,6 +35,9 @@ What changed:
 * Kept each visible line compatible with Turn into tasks.
 * Sanitized saved formatting and pasted text.
 * Fixed typing that appeared backwards by preventing caret-resetting rerenders.
+* Followed up after manual testing showed the editable HTML was still being
+  restored after each edit; React now restores it only once on mount so typing,
+  Backspace, and Delete work normally.
 * Made formatting controls readable in dark mode.
 * Added Ctrl/Cmd+B and Ctrl/Cmd+I while preserving native undo, redo, cut,
   copy, paste, and select-all shortcuts.
