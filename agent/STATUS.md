@@ -43,6 +43,8 @@ What changed:
   copy, paste, and select-all shortcuts.
 * Kept Enter's conventional new-line behavior and made Tab indent plain text;
   Tab and Shift+Tab indent and outdent list items while the editor is focused.
+* Kept the writing area at a stable height and made long notes scroll inside it
+  instead of expanding the entire Parking Lot card.
 
 What works: the production frontend build and lint check pass.
 

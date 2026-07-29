@@ -28,6 +28,13 @@ describe('ParkingLot', () => {
     expect(screen.getByRole('textbox', { name: 'Parking Lot notes' })).toHaveTextContent('Call the dentist');
   });
 
+  it('keeps long notes inside a scrolling editor', () => {
+    render(<ParkingLot {...defaultProps} />);
+
+    expect(screen.getByRole('textbox', { name: 'Parking Lot notes' }))
+      .toHaveClass('h-80', 'overflow-y-auto');
+  });
+
   it('autosaves text as the user types', () => {
     render(<ParkingLot {...defaultProps} />);
     const editor = screen.getByRole('textbox', { name: 'Parking Lot notes' });

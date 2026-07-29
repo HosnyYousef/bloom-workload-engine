@@ -169,7 +169,7 @@ const ParkingLot = ({
                     dir="ltr"
                     data-placeholder={'Type anything here...\n\nCall the dentist\nMaybe look into that design course\nFinish the report by Friday'}
                     aria-label="Parking Lot notes"
-                    className="parking-lot-editor w-full min-h-80 p-5 bg-transparent text-gray-900 dark:text-gray-100 focus:outline-none leading-7 whitespace-pre-wrap"
+                    className="parking-lot-editor w-full h-80 overflow-y-auto p-5 bg-transparent text-gray-900 dark:text-gray-100 focus:outline-none leading-7 whitespace-pre-wrap"
                 />
                 <div className="px-5 py-2 border-t border-pink-300 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-400">
                     Saved on this device · Enter adds a line · Tab indents · Ctrl/Cmd+Z undo · standard editing shortcuts work
