@@ -120,6 +120,24 @@ Select the RevenueCat purchase model before finalizing mobile architecture.
 Build the React Native app, connect it to the shared backend, add RevenueCat,
 test purchases, and prepare the store submission package.
 
+### 16. Beta tester feedback box
+
+Status: Shelved for later
+
+Give beta testers an obvious place to send feedback without leaving the app.
+Possible directions to review before building:
+
+- Replace **Notes/Thoughts** if it does not have a distinct purpose from the
+  Parking Lot.
+- Add a highlighted feedback button that opens a small writing window.
+- Keep feedback entry as simple as the Parking Lot.
+- After submission, leave the comment visible but greyed out.
+- Let the tester edit or undo an accidental submission.
+- Decide where submitted feedback is stored and how the builder reads it.
+
+Write and review a focused feature prompt before implementation. Do not build
+this until the core loop is stable.
+
 ## Core Loop Acceptance Test
 
 Before design work, confirm this complete flow:

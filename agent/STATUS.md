@@ -33,6 +33,7 @@ What changed:
 * Added a short purpose below each recommendation section name.
 * Added a result message showing how many tasks entered each section.
 * Tasks added inside a section now remain in that section.
+* Shelved the beta tester feedback box idea in `agent/BACKLOG.md`.
 
 What works: the production frontend build and lint check pass.
 
