@@ -52,6 +52,23 @@ const ParkingLot = ({
     };
 
     const handleKeyDown = (event) => {
+        if (event.key === ' ' && !(event.metaKey || event.ctrlKey || event.altKey)) {
+            const selection = window.getSelection();
+            const selectedNode = selection?.anchorNode;
+            const selectedElement = selectedNode?.nodeType === Node.ELEMENT_NODE
+                ? selectedNode
+                : selectedNode?.parentElement;
+            const currentLine = selectedElement?.closest('div, p, li') || selectedElement;
+
+            if (currentLine?.textContent === '-' && selection?.isCollapsed) {
+                event.preventDefault();
+                document.execCommand('delete', false);
+                document.execCommand('insertUnorderedList', false);
+                saveDraft();
+                return;
+            }
+        }
+
         if (event.key === 'Tab') {
             event.preventDefault();
             const selection = window.getSelection();
@@ -71,6 +88,12 @@ const ParkingLot = ({
         }
 
         if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
+
+        if (event.shiftKey && (event.key === '7' || event.key === '8')) {
+            event.preventDefault();
+            formatDraft(event.key === '7' ? 'insertOrderedList' : 'insertUnorderedList');
+            return;
+        }
 
         const formattingCommands = {
             b: 'bold',
@@ -155,8 +178,8 @@ const ParkingLot = ({
                 <div className="flex flex-wrap gap-1 px-4 py-2 border-b border-pink-300 dark:border-gray-700 text-gray-900 dark:text-gray-100" aria-label="Parking Lot formatting">
                     <button type="button" onClick={() => formatDraft('bold')} aria-label="Bold" title="Bold (Ctrl/Cmd+B)" className="w-9 h-8 rounded font-bold hover:bg-pink-200 dark:hover:bg-gray-800">B</button>
                     <button type="button" onClick={() => formatDraft('italic')} aria-label="Italic" title="Italic (Ctrl/Cmd+I)" className="w-9 h-8 rounded italic hover:bg-pink-200 dark:hover:bg-gray-800">I</button>
-                    <button type="button" onClick={() => formatDraft('insertUnorderedList')} aria-label="Bulleted list" className="px-3 h-8 rounded hover:bg-pink-200 dark:hover:bg-gray-800">• List</button>
-                    <button type="button" onClick={() => formatDraft('insertOrderedList')} aria-label="Numbered list" className="px-3 h-8 rounded hover:bg-pink-200 dark:hover:bg-gray-800">1. List</button>
+                    <button type="button" onClick={() => formatDraft('insertUnorderedList')} aria-label="Bulleted list" title="Bulleted list (Ctrl/Cmd+Shift+8)" className="px-3 h-8 rounded hover:bg-pink-200 dark:hover:bg-gray-800">• List</button>
+                    <button type="button" onClick={() => formatDraft('insertOrderedList')} aria-label="Numbered list" title="Numbered list (Ctrl/Cmd+Shift+7)" className="px-3 h-8 rounded hover:bg-pink-200 dark:hover:bg-gray-800">1. List</button>
                 </div>
                 <div
                     ref={editorRef}
@@ -172,7 +195,7 @@ const ParkingLot = ({
                     className="parking-lot-editor w-full h-80 overflow-y-auto p-5 bg-transparent text-gray-900 dark:text-gray-100 focus:outline-none leading-7 whitespace-pre-wrap"
                 />
                 <div className="px-5 py-2 border-t border-pink-300 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-400">
-                    Saved on this device · Enter adds a line · Tab indents · Ctrl/Cmd+Z undo · standard editing shortcuts work
+                    Saved on this device · Enter adds a line · Tab indents · “- ” starts a list · Ctrl/Cmd+Z undo
                 </div>
             </div>
 

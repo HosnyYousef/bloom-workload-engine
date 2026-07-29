@@ -46,6 +46,8 @@ What changed:
 * Kept the writing area at a stable height and made long notes scroll inside it
   instead of expanding the entire Parking Lot card.
 * Added a contrasting scrollbar that remains visible in light and dark mode.
+* Added Ctrl/Cmd+Shift+7 for numbered lists, Ctrl/Cmd+Shift+8 for bulleted
+  lists, and automatic list creation after typing a dash followed by Space.
 
 What works: the production frontend build and lint check pass.
 

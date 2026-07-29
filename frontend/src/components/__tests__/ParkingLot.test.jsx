@@ -81,6 +81,34 @@ describe('ParkingLot', () => {
     expect(document.execCommand).not.toHaveBeenCalledWith('undo', false);
   });
 
+  it('supports numbered-list and bulleted-list keyboard shortcuts', () => {
+    render(<ParkingLot {...defaultProps} />);
+    const editor = screen.getByRole('textbox', { name: 'Parking Lot notes' });
+
+    fireEvent.keyDown(editor, { key: '7', metaKey: true, shiftKey: true });
+    fireEvent.keyDown(editor, { key: '8', ctrlKey: true, shiftKey: true });
+
+    expect(document.execCommand).toHaveBeenCalledWith('insertOrderedList', false);
+    expect(document.execCommand).toHaveBeenCalledWith('insertUnorderedList', false);
+  });
+
+  it('turns dash followed by space into a bulleted list', () => {
+    render(<ParkingLot {...defaultProps} />);
+    const editor = screen.getByRole('textbox', { name: 'Parking Lot notes' });
+    editor.textContent = '-';
+    const textNode = editor.firstChild;
+    const selectionSpy = vi.spyOn(window, 'getSelection').mockReturnValue({
+      anchorNode: textNode,
+      isCollapsed: true,
+    });
+
+    fireEvent.keyDown(editor, { key: ' ' });
+
+    expect(document.execCommand).toHaveBeenCalledWith('delete', false);
+    expect(document.execCommand).toHaveBeenCalledWith('insertUnorderedList', false);
+    selectionSpy.mockRestore();
+  });
+
   it('keeps Tab inside the editor as an indent', () => {
     render(<ParkingLot {...defaultProps} />);
     const editor = screen.getByRole('textbox', { name: 'Parking Lot notes' });
