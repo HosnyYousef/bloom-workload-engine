@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import ParkingLot from '../ParkingLot';
-import { editorTextFromElement, sanitizeEditorHtml, splitEntries } from '../../utils/splitParkingLotEntries';
+import { editorTextFromElement, sanitizeEditorHtml, splitEntries, structuredEntriesFromElement } from '../../utils/splitParkingLotEntries';
 
 const defaultProps = {
   tasks: [],
@@ -109,6 +109,21 @@ describe('ParkingLot', () => {
     selectionSpy.mockRestore();
   });
 
+  it('turns 1. followed by space into a numbered list', () => {
+    render(<ParkingLot {...defaultProps} />);
+    const editor = screen.getByRole('textbox', { name: 'Parking Lot notes' });
+    editor.textContent = '1.';
+    const selectionSpy = vi.spyOn(window, 'getSelection').mockReturnValue({
+      anchorNode: editor.firstChild,
+      isCollapsed: true,
+    });
+
+    fireEvent.keyDown(editor, { key: ' ' });
+
+    expect(document.execCommand).toHaveBeenCalledWith('insertOrderedList', false);
+    selectionSpy.mockRestore();
+  });
+
   it('keeps Tab inside the editor as an indent', () => {
     render(<ParkingLot {...defaultProps} />);
     const editor = screen.getByRole('textbox', { name: 'Parking Lot notes' });
@@ -128,8 +143,8 @@ describe('ParkingLot', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Turn into tasks' }));
 
     await waitFor(() => expect(onExecute).toHaveBeenCalledWith([
-      'Call dentist',
-      'finish report by Friday',
+      { text: 'Call dentist', steps: [] },
+      { text: 'finish report by Friday', steps: [] },
     ]));
     expect(textbox).toHaveTextContent('');
   });
@@ -163,6 +178,16 @@ describe('splitEntries', () => {
     editor.innerHTML = '<div>Call dentist</div><div>Finish report</div>';
 
     expect(editorTextFromElement(editor)).toBe('Call dentist\nFinish report');
+  });
+
+  it('turns nested list items into small steps under their parent task', () => {
+    const editor = document.createElement('div');
+    editor.innerHTML = '<ul><li>Plan trip<ul><li>Book hotel</li><li>Pack bags</li></ul></li><li>Call Mom</li></ul>';
+
+    expect(structuredEntriesFromElement(editor)).toEqual([
+      { text: 'Plan trip', steps: ['Book hotel', 'Pack bags'] },
+      { text: 'Call Mom', steps: [] },
+    ]);
   });
 
   it('removes unsafe markup and attributes from saved notes', () => {

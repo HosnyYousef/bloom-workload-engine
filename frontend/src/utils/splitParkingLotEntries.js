@@ -39,3 +39,43 @@ export const editorTextFromElement = (element) => {
 
     return [...element.childNodes].map(readNode).join('').replace(/\n{3,}/g, '\n\n').trimEnd();
 };
+
+const cleanEntryText = (text) => text
+    .replace(/^\s*(?:[-*•]|\d+[.)])\s*/, '')
+    .trim();
+
+const listItemOwnText = (item) => [...item.childNodes]
+    .filter(node => !['UL', 'OL'].includes(node.nodeName))
+    .map(node => node.textContent || '')
+    .join('');
+
+const nestedStepTexts = (item) => [...item.children]
+    .filter(child => ['UL', 'OL'].includes(child.tagName))
+    .flatMap(list => [...list.children].flatMap(step => {
+        const text = cleanEntryText(listItemOwnText(step));
+        return [text, ...nestedStepTexts(step)].filter(Boolean);
+    }));
+
+export const structuredEntriesFromElement = (element) => {
+    if (!element) return [];
+    const entries = [];
+
+    const addPlainText = (text) => {
+        for (const line of splitEntries(text)) entries.push({ text: line, steps: [] });
+    };
+
+    for (const node of element.childNodes) {
+        if (['UL', 'OL'].includes(node.nodeName)) {
+            for (const item of node.children) {
+                const text = cleanEntryText(listItemOwnText(item));
+                if (text) entries.push({ text, steps: nestedStepTexts(item) });
+            }
+        } else if (node.nodeName === 'BR') {
+            continue;
+        } else {
+            addPlainText(node.textContent || '');
+        }
+    }
+
+    return entries;
+};

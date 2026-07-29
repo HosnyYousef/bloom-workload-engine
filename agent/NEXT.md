@@ -23,10 +23,9 @@ After coding:
 
 ## Current Next Step
 
-Manually test and accept item 3 in `agent/BACKLOG.md`: type and format notes,
-refresh the page, confirm the writing remains, and verify keyboard shortcuts.
-Also confirm typed characters remain in the expected order. After acceptance,
-item 4 is Parking Lot execution and undo.
+Manually test the two item 4 refinements: confirm `1.` followed by Space starts
+a numbered list, then create a task with indented sub-bullets and confirm Turn
+into tasks saves only the parent as a task with the sub-bullets as small steps.
 
 The beta tester feedback box, optional cognitive-load breakdown, and daily
 history/calendar search are saved as items 17 through 19. They should not be

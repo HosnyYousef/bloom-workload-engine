@@ -125,7 +125,9 @@ const App = () => {
             deadlineSource: parsed.deadlineSource,
             hours: taskData.hours || parsed.hours,
             energyRequired: parsed.energyRequired,
-            steps: parsed.steps.map(text => ({ text, done: false })),
+            steps: taskData.steps?.length
+              ? taskData.steps
+              : parsed.steps.map(text => ({ text, done: false })),
             // Keep the user's pick when they changed it off the default
             importance: taskData.importance && taskData.importance !== 'medium'
               ? taskData.importance
@@ -230,15 +232,20 @@ const App = () => {
   };
 
   const handleExecuteParkingLot = async (entries) => {
-    const cleanEntries = entries.map(text => text.trim()).filter(Boolean);
+    const cleanEntries = entries
+      .map(entry => typeof entry === 'string' ? { text: entry.trim(), steps: [] } : {
+        text: entry.text.trim(),
+        steps: (entry.steps || []).map(text => ({ text: text.trim(), done: false })).filter(step => step.text),
+      })
+      .filter(entry => entry.text);
     if (cleanEntries.length === 0) return false;
 
     const snapshot = tasks.map(task => ({ ...task }));
     const createdTasks = [];
 
     try {
-      for (const text of cleanEntries) {
-        const created = await createTask({ text });
+      for (const entry of cleanEntries) {
+        const created = await createTask(entry);
         createdTasks.push(created);
       }
 

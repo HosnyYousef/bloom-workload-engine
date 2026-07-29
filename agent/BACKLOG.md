@@ -46,7 +46,7 @@ organization without adding a long scoring explanation.
 
 ### 3. Notes-style Parking Lot editor
 
-Status: Implemented, awaiting manual acceptance
+Status: Accepted July 29, 2026
 
 Make the Parking Lot feel closer to a notes app while keeping capture fast.
 Consider bullets, numbered lists, simple formatting, and optional colors.
@@ -54,7 +54,7 @@ Start with the smallest useful toolbar. Remove controls that add friction.
 
 ### 4. Parking Lot execution and undo
 
-Status: Next after item 3 is accepted
+Status: Core flow accepted; nested-step refinement implemented, awaiting acceptance
 
 Convert written lines into tasks, keep the original text recoverable, and let
 the user undo the conversion. Review the partial uncommitted implementation

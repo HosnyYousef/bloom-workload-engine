@@ -48,6 +48,10 @@ What changed:
 * Added a contrasting scrollbar that remains visible in light and dark mode.
 * Added Ctrl/Cmd+Shift+7 for numbered lists, Ctrl/Cmd+Shift+8 for bulleted
   lists, and automatic list creation after typing a dash followed by Space.
+* Accepted the Notes-style editor after manual testing on July 29, 2026.
+* Made nested list items explicit small steps under their parent task during
+  Turn into tasks, rather than creating a separate task for each sub-bullet.
+* Added automatic numbered-list creation after typing `1.` followed by Space.
 
 What works: the production frontend build and lint check pass.
 

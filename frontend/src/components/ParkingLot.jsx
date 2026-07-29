@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
-import { editorTextFromElement, sanitizeEditorHtml, splitEntries } from "../utils/splitParkingLotEntries";
+import { editorTextFromElement, sanitizeEditorHtml, structuredEntriesFromElement } from "../utils/splitParkingLotEntries";
 
 const DRAFT_KEY = 'bloomspace.parkingLotDraft';
 
@@ -60,10 +60,13 @@ const ParkingLot = ({
                 : selectedNode?.parentElement;
             const currentLine = selectedElement?.closest('div, p, li') || selectedElement;
 
-            if (currentLine?.textContent === '-' && selection?.isCollapsed) {
+            const listShortcut = currentLine?.textContent;
+            if ((listShortcut === '-' || listShortcut === '1.') && selection?.isCollapsed) {
                 event.preventDefault();
-                document.execCommand('delete', false);
-                document.execCommand('insertUnorderedList', false);
+                for (let index = 0; index < listShortcut.length; index += 1) {
+                    document.execCommand('delete', false);
+                }
+                document.execCommand(listShortcut === '1.' ? 'insertOrderedList' : 'insertUnorderedList', false);
                 saveDraft();
                 return;
             }
@@ -108,7 +111,7 @@ const ParkingLot = ({
 
     const handleExecute = async () => {
         const editor = editorRef.current;
-        const entries = splitEntries(editorTextFromElement(editor));
+        const entries = structuredEntriesFromElement(editor);
         if (entries.length === 0) return;
 
         setError('');
