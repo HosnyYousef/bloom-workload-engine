@@ -56,6 +56,8 @@ What changed:
   remain steps under the preceding parent task.
 * Added indent/outdent toolbar buttons, Ctrl/Cmd+] and Ctrl/Cmd+[ shortcuts,
   and Ctrl/Cmd+Enter to run Turn into tasks while the editor is focused.
+* Added a focused inline editor to Top Priorities for renaming a task and
+  editing, adding, removing, or reordering its small steps.
 
 What works: the production frontend build and lint check pass.
 

@@ -391,6 +391,7 @@ const App = () => {
               onToggle={toggleTask}
               onDelete={deleteTask}
               onAdd={addTask}
+              onUpdate={updateTask}
             />
             <ForTomorrow
               tasks={tomorrowTasks}

@@ -9,12 +9,13 @@ const TASKS = [
 ];
 
 describe('TopPriorities', () => {
-  let onToggle, onDelete, onAdd;
+  let onToggle, onDelete, onAdd, onUpdate;
 
   beforeEach(() => {
     onToggle = vi.fn();
     onDelete = vi.fn();
     onAdd    = vi.fn();
+    onUpdate = vi.fn();
   });
 
   // ── Rendering ──────────────────────────────────────────────────────────────
@@ -116,5 +117,34 @@ describe('TopPriorities', () => {
     const input = screen.getByPlaceholderText('Add priority task...');
     await user.type(input, 'New task{Enter}');
     expect(input).toHaveValue('');
+  });
+
+  it('edits a task and reorders its small steps in a focused editor', async () => {
+    const user = userEvent.setup();
+    const tasks = [{
+      _id: 'abc3',
+      text: 'Plan launch',
+      completed: false,
+      steps: [
+        { text: 'Write announcement', done: false },
+        { text: 'Notify testers', done: false },
+      ],
+    }];
+    render(<TopPriorities tasks={tasks} onToggle={onToggle} onDelete={onDelete} onAdd={onAdd} onUpdate={onUpdate} />);
+
+    await user.click(screen.getByRole('button', { name: 'Edit' }));
+    const taskName = screen.getByRole('textbox', { name: 'Task name' });
+    await user.clear(taskName);
+    await user.type(taskName, 'Prepare launch');
+    await user.click(screen.getByRole('button', { name: 'Move step 2 up' }));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(onUpdate).toHaveBeenCalledWith('abc3', {
+      text: 'Prepare launch',
+      steps: [
+        { text: 'Notify testers', done: false },
+        { text: 'Write announcement', done: false },
+      ],
+    });
   });
 });
