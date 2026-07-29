@@ -147,4 +147,18 @@ describe('TopPriorities', () => {
       ],
     });
   });
+
+  it('saves edits with Ctrl/Cmd+Enter from within the editor', async () => {
+    const user = userEvent.setup();
+    const tasks = [{ _id: 'abc4', text: 'Old name', completed: false, steps: [] }];
+    render(<TopPriorities tasks={tasks} onToggle={onToggle} onDelete={onDelete} onAdd={onAdd} onUpdate={onUpdate} />);
+    await user.click(screen.getByRole('button', { name: 'Edit' }));
+    const taskName = screen.getByRole('textbox', { name: 'Task name' });
+    await user.clear(taskName);
+    await user.type(taskName, 'New name');
+
+    await user.keyboard('{Meta>}{Enter}{/Meta}');
+
+    expect(onUpdate).toHaveBeenCalledWith('abc4', { text: 'New name', steps: [] });
+  });
 });

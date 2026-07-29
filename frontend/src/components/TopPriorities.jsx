@@ -53,6 +53,13 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate }) => {
         setEditSteps(reordered);
     }
 
+    const handleEditorKeyDown = (event) => {
+        if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+            event.preventDefault();
+            saveEditing();
+        }
+    }
+
     return (
         <div className='card bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-44 transition-colors'>
             {/* Header */}
@@ -69,7 +76,7 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate }) => {
                 {tasks.map(task => (
                     <div key={task._id}>
                         {editingTaskId === task._id ? (
-                            <div className='ml-6 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/50 p-3 space-y-2'>
+                            <div onKeyDown={handleEditorKeyDown} className='ml-6 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/50 p-3 space-y-2'>
                                 <label className='block text-xs font-semibold text-gray-600 dark:text-gray-300'>Task name</label>
                                 <input
                                     value={editText}
@@ -94,7 +101,7 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate }) => {
                                 <button type='button' onClick={() => setEditSteps([...editSteps, { text: '', done: false }])} className='text-xs text-blue-600 dark:text-blue-400'>+ Add small step</button>
                                 <div className='flex justify-end gap-2 pt-1'>
                                     <button type='button' onClick={cancelEditing} className='rounded px-2 py-1 text-xs dark:text-gray-300'>Cancel</button>
-                                    <button type='button' onClick={saveEditing} disabled={!editText.trim()} className='rounded bg-blue-600 px-3 py-1 text-xs font-bold text-white disabled:opacity-40'>Save</button>
+                                    <button type='button' onClick={saveEditing} disabled={!editText.trim()} title='Save (Ctrl/Cmd+Enter)' className='rounded bg-blue-600 px-3 py-1 text-xs font-bold text-white disabled:opacity-40'>Save</button>
                                 </div>
                             </div>
                         ) : (<>

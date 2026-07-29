@@ -58,6 +58,8 @@ What changed:
   and Ctrl/Cmd+Enter to run Turn into tasks while the editor is focused.
 * Added a focused inline editor to Top Priorities for renaming a task and
   editing, adding, removing, or reordering its small steps.
+* Added Ctrl/Cmd+Enter as the Save shortcut while the Top Priority inline
+  editor is focused, matching the Parking Lot submission convention.
 
 What works: the production frontend build and lint check pass.
 
