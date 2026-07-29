@@ -23,9 +23,9 @@ After coding:
 
 ## Current Next Step
 
-Manually test and accept item 2 in `agent/BACKLOG.md`: recommendation section
-labels, placement summary, and direct section adds. After acceptance, item 3 is
-the notes-style Parking Lot editor.
+Manually test and accept item 3 in `agent/BACKLOG.md`: type and format notes,
+refresh the page, and confirm the writing remains. After acceptance, item 4 is
+Parking Lot execution and undo.
 
 The beta tester feedback box and optional cognitive-load breakdown are saved as
 items 17 and 18. They should not be built until the core MVP is stable.

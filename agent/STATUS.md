@@ -26,6 +26,22 @@ Phase 1: MVP Foundation
 
 ## Session Log
 
+### 2026-07-28: Notes-style Parking Lot editor
+
+What changed:
+
+* Replaced the plain textarea with an autosaving rich-text editor.
+* Added bold, italic, bulleted-list, and numbered-list controls.
+* Kept each visible line compatible with Turn into tasks.
+* Sanitized saved formatting and pasted text.
+
+What works: the production frontend build and lint check pass.
+
+What is broken: no confirmed failure. The editor needs manual acceptance.
+
+What needs to happen next: test editor formatting and refresh persistence, then
+begin item 4 only after item 3 is accepted.
+
 ### 2026-07-28: Clear recommendation sections
 
 What changed:

@@ -38,7 +38,7 @@ account. Older notes and tests may call these **seeded tasks**.
 
 ### 2. Clarify task sections
 
-Status: Implemented, awaiting manual acceptance
+Status: Accepted
 
 Make it clear that **Top Priorities**, **For Tomorrow**, and **Don't Forget**
 are the three recommendation sections. Explain where a task went after
@@ -46,13 +46,15 @@ organization without adding a long scoring explanation.
 
 ### 3. Notes-style Parking Lot editor
 
-Status: Next after item 2 is accepted
+Status: Implemented, awaiting manual acceptance
 
 Make the Parking Lot feel closer to a notes app while keeping capture fast.
 Consider bullets, numbered lists, simple formatting, and optional colors.
 Start with the smallest useful toolbar. Remove controls that add friction.
 
 ### 4. Parking Lot execution and undo
+
+Status: Next after item 3 is accepted
 
 Convert written lines into tasks, keep the original text recoverable, and let
 the user undo the conversion. Review the partial uncommitted implementation

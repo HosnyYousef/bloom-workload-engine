@@ -82,3 +82,20 @@ input[type="checkbox"]:checked::after {
 .animate-progress-sweep {
   animation: progress-sweep 1.2s ease-in-out infinite;
 }
+
+.parking-lot-editor:empty::before {
+  content: attr(data-placeholder);
+  color: #6b7280;
+  white-space: pre-line;
+  pointer-events: none;
+}
+
+.parking-lot-editor ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+
+.parking-lot-editor ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+}

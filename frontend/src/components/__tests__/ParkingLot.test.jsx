@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import ParkingLot from '../ParkingLot';
-import { splitEntries } from '../../utils/splitParkingLotEntries';
+import { editorTextFromElement, sanitizeEditorHtml, splitEntries } from '../../utils/splitParkingLotEntries';
 
 const defaultProps = {
   tasks: [],
@@ -24,14 +24,14 @@ describe('ParkingLot', () => {
     localStorage.setItem('bloomspace.parkingLotDraft', 'Call the dentist');
     render(<ParkingLot {...defaultProps} />);
 
-    expect(screen.getByRole('textbox', { name: 'Parking Lot notes' })).toHaveValue('Call the dentist');
+    expect(screen.getByRole('textbox', { name: 'Parking Lot notes' })).toHaveTextContent('Call the dentist');
   });
 
   it('autosaves text as the user types', () => {
     render(<ParkingLot {...defaultProps} />);
-    fireEvent.change(screen.getByRole('textbox', { name: 'Parking Lot notes' }), {
-      target: { value: 'Messy thought' },
-    });
+    const editor = screen.getByRole('textbox', { name: 'Parking Lot notes' });
+    editor.innerHTML = 'Messy thought';
+    fireEvent.input(editor);
 
     expect(localStorage.getItem('bloomspace.parkingLotDraft')).toBe('Messy thought');
   });
@@ -41,27 +41,29 @@ describe('ParkingLot', () => {
     render(<ParkingLot {...defaultProps} onExecute={onExecute} />);
     const textbox = screen.getByRole('textbox', { name: 'Parking Lot notes' });
 
-    fireEvent.change(textbox, { target: { value: '- Call dentist\n\n* finish report by Friday' } });
+    textbox.innerHTML = '<div>- Call dentist</div><div>* finish report by Friday</div>';
+    fireEvent.input(textbox);
     fireEvent.click(screen.getByRole('button', { name: 'Turn into tasks' }));
 
     await waitFor(() => expect(onExecute).toHaveBeenCalledWith([
       'Call dentist',
       'finish report by Friday',
     ]));
-    expect(textbox).toHaveValue('');
+    expect(textbox).toHaveTextContent('');
   });
 
   it('restores the previous draft after undo succeeds', async () => {
     const { rerender } = render(<ParkingLot {...defaultProps} />);
     const textbox = screen.getByRole('textbox', { name: 'Parking Lot notes' });
-    fireEvent.change(textbox, { target: { value: 'Renew insurance' } });
+    textbox.innerHTML = 'Renew insurance';
+    fireEvent.input(textbox);
     fireEvent.click(screen.getByRole('button', { name: 'Turn into tasks' }));
-    await waitFor(() => expect(textbox).toHaveValue(''));
+    await waitFor(() => expect(textbox).toHaveTextContent(''));
 
     rerender(<ParkingLot {...defaultProps} canUndo />);
     fireEvent.click(screen.getByRole('button', { name: 'Undo' }));
 
-    await waitFor(() => expect(screen.getByRole('textbox', { name: 'Parking Lot notes' })).toHaveValue('Renew insurance'));
+    await waitFor(() => expect(screen.getByRole('textbox', { name: 'Parking Lot notes' })).toHaveTextContent('Renew insurance'));
   });
 });
 
@@ -72,5 +74,16 @@ describe('splitEntries', () => {
       'Second thing',
       'plain thought',
     ]);
+  });
+
+  it('reads separate editor blocks as separate lines', () => {
+    const editor = document.createElement('div');
+    editor.innerHTML = '<div>Call dentist</div><div>Finish report</div>';
+
+    expect(editorTextFromElement(editor)).toBe('Call dentist\nFinish report');
+  });
+
+  it('removes unsafe markup and attributes from saved notes', () => {
+    expect(sanitizeEditorHtml('<b onclick="bad()">Safe</b><script>bad()</script>')).toBe('<b>Safe</b>bad()');
   });
 });
