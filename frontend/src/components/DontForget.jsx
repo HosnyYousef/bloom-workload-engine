@@ -9,7 +9,9 @@ const DontForget = ({ tasks, onToggle, onDelete, onAdd }) => {
             text: newTask,
             hours: 0.5,
             deadline: '',
-            importance: 'low'
+            importance: 'low',
+            sorted: true,
+            sortedCategory: 'dontForget'
         });
         setNewTask('')
     }
@@ -17,8 +19,11 @@ const DontForget = ({ tasks, onToggle, onDelete, onAdd }) => {
     return (
         <div className="card bg-green-200 dark:bg-[#072010] border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-44 transition-colors">
             {/* Header */}
-            <div className="flex justify-between items-center border-b-2 border-black dark:border-green-900 pb-2 mb-3">
-                <p className="font-bold dark:text-green-100">Don't Forget</p>
+            <div className="flex justify-between items-start border-b-2 border-black dark:border-green-900 pb-2 mb-3">
+                <div>
+                    <p className="font-bold dark:text-green-100">Don't Forget</p>
+                    <p className="text-xs text-green-800/70 dark:text-green-300/60">Saved safely for later</p>
+                </div>
                 <button className="text-sm underline dark:text-green-300/60">See all...</button>
             </div>
 

@@ -35,6 +35,7 @@ const App = () => {
 
   const [tasks, setTasks] = useState([]);
   const [tasksLoading, setTasksLoading] = useState(false);
+  const [organizeSummary, setOrganizeSummary] = useState('');
   const skipNextTaskFetch = useRef(false);
 
   const [selectedTask, setSelectedTask] = useState(null);
@@ -138,9 +139,9 @@ const App = () => {
       const response = await api.post('/tasks', {
         ...taskData,
         completed: false,
-        sorted: false,
-        sortedCategory: null,
-        sortedAt: null
+        sorted: taskData.sorted ?? false,
+        sortedCategory: taskData.sortedCategory ?? null,
+        sortedAt: taskData.sorted ? Date.now() : null
       })
       setTasks(prev => [...prev, response.data])
       return response.data
@@ -183,6 +184,9 @@ const App = () => {
         persist: true
       });
       setTasks(prev => applyRecommendations(prev, data));
+      setOrganizeSummary(
+        `Sorted into sections: ${data.today.length} in Top Priorities, ${data.tomorrow.length} in For Tomorrow, and ${data.dontForget.length} in Don't Forget.`
+      );
       return data;
     } catch (err) {
       console.error('❌ Recommend endpoint failed, using local sort:', err);
@@ -217,6 +221,10 @@ const App = () => {
       }
       return task;
     }));
+
+    setOrganizeSummary(
+      `Sorted into sections: ${priorities.length} in Top Priorities, ${tomorrowTasks.length} in For Tomorrow, and ${dontForget.length} in Don't Forget.`
+    );
 
     return { fallback: true };
   };
@@ -356,6 +364,16 @@ const App = () => {
           </div>
           <DateDisplay />
         </div>
+
+        {organizeSummary && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="mb-5 rounded-xl border border-blue-300 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 px-4 py-3 text-sm text-blue-900 dark:text-blue-100"
+          >
+            {organizeSummary}
+          </div>
+        )}
 
         {/* Main layout — checklist first, parking lot second, notes last on mobile */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

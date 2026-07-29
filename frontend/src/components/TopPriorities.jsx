@@ -9,7 +9,9 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd}) => {
             text: newTask,
             hours: 1,
             deadline: '',
-            importance: 'high'
+            importance: 'high',
+            sorted: true,
+            sortedCategory: 'priorities'
         })
         setNewTask('');
     }
@@ -17,8 +19,11 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd}) => {
     return (
         <div className='card bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-44 transition-colors'>
             {/* Header */}
-            <div className='flex justify-between items-center border-b-2 border-black dark:border-gray-600 pb-2 mb-3'>
-                <p className='font-bold dark:text-gray-100'>Top Priorities</p>
+            <div className='flex justify-between items-start border-b-2 border-black dark:border-gray-600 pb-2 mb-3'>
+                <div>
+                    <p className='font-bold dark:text-gray-100'>Top Priorities</p>
+                    <p className='text-xs text-gray-500 dark:text-gray-400'>Your focus for today</p>
+                </div>
                 <button className='text-sm underline dark:text-gray-400'>See all...</button>
             </div>
 

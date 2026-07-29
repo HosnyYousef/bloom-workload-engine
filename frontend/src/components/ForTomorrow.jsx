@@ -12,7 +12,9 @@ const ForTomorrow = ({ tasks, onToggle, onDelete, onAdd }) => {
             text: newTask,
             hours: 1,
             deadline: tomorrow.toISOString().split('T')[0],
-            importance: 'medium'
+            importance: 'medium',
+            sorted: true,
+            sortedCategory: 'tomorrow'
         })
         setNewTask('')
     };
@@ -20,8 +22,11 @@ const ForTomorrow = ({ tasks, onToggle, onDelete, onAdd }) => {
     return (
         <div className="card bg-orange-100 dark:bg-[#1c0d00] border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-44 transition-colors">
             {/* Header */}
-            <div className="flex justify-between items-center border-b-2 border-black dark:border-orange-900 pb-2 mb-3">
-                <p className="font-bold dark:text-orange-100">For Tomorrow</p>
+            <div className="flex justify-between items-start border-b-2 border-black dark:border-orange-900 pb-2 mb-3">
+                <div>
+                    <p className="font-bold dark:text-orange-100">For Tomorrow</p>
+                    <p className="text-xs text-orange-800/70 dark:text-orange-300/60">Important, but not needed today</p>
+                </div>
                 <button className="text-sm underline dark:text-orange-300/60">See all...</button>
             </div>
 

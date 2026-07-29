@@ -23,9 +23,9 @@ After coding:
 
 ## Current Next Step
 
-Manually test and accept item 1 in `agent/BACKLOG.md`: Demo Mode loading
-progress. After acceptance, complete item 2 by making the recommendation
-sections and task placement clear.
+Manually test and accept item 2 in `agent/BACKLOG.md`: recommendation section
+labels, placement summary, and direct section adds. After acceptance, item 3 is
+the notes-style Parking Lot editor.
 
 Suggested command after the change:
 

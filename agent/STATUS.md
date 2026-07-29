@@ -26,6 +26,21 @@ Phase 1: MVP Foundation
 
 ## Session Log
 
+### 2026-07-28: Clear recommendation sections
+
+What changed:
+
+* Added a short purpose below each recommendation section name.
+* Added a result message showing how many tasks entered each section.
+* Tasks added inside a section now remain in that section.
+
+What works: the production frontend build and lint check pass.
+
+What is broken: no confirmed failure. The change needs manual acceptance.
+
+What needs to happen next: test task placement, then begin item 3 in
+`agent/BACKLOG.md` only after item 2 is accepted.
+
 ### 2026-07-28: Demo Mode progress
 
 What changed:

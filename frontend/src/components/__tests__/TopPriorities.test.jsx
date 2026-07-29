@@ -21,6 +21,7 @@ describe('TopPriorities', () => {
   it('renders the panel header', () => {
     render(<TopPriorities tasks={[]} onToggle={onToggle} onDelete={onDelete} onAdd={onAdd} />);
     expect(screen.getByText('Top Priorities')).toBeInTheDocument();
+    expect(screen.getByText('Your focus for today')).toBeInTheDocument();
   });
 
   it('renders every task passed as a prop', () => {
@@ -76,6 +77,8 @@ describe('TopPriorities', () => {
     expect(onAdd).toHaveBeenCalledWith(expect.objectContaining({
       text: 'Fix login bug',
       importance: 'high',
+      sorted: true,
+      sortedCategory: 'priorities',
     }));
   });
 
