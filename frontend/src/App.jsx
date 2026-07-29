@@ -37,6 +37,7 @@ const App = () => {
   const [tasksLoading, setTasksLoading] = useState(false);
 
   const [selectedTask, setSelectedTask] = useState(null);
+  const [organizeUndoSnapshot, setOrganizeUndoSnapshot] = useState(null);
 
   const handleSelectTask = (task) => {
     setSelectedTask(task);
@@ -98,8 +99,7 @@ const App = () => {
     }
   }
 
-  const addTask = async (newTask) => {
-    try {
+  const createTask = async (newTask) => {
       let taskData = { ...newTask };
 
       if (taskData.deadline) {
@@ -134,8 +134,15 @@ const App = () => {
         sortedAt: null
       })
       setTasks(prev => [...prev, response.data])
+      return response.data
+  };
+
+  const addTask = async (newTask) => {
+    try {
+      return await createTask(newTask)
     } catch (err) {
       console.error('❌ Failed to add task:', err)
+      return null
     }
   };
 
@@ -167,7 +174,7 @@ const App = () => {
         persist: true
       });
       setTasks(prev => applyRecommendations(prev, data));
-      return;
+      return data;
     } catch (err) {
       console.error('❌ Recommend endpoint failed, using local sort:', err);
     }
@@ -201,6 +208,59 @@ const App = () => {
       }
       return task;
     }));
+
+    return { fallback: true };
+  };
+
+  const handleExecuteParkingLot = async (entries) => {
+    const cleanEntries = entries.map(text => text.trim()).filter(Boolean);
+    if (cleanEntries.length === 0) return false;
+
+    const snapshot = tasks.map(task => ({ ...task }));
+    const createdTasks = [];
+
+    try {
+      for (const text of cleanEntries) {
+        const created = await createTask({ text });
+        createdTasks.push(created);
+      }
+
+      setOrganizeUndoSnapshot({
+        tasks: snapshot,
+        createdIds: createdTasks.map(task => task._id),
+      });
+
+      await handleOrganize();
+      return true;
+    } catch (err) {
+      console.error('❌ Failed to execute Parking Lot:', err);
+      await Promise.allSettled(createdTasks.map(task => api.delete(`/tasks/${task._id}`)));
+      setTasks(snapshot);
+      return false;
+    }
+  };
+
+  const handleUndoParkingLot = async () => {
+    if (!organizeUndoSnapshot) return false;
+
+    const { tasks: previousTasks, createdIds } = organizeUndoSnapshot;
+
+    try {
+      await Promise.all([
+        ...createdIds.map(id => api.delete(`/tasks/${id}`)),
+        ...previousTasks.map(task => api.put(`/tasks/${task._id}`, {
+          sorted: task.sorted,
+          sortedCategory: task.sortedCategory,
+          sortedAt: task.sortedAt,
+        })),
+      ]);
+      setTasks(previousTasks);
+      setOrganizeUndoSnapshot(null);
+      return true;
+    } catch (err) {
+      console.error('❌ Failed to undo Parking Lot execution:', err);
+      return false;
+    }
   };
 
   if (!user) {
@@ -324,6 +384,9 @@ const App = () => {
               onUpdate={updateTask}
               onDelete={deleteTask}
               onOrganize={handleOrganize}
+              onExecute={handleExecuteParkingLot}
+              onUndo={handleUndoParkingLot}
+              canUndo={Boolean(organizeUndoSnapshot)}
               onSelect={handleSelectTask}
               selectedTaskId={selectedTask?._id}
             />

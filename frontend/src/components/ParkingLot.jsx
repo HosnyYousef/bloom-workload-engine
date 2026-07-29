@@ -1,334 +1,148 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const DEFAULT_GOALS = ['Health', 'Career', 'Finance', 'Personal', 'Social'];
+const DRAFT_KEY = 'bloomspace.parkingLotDraft';
 
-const GoalSelect = ({ value, onChange, showCustom, setShowCustom, customValue, setCustomValue }) => (
-    <div className="flex flex-col gap-1">
-        <select
-            value={showCustom ? 'custom' : value}
-            onChange={(e) => {
-                if (e.target.value === 'custom') {
-                    setShowCustom(true);
-                } else {
-                    setShowCustom(false);
-                    onChange(e.target.value);
-                }
-            }}
-            className="w-full p-1 border border-black dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-        >
-            {DEFAULT_GOALS.map(g => (
-                <option key={g} value={g}>{g}</option>
-            ))}
-            <option value="custom">+ Custom...</option>
-        </select>
-        {showCustom && (
-            <input
-                type="text"
-                value={customValue}
-                onChange={(e) => setCustomValue(e.target.value)}
-                placeholder="Type goal..."
-                className="w-full p-1 border border-black dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                autoFocus
-            />
-        )}
-    </div>
-);
+const splitEntries = (draft) => draft
+    .split(/\n+/)
+    .map(line => line.replace(/^\s*(?:[-*•]|\d+[.)])\s*/, '').trim())
+    .filter(Boolean);
 
-const inputCls = "w-full p-1 border border-black dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100";
+const ParkingLot = ({
+    tasks,
+    onUpdate,
+    onDelete,
+    onExecute,
+    onUndo,
+    canUndo,
+    onSelect,
+    selectedTaskId,
+}) => {
+    const [draft, setDraft] = useState(() => localStorage.getItem(DRAFT_KEY) || '');
+    const [executedDraft, setExecutedDraft] = useState('');
+    const [isExecuting, setIsExecuting] = useState(false);
+    const [isUndoing, setIsUndoing] = useState(false);
+    const [error, setError] = useState('');
 
-const ParkingLot = ({ tasks, onAdd, onUpdate, onDelete, onOrganize, onSelect, selectedTaskId }) => {
-    const [editingId, setEditingId] = useState(null);
-    const [showSorted, setShowSorted] = useState(false);
-    const [customGoal, setCustomGoal] = useState('');
-    const [showCustomInput, setShowCustomInput] = useState(false);
-    const [editCustomGoal, setEditCustomGoal] = useState('');
-    const [editShowCustomInput, setEditShowCustomInput] = useState(false);
+    useEffect(() => {
+        localStorage.setItem(DRAFT_KEY, draft);
+    }, [draft]);
 
-    const [newTaskForm, setNewTaskForm] = useState({
-        text: '',
-        hours: '',
-        deadline: '',
-        importance: 'medium',
-        goal: 'Personal'
-    });
+    const handleExecute = async () => {
+        const entries = splitEntries(draft);
+        if (entries.length === 0) return;
 
-    const [editForm, setEditForm] = useState({
-        text: '',
-        hours: '',
-        deadline: '',
-        importance: 'medium',
-        goal: 'Personal'
-    });
+        setError('');
+        setIsExecuting(true);
+        const originalDraft = draft;
+        const succeeded = await onExecute(entries);
+        setIsExecuting(false);
 
-    const unsortedTasks = tasks.filter(t => !t.sorted);
-    const sortedTasks = tasks.filter(t => t.sorted);
-
-    const handleAddNew = () => {
-        if (newTaskForm.text.trim() === '') return;
-        onAdd({
-            text: newTaskForm.text,
-            hours: parseFloat(newTaskForm.hours) || 0,
-            deadline: newTaskForm.deadline,
-            importance: newTaskForm.importance,
-            goal: showCustomInput ? customGoal || 'Personal' : newTaskForm.goal
-        });
-        setNewTaskForm({ text: '', hours: '', deadline: '', importance: 'medium', goal: 'Personal' });
-        setCustomGoal('');
-        setShowCustomInput(false);
+        if (succeeded) {
+            setExecutedDraft(originalDraft);
+            setDraft('');
+        } else {
+            setError('Nothing changed. Your notes are still here.');
+        }
     };
 
-    const handleEdit = (task) => {
-        setEditingId(task._id);
-        setEditForm({
-            text: task.text,
-            hours: task.hours,
-            deadline: task.deadline,
-            importance: task.importance,
-            goal: task.goal || 'Personal'
-        });
-        setEditShowCustomInput(false);
-        setEditCustomGoal('');
+    const handleUndo = async () => {
+        setError('');
+        setIsUndoing(true);
+        const succeeded = await onUndo();
+        setIsUndoing(false);
+
+        if (succeeded) {
+            setDraft(executedDraft);
+            setExecutedDraft('');
+        } else {
+            setError('Undo did not finish. Your organized tasks are still safe.');
+        }
     };
 
-    const handleSaveEdit = (id) => {
-        onUpdate(id, {
-            text: editForm.text,
-            hours: parseFloat(editForm.hours) || 0,
-            deadline: editForm.deadline,
-            importance: editForm.importance,
-            goal: editShowCustomInput ? editCustomGoal || 'Personal' : editForm.goal
-        });
-        setEditingId(null);
-    };
-
-    const handleCancelEdit = () => {
-        setEditingId(null);
-        setEditForm({ text: '', hours: '', deadline: '', importance: 'medium', goal: 'Personal' });
-        setEditShowCustomInput(false);
-        setEditCustomGoal('');
-    };
-
-    const importanceBadge = (importance) => {
-        if (importance === 'high') return 'bg-red-200 dark:bg-red-900 dark:text-red-200';
-        if (importance === 'medium') return 'bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-200';
-        return 'bg-green-200 dark:bg-green-900 dark:text-green-200';
-    };
+    const unsortedTasks = tasks.filter(task => !task.sorted);
 
     return (
-        <div className="card bg-pink-300 dark:bg-[#200a12] border-2 border-black dark:border-gray-700 rounded-2xl p-6 min-h-150 flex flex-col transition-colors">
-            <div className="flex justify-between items-center mb-4">
+        <section className="card bg-pink-300 dark:bg-[#200a12] border-2 border-black dark:border-gray-700 rounded-2xl p-6 min-h-150 flex flex-col transition-colors">
+            <div className="flex flex-wrap justify-between items-start gap-3 mb-4">
                 <div>
                     <h2 className="font-bold text-2xl dark:text-gray-100">PARKING LOT</h2>
-                    <p className="text-sm text-gray-700 dark:text-gray-400">Brain dump everything here - we'll organize it for you!</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-400">Write it down however it comes to you. It saves as you type.</p>
                 </div>
-                <button
-                    onClick={onOrganize}
-                    className="btn px-4 py-2 bg-yellow-400 border-2 border-black dark:border-yellow-600 rounded-xl font-bold hover:bg-yellow-500 flex items-center gap-2 dark:text-gray-900"
-                >
-                    <span className="text-xl">📝</span>
-                    ORGANIZE!
-                </button>
+                <div className="flex gap-2">
+                    {canUndo && (
+                        <button
+                            type="button"
+                            onClick={handleUndo}
+                            disabled={isUndoing || isExecuting}
+                            className="px-4 py-2 bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-600 rounded-xl font-bold disabled:opacity-60"
+                        >
+                            {isUndoing ? 'Undoing...' : 'Undo'}
+                        </button>
+                    )}
+                    <button
+                        type="button"
+                        onClick={handleExecute}
+                        disabled={!draft.trim() || isExecuting || isUndoing}
+                        className="btn px-4 py-2 bg-yellow-400 border-2 border-black dark:border-yellow-600 rounded-xl font-bold hover:bg-yellow-500 disabled:opacity-60 dark:text-gray-900"
+                    >
+                        {isExecuting ? 'Organizing...' : 'Turn into tasks'}
+                    </button>
+                </div>
             </div>
 
-            <div className="bg-pink-200 dark:bg-[#17080f] border-2 border-black dark:border-gray-700 rounded-2xl overflow-hidden flex-1 flex flex-col">
-                <table className="w-full">
-                    <thead className="bg-pink-400 dark:bg-[#2e0f1a] border-b-2 border-black dark:border-gray-700">
-                        <tr>
-                            <th className="border-r-2 border-black dark:border-gray-700 p-3 text-left font-bold dark:text-gray-100">ITEM</th>
-                            <th className="border-r-2 border-black dark:border-gray-700 p-3 text-left font-bold w-24 dark:text-gray-100">HOURS</th>
-                            <th className="border-r-2 border-black dark:border-gray-700 p-3 text-left font-bold w-36 dark:text-gray-100">DUE DATE</th>
-                            <th className="border-r-2 border-black dark:border-gray-700 p-3 text-left font-bold w-28 dark:text-gray-100">IMPORTANCE</th>
-                            <th className="border-r-2 border-black dark:border-gray-700 p-3 text-left font-bold w-32 dark:text-gray-100">GOAL</th>
-                            <th className="p-3 w-20"></th>
-                        </tr>
-                    </thead>
+            <div className="bg-pink-100 dark:bg-[#17080f] border-2 border-black dark:border-gray-700 rounded-2xl overflow-hidden">
+                <textarea
+                    value={draft}
+                    onChange={(event) => setDraft(event.target.value)}
+                    placeholder={'Type anything here...\n\nCall the dentist\nMaybe look into that design course\nFinish the report by Friday'}
+                    aria-label="Parking Lot notes"
+                    className="w-full min-h-80 resize-y p-5 bg-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:outline-none leading-7"
+                />
+                <div className="px-5 py-2 border-t border-pink-300 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-400">
+                    Saved on this device
+                </div>
+            </div>
 
-                    <tbody>
-                        {/* UNSORTED TASKS */}
+            {error && (
+                <p role="alert" className="mt-3 text-sm text-red-700 dark:text-red-300">{error}</p>
+            )}
+
+            {unsortedTasks.length > 0 && (
+                <div className="mt-5">
+                    <h3 className="font-bold text-sm text-gray-800 dark:text-gray-200 mb-2">Waiting to be organized</h3>
+                    <ul className="space-y-2">
                         {unsortedTasks.map(task => (
-                            <tr
+                            <li
                                 key={task._id}
-                                className={`border-b-2 border-black dark:border-gray-700 cursor-pointer transition-colors ${
-                                    selectedTaskId === task._id
-                                        ? 'bg-yellow-200 dark:bg-yellow-900 border-l-4 border-l-yellow-500 dark:border-l-yellow-600'
-                                        : 'hover:bg-pink-300 dark:hover:bg-[#2a0f1a]'
-                                }`}
                                 onClick={() => onSelect(task)}
+                                className={`flex items-center gap-2 rounded-xl border p-3 cursor-pointer bg-white/60 dark:bg-gray-900/60 ${selectedTaskId === task._id ? 'border-yellow-500' : 'border-pink-400 dark:border-gray-700'}`}
                             >
-                                {editingId === task._id ? (
-                                    <>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                            <input type="text" value={editForm.text} onChange={(e) => setEditForm({ ...editForm, text: e.target.value })} className={inputCls} autoFocus />
-                                        </td>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                            <input type="number" step="0.5" value={editForm.hours} onChange={(e) => setEditForm({ ...editForm, hours: e.target.value })} className={inputCls} placeholder="Optional" />
-                                        </td>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                            <input type="date" value={editForm.deadline} onChange={(e) => setEditForm({ ...editForm, deadline: e.target.value })} className={inputCls} />
-                                        </td>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                            <select value={editForm.importance} onChange={(e) => setEditForm({ ...editForm, importance: e.target.value })} className={inputCls}>
-                                                <option value="high">High</option>
-                                                <option value="medium">Med</option>
-                                                <option value="low">Low</option>
-                                            </select>
-                                        </td>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                            <GoalSelect value={editForm.goal} onChange={(val) => setEditForm({ ...editForm, goal: val })} showCustom={editShowCustomInput} setShowCustom={setEditShowCustomInput} customValue={editCustomGoal} setCustomValue={setEditCustomGoal} />
-                                        </td>
-                                        <td className="p-2 flex gap-1" onClick={e => e.stopPropagation()}>
-                                            <button onClick={() => handleSaveEdit(task._id)} className="px-2 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600">✓</button>
-                                            <button onClick={handleCancelEdit} className="px-2 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600">✕</button>
-                                        </td>
-                                    </>
-                                ) : (
-                                    <>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-3 dark:text-gray-200">
-                                            <span className="mr-2">🔴</span>
-                                            {task.text}
-                                        </td>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-3 text-center dark:text-gray-300">
-                                            {task.hours || '-'}
-                                        </td>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-3 dark:text-gray-300">
-                                            {task.deadline || '-'}
-                                        </td>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-3 capitalize">
-                                            <span className={`px-2 py-1 rounded ${importanceBadge(task.importance)}`}>
-                                                {task.importance || 'Med'}
-                                            </span>
-                                        </td>
-                                        <td className="border-r-2 border-black dark:border-gray-700 p-3 text-sm dark:text-gray-300">
-                                            {task.goal || 'Personal'}
-                                        </td>
-                                        <td className="p-3 flex gap-1" onClick={e => e.stopPropagation()}>
-                                            <button onClick={() => handleEdit(task)} className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">✎</button>
-                                            <button onClick={() => onDelete(task._id)} className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300">✕</button>
-                                        </td>
-                                    </>
-                                )}
-                            </tr>
+                                <input
+                                    value={task.text}
+                                    onClick={event => event.stopPropagation()}
+                                    onChange={event => onUpdate(task._id, { text: event.target.value })}
+                                    aria-label={`Edit ${task.text}`}
+                                    className="flex-1 bg-transparent focus:outline-none dark:text-gray-200"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        onDelete(task._id);
+                                    }}
+                                    aria-label={`Delete ${task.text}`}
+                                    className="text-red-600 dark:text-red-400 px-2"
+                                >
+                                    Remove
+                                </button>
+                            </li>
                         ))}
-
-                        {/* ADD FORM */}
-                        <tr className="border-b-2 border-black dark:border-gray-700 bg-yellow-50 dark:bg-gray-800/60">
-                            <td className="border-r-2 border-black dark:border-gray-700 p-2">
-                                <input type="text" value={newTaskForm.text} onChange={(e) => setNewTaskForm({ ...newTaskForm, text: e.target.value })} onKeyDown={(e) => e.key === 'Enter' && handleAddNew()} className={inputCls} placeholder="Add task..." />
-                            </td>
-                            <td className="border-r-2 border-black dark:border-gray-700 p-2">
-                                <input type="number" step="0.5" value={newTaskForm.hours} onChange={(e) => setNewTaskForm({ ...newTaskForm, hours: e.target.value })} className={inputCls} placeholder="Hours" />
-                            </td>
-                            <td className="border-r-2 border-black dark:border-gray-700 p-2">
-                                <input type="date" value={newTaskForm.deadline} onChange={(e) => setNewTaskForm({ ...newTaskForm, deadline: e.target.value })} className={inputCls} />
-                            </td>
-                            <td className="border-r-2 border-black dark:border-gray-700 p-2">
-                                <select value={newTaskForm.importance} onChange={(e) => setNewTaskForm({ ...newTaskForm, importance: e.target.value })} className={inputCls}>
-                                    <option value="high">High</option>
-                                    <option value="medium">Med</option>
-                                    <option value="low">Low</option>
-                                </select>
-                            </td>
-                            <td className="border-r-2 border-black dark:border-gray-700 p-2">
-                                <GoalSelect value={newTaskForm.goal} onChange={(val) => setNewTaskForm({ ...newTaskForm, goal: val })} showCustom={showCustomInput} setShowCustom={setShowCustomInput} customValue={customGoal} setCustomValue={setCustomGoal} />
-                            </td>
-                            <td className="p-2">
-                                <button onClick={handleAddNew} className="w-full px-2 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600">✓</button>
-                            </td>
-                        </tr>
-
-                        {/* SORTED TASKS */}
-                        {sortedTasks.length > 0 && (
-                            <>
-                                <tr className="bg-gray-200 dark:bg-gray-800 border-b-2 border-black dark:border-gray-700">
-                                    <td colSpan="6" className="p-2">
-                                        <button onClick={() => setShowSorted(!showSorted)} className="w-full text-left font-bold flex items-center gap-2 dark:text-gray-300">
-                                            {showSorted ? '▲' : '▼'}
-                                            {showSorted ? 'Hide' : 'Show'} Sorted Tasks ({sortedTasks.length} organized)
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                {showSorted && sortedTasks.map(task => (
-                                    <tr
-                                        key={task._id}
-                                        className={`border-b-2 border-black dark:border-gray-700 bg-gray-100 dark:bg-gray-800/50 opacity-60 cursor-pointer ${
-                                            selectedTaskId === task._id ? 'bg-yellow-200 dark:bg-yellow-900 opacity-100' : 'hover:bg-gray-200 dark:hover:bg-gray-700/50'
-                                        }`}
-                                        onClick={() => onSelect(task)}
-                                    >
-                                        {editingId === task._id ? (
-                                            <>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                                    <input type="text" value={editForm.text} onChange={(e) => setEditForm({ ...editForm, text: e.target.value })} className={inputCls} autoFocus />
-                                                </td>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                                    <input type="number" step="0.5" value={editForm.hours} onChange={(e) => setEditForm({ ...editForm, hours: e.target.value })} className={inputCls} />
-                                                </td>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                                    <input type="date" value={editForm.deadline} onChange={(e) => setEditForm({ ...editForm, deadline: e.target.value })} className={inputCls} />
-                                                </td>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                                    <select value={editForm.importance} onChange={(e) => setEditForm({ ...editForm, importance: e.target.value })} className={inputCls}>
-                                                        <option value="high">High</option>
-                                                        <option value="medium">Med</option>
-                                                        <option value="low">Low</option>
-                                                    </select>
-                                                </td>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-2" onClick={e => e.stopPropagation()}>
-                                                    <GoalSelect value={editForm.goal} onChange={(val) => setEditForm({ ...editForm, goal: val })} showCustom={editShowCustomInput} setShowCustom={setEditShowCustomInput} customValue={editCustomGoal} setCustomValue={setEditCustomGoal} />
-                                                </td>
-                                                <td className="p-2 flex gap-1" onClick={e => e.stopPropagation()}>
-                                                    <button onClick={() => handleSaveEdit(task._id)} className="px-2 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600">✓</button>
-                                                    <button onClick={handleCancelEdit} className="px-2 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600">✕</button>
-                                                </td>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-3 dark:text-gray-400">
-                                                    <span className="mr-2">✅</span>
-                                                    {task.text}
-                                                    <span className="ml-2 text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/50 dark:text-blue-300 rounded">
-                                                        → {task.sortedCategory === 'priorities' ? 'Top Priorities' :
-                                                            task.sortedCategory === 'tomorrow' ? 'For Tomorrow' :
-                                                            "Don't Forget"}
-                                                    </span>
-                                                </td>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-3 text-center dark:text-gray-400">
-                                                    {task.hours || '-'}
-                                                </td>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-3 dark:text-gray-400">
-                                                    {task.deadline || '-'}
-                                                </td>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-3 capitalize">
-                                                    <span className={`px-2 py-1 rounded ${importanceBadge(task.importance)}`}>
-                                                        {task.importance || 'Med'}
-                                                    </span>
-                                                </td>
-                                                <td className="border-r-2 border-black dark:border-gray-700 p-3 text-sm dark:text-gray-400">
-                                                    {task.goal || 'Personal'}
-                                                </td>
-                                                <td className="p-3 flex gap-1" onClick={e => e.stopPropagation()}>
-                                                    <button onClick={() => handleEdit(task)} className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">✎</button>
-                                                    <button onClick={() => onDelete(task._id)} className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300">✕</button>
-                                                </td>
-                                            </>
-                                        )}
-                                    </tr>
-                                ))}
-                            </>
-                        )}
-                    </tbody>
-                </table>
-
-                {unsortedTasks.length === 0 && sortedTasks.length === 0 && (
-                    <div className="p-8 text-center text-gray-600 dark:text-gray-400">
-                        <p className="mb-2">No tasks yet. Start by adding your first task below!</p>
-                        <p className="text-sm">💡 Tip: Just brain dump - we'll organize it for you!</p>
-                    </div>
-                )}
-            </div>
-        </div>
+                    </ul>
+                </div>
+            )}
+        </section>
     );
 };
 
+export { splitEntries };
 export default ParkingLot;
