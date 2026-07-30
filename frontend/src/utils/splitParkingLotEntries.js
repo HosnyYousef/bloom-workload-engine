@@ -44,22 +44,28 @@ const cleanEntryText = (text) => text
     .replace(/^\s*(?:[-*•]|\d+[.)])\s*/, '')
     .trim();
 
-const listItemOwnText = (item) => [...item.childNodes]
-    .filter(node => !['UL', 'OL'].includes(node.nodeName))
-    .map(node => node.textContent || '')
-    .join('');
+const visibleTextWithoutNestedLists = (node) => {
+    if (node.nodeType === Node.TEXT_NODE) return node.textContent || '';
+    if (node.nodeName === 'BR') return '\n';
+    if (['UL', 'OL'].includes(node.nodeName)) return '';
+
+    const text = [...node.childNodes].map(visibleTextWithoutNestedLists).join('');
+    return ['DIV', 'P'].includes(node.nodeName) ? `${text}\n` : text;
+};
+
+const listItemOwnLines = (item) => splitEntries(
+    [...item.childNodes].map(visibleTextWithoutNestedLists).join('')
+);
 
 const nestedStepTexts = (item) => [...item.children]
     .filter(child => ['UL', 'OL'].includes(child.tagName))
     .flatMap(list => [...list.children].flatMap(step => {
-        const text = cleanEntryText(listItemOwnText(step));
-        return [text, ...nestedStepTexts(step)].filter(Boolean);
+        return [...listItemOwnLines(step), ...nestedStepTexts(step)].filter(Boolean);
     }));
 
 const allListItemTexts = (list) => [...list.children].flatMap(child => {
     if (child.tagName === 'LI') {
-        const text = cleanEntryText(listItemOwnText(child));
-        return [text, ...nestedStepTexts(child)].filter(Boolean);
+        return [...listItemOwnLines(child), ...nestedStepTexts(child)].filter(Boolean);
     }
     return ['UL', 'OL'].includes(child.tagName) ? allListItemTexts(child) : [];
 });
@@ -77,10 +83,11 @@ export const structuredEntriesFromElement = (element) => {
             let previousEntry = null;
             for (const item of node.children) {
                 if (item.tagName === 'LI') {
-                    const text = cleanEntryText(listItemOwnText(item));
-                    if (text) {
-                        previousEntry = { text, steps: nestedStepTexts(item) };
+                    const lines = listItemOwnLines(item);
+                    if (lines.length > 0) {
+                        previousEntry = { text: cleanEntryText(lines[0]), steps: nestedStepTexts(item) };
                         entries.push(previousEntry);
+                        for (const text of lines.slice(1)) entries.push({ text: cleanEntryText(text), steps: [] });
                     }
                 } else if (['UL', 'OL'].includes(item.tagName) && previousEntry) {
                     previousEntry.steps.push(...allListItemTexts(item));
@@ -89,7 +96,7 @@ export const structuredEntriesFromElement = (element) => {
         } else if (node.nodeName === 'BR') {
             continue;
         } else {
-            addPlainText(node.textContent || '');
+            addPlainText(visibleTextWithoutNestedLists(node));
         }
     }
 

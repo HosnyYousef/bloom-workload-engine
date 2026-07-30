@@ -37,6 +37,8 @@ What changed:
 * Preserved user-authored Parking Lot sub-bullets as the highest-priority step
   source.
 * Recorded Parking Lot execution, movement, editing, and undo as accepted.
+* Fixed multi-line paste while a list is active so each visible same-level line
+  becomes its own task instead of being concatenated into one task.
 
 What needs to happen next: manually compare simple and complex tasks, then
 begin item 6 only after item 5 is accepted.

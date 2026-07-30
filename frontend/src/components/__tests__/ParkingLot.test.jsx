@@ -224,6 +224,17 @@ describe('splitEntries', () => {
     ]);
   });
 
+  it('keeps visibly separate pasted lines as separate tasks inside one list item', () => {
+    const editor = document.createElement('div');
+    editor.innerHTML = '<ul><li>- Plan a birthday party<div>- Prepare the quarterly presentation</div><div>- Research standing desks</div></li></ul>';
+
+    expect(structuredEntriesFromElement(editor)).toEqual([
+      { text: 'Plan a birthday party', steps: [] },
+      { text: 'Prepare the quarterly presentation', steps: [] },
+      { text: 'Research standing desks', steps: [] },
+    ]);
+  });
+
   it('removes unsafe markup and attributes from saved notes', () => {
     expect(sanitizeEditorHtml('<b onclick="bad()">Safe</b><script>bad()</script>')).toBe('<b>Safe</b>bad()');
   });
