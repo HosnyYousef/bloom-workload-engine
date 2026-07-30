@@ -92,8 +92,8 @@ const App = () => {
   const allTomorrowTasks = sortedTasksOnly.filter(t => t.sortedCategory === 'tomorrow').sort(bySectionOrder);
   const allDontForget = sortedTasksOnly.filter(t => t.sortedCategory === 'dontForget').sort(bySectionOrder);
 
-  // The engine already picks exactly 3 for today (energy level changes
-  // which 3 via scoring), so no extra slicing here.
+  // The engine applies the daily capacity: 4 for Early Start, 3 otherwise.
+  // Energy level also changes which tasks win via scoring.
   const priorities = allPriorities
 
   const tomorrowTasks = allTomorrowTasks

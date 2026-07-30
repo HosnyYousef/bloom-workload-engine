@@ -26,6 +26,20 @@ Phase 1: MVP Foundation
 
 ## Session Log
 
+### 2026-07-30: Daily focus capacity by energy level
+
+What changed:
+
+* Limited Typical Day and Slow Day to 3 Top Priorities.
+* Allowed up to 4 Top Priorities for Early Start.
+* Aligned the backend recommendation engine and client fallback limits.
+* Kept energy selection non-destructive: it affects the next explicit
+  organization and does not immediately overwrite manual task placement.
+* Recorded persistent small-step checkboxes as accepted.
+
+What needs to happen next: organize at least eight tasks under each energy mode
+and confirm the 4/3/3 capacities and energy-appropriate selection.
+
 ### 2026-07-30: Persistent small-step checkboxes
 
 What changed:

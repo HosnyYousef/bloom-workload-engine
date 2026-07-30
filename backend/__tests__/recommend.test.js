@@ -1,4 +1,4 @@
-const { recommendTasks, TODAY_COUNT } = require('../engine/recommend');
+const { recommendTasks, TODAY_COUNTS } = require('../engine/recommend');
 
 // Monday July 6 2026, 9am local time
 const REF = new Date(2026, 6, 6, 9, 0, 0);
@@ -36,7 +36,16 @@ describe('recommendTasks: today selection', () => {
       task({ deadline: ymdOffset(i), text: `task ${i}` })
     );
     const { today } = recommendTasks(tasks, ctx());
-    expect(today).toHaveLength(TODAY_COUNT);
+    expect(today).toHaveLength(TODAY_COUNTS.typical);
+  });
+
+  it.each([
+    ['early', 4],
+    ['typical', 3],
+    ['slow', 3],
+  ])('%s mode caps today at %i tasks', (energyLevel, expected) => {
+    const tasks = Array.from({ length: 8 }, (_, i) => task({ deadline: ymdOffset(i + 1) }));
+    expect(recommendTasks(tasks, ctx(energyLevel)).today).toHaveLength(expected);
   });
 
   it('returns all open tasks when fewer than 3 exist', () => {

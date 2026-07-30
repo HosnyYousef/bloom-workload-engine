@@ -1,23 +1,23 @@
 /**
- * Picks the top 3 tasks for today and buckets the rest.
+ * Picks a deliberately small set of tasks for today and buckets the rest.
  * Pure module: no DB, no Express.
  *
  * recommendTasks(tasks, context) returns:
  *   {
- *     today:      up to 3 items, highest score first
+ *     today:      up to the selected energy level's capacity
  *     tomorrow:   near-term leftovers (due soon or scoring well)
  *     dontForget: everything else that is open
  *   }
  * Each item is { task, score, breakdown }.
  *
- * Today is capped at exactly TODAY_COUNT (3) on purpose: a short list the
- * user can actually finish is the whole point of BloomSpace. Energy level
- * changes which 3 win via scoring, never how many.
+ * Today is capped on purpose: a short list the user can actually finish is
+ * the whole point of BloomSpace. Early Start allows one additional task.
  */
 
 const { scoreTask, daysUntil } = require('./scoreTask');
 
-const TODAY_COUNT = 3;
+const TODAY_COUNTS = Object.freeze({ early: 4, typical: 3, slow: 3 });
+const todayCapacity = (energyLevel) => TODAY_COUNTS[energyLevel] ?? TODAY_COUNTS.typical;
 
 // Leftovers land in "tomorrow" when due within this many days...
 const TOMORROW_DEADLINE_DAYS = 3;
@@ -44,14 +44,15 @@ const compareScored = (a, b) => {
  */
 const recommendTasks = (tasks, context = {}) => {
   const now = context.now || new Date();
+  const capacity = todayCapacity(context.energy?.level);
 
   const scored = (tasks || [])
     .filter((t) => !t.completed)
     .map((task) => ({ task, ...scoreTask(task, context) }))
     .sort(compareScored);
 
-  const today = scored.slice(0, TODAY_COUNT);
-  const rest = scored.slice(TODAY_COUNT);
+  const today = scored.slice(0, capacity);
+  const rest = scored.slice(capacity);
 
   const tomorrow = [];
   const dontForget = [];
@@ -65,4 +66,4 @@ const recommendTasks = (tasks, context = {}) => {
   return { today, tomorrow, dontForget };
 };
 
-module.exports = { recommendTasks, TODAY_COUNT, TOMORROW_DEADLINE_DAYS, TOMORROW_SCORE_FLOOR };
+module.exports = { recommendTasks, TODAY_COUNTS, todayCapacity, TOMORROW_DEADLINE_DAYS, TOMORROW_SCORE_FLOOR };

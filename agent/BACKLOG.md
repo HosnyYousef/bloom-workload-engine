@@ -79,7 +79,7 @@ more work unless clarification is genuinely needed.
 
 ### 7. Add step checkboxes
 
-Status: Implemented, awaiting manual acceptance
+Status: Accepted July 30, 2026
 
 Show a small checkbox beside each step. Save step completion separately from
 completion of the main task.
@@ -89,6 +89,8 @@ completion of the main task.
 ### 8. Set daily focus capacity
 
 Status: Required for MVP
+
+Implementation status: Implemented, awaiting manual acceptance
 
 Recommend 3 tasks on a Typical Day or Slow Day. Allow up to 4 tasks when the
 user chooses Early Start. Keep the daily list intentionally short.

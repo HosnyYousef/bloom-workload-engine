@@ -23,10 +23,10 @@ After coding:
 
 ## Current Next Step
 
-Manually test item 7: check individual small steps in all three recommendation
-sections, refresh, and confirm progress remains. Edit and reorder a mixture of
-complete and incomplete steps and confirm their completion states remain. Mark
-the parent task complete and confirm its step history is still available.
+Manually test item 8 with at least eight new tasks. Select an energy mode before
+running Turn into tasks: Early Start should place at most 4 in Top Priorities;
+Typical Day and Slow Day should place at most 3. Slow Day should favor lighter
+tasks, and changing the selector alone should not overwrite manual placement.
 
 The beta tester feedback box, optional cognitive-load breakdown, and daily
 history/calendar search are saved as items 17 through 19. They should not be

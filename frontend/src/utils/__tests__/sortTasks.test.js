@@ -76,7 +76,7 @@ describe('sortTasks', () => {
         _id: `h${i}`, text: `High ${i}`, importance: 'high', hours: 1,
       }));
       const { priorities } = sortTasks(many, 'early');
-      expect(priorities.length).toBeLessThanOrEqual(5);
+      expect(priorities.length).toBeLessThanOrEqual(4);
     });
 
     it('caps dontForget at 2 tasks', () => {
@@ -107,7 +107,7 @@ describe('sortTasks', () => {
         _id: `h${i}`, text: `High ${i}`, importance: 'high', hours: 0.5,
       }));
       const { priorities } = sortTasks(many, 'slow');
-      expect(priorities.length).toBeLessThanOrEqual(2);
+      expect(priorities.length).toBeLessThanOrEqual(3);
     });
   });
 
