@@ -12,6 +12,7 @@ describe('TopPriorities', () => {
   let onToggle, onDelete, onAdd, onUpdate;
 
   beforeEach(() => {
+    localStorage.clear();
     onToggle = vi.fn();
     onDelete = vi.fn();
     onAdd    = vi.fn();
@@ -235,5 +236,37 @@ describe('TopPriorities', () => {
     expect(screen.queryByText('Secondary task 4')).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'See all (5)' }));
     expect(screen.getByText('Secondary task 4')).toBeInTheDocument();
+  });
+
+  it('remembers when a secondary section is collapsed', async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(<TopPriorities tasks={TASKS} category='tomorrow' onToggle={onToggle} onDelete={onDelete} onAdd={onAdd} onUpdate={onUpdate} />);
+    await user.click(screen.getByRole('button', { name: 'Collapse For Tomorrow' }));
+    expect(screen.queryByText('Write unit tests')).not.toBeInTheDocument();
+    expect(localStorage.getItem('bloomspace.sectionCollapsed.tomorrow')).toBe('true');
+
+    unmount();
+    render(<TopPriorities tasks={TASKS} category='tomorrow' onToggle={onToggle} onDelete={onDelete} onAdd={onAdd} onUpdate={onUpdate} />);
+    expect(screen.getByRole('button', { name: 'Expand For Tomorrow' })).toBeInTheDocument();
+  });
+
+  it('lets Typical Day users choose a different priority', async () => {
+    const user = userEvent.setup();
+    const onChoosePriority = vi.fn();
+    const candidates = [{ _id: 'candidate-1', text: 'Alternative task' }];
+    render(<TopPriorities
+      tasks={TASKS}
+      energyLevel='typical'
+      candidateTasks={candidates}
+      onChoosePriority={onChoosePriority}
+      onToggle={onToggle}
+      onDelete={onDelete}
+      onAdd={onAdd}
+      onUpdate={onUpdate}
+    />);
+
+    await user.click(screen.getByRole('button', { name: 'Choose a different task' }));
+    await user.click(screen.getByRole('button', { name: 'Choose' }));
+    expect(onChoosePriority).toHaveBeenCalledWith('candidate-1');
   });
 });

@@ -34,6 +34,11 @@ Current focused check: Tomorrow should contain three next-up tasks whenever at
 least three tasks remain after Top Priorities. Due-soon tasks must appear before
 later filler tasks. Parking Lot library work is intentionally separate.
 
+Also confirm Tomorrow and Don't Forget remember their collapsed state after a
+refresh. On Typical and Slow Day, expand Choose a different task, select an
+alternative, and confirm it replaces the last current priority without
+exceeding the mode's focus limit. Reorder chosen priorities by dragging.
+
 The beta tester feedback box, optional cognitive-load breakdown, and daily
 history/calendar search are saved as items 17 through 19. They should not be
 built until the core MVP is stable.

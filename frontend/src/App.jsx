@@ -215,6 +215,43 @@ const App = () => {
     if (targetCategory) moveTask(taskId, targetCategory);
   };
 
+  const choosePriorityTask = async (taskId) => {
+    const capacity = energyLevel === 'slow' ? 1 : energyLevel === 'early' ? 4 : 3;
+    const candidate = tasks.find(task => task._id === taskId);
+    if (!candidate) return false;
+    const snapshot = tasks;
+    const currentPriorities = tasks
+      .filter(task => task.sortedCategory === 'priorities' && !task.completed && task._id !== taskId)
+      .sort(bySectionOrder);
+    const demoted = currentPriorities.length >= capacity ? currentPriorities[capacity - 1] : null;
+    const updates = new Map([[taskId, {
+      sorted: true,
+      sortedCategory: 'priorities',
+      sortedAt: Date.now(),
+      sectionOrder: Math.min(currentPriorities.length, capacity - 1),
+    }]]);
+
+    if (demoted) {
+      const destinationTasks = tasks.filter(task => task.sortedCategory === candidate.sortedCategory && task._id !== taskId);
+      updates.set(demoted._id, {
+        sorted: true,
+        sortedCategory: candidate.sortedCategory,
+        sortedAt: Date.now(),
+        sectionOrder: destinationTasks.length,
+      });
+    }
+
+    setTasks(current => current.map(task => updates.has(task._id) ? { ...task, ...updates.get(task._id) } : task));
+    try {
+      await Promise.all([...updates].map(([id, taskUpdates]) => api.put(`/tasks/${id}`, taskUpdates)));
+      return true;
+    } catch (err) {
+      console.error('❌ Failed to choose priority task:', err);
+      setTasks(snapshot);
+      return false;
+    }
+  };
+
   const moveTaskToParkingLot = async (taskId) => {
     const task = tasks.find(item => item._id === taskId);
     if (!task) return false;
@@ -454,6 +491,9 @@ const App = () => {
               onMove={moveTask}
               onMoveSection={moveTaskBySection}
               onMoveToParking={moveTaskToParkingLot}
+              energyLevel={energyLevel}
+              candidateTasks={[...tomorrowTasks, ...dontForget].filter(task => !task.completed)}
+              onChoosePriority={choosePriorityTask}
             />
             <ForTomorrow
               tasks={tomorrowTasks}

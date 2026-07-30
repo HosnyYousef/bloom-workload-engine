@@ -46,6 +46,10 @@ What changed:
   remains in Don't Forget, where the three highest-ranked items show first.
 * Followed up by making Tomorrow fill to three tasks when fewer than three are
   due soon, using the highest-ranked remaining next-up work.
+* Made Tomorrow and Don't Forget independently collapsible and saved each
+  preference on the device.
+* Added a Typical/Slow priority chooser that lets users replace the last
+  recommendation with another available task while preserving the focus cap.
 
 What needs to happen next: organize at least eight tasks under each energy mode
 and confirm the 4/3/3 capacities and energy-appropriate selection.

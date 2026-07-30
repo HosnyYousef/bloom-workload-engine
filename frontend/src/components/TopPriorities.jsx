@@ -6,15 +6,27 @@ const SECTION_CONFIG = {
     dontForget: { title: "Don't Forget", subtitle: 'Saved safely for later', placeholder: 'Add reminder...', defaults: { hours: 0.5, deadline: '', importance: 'low' }, card: 'bg-green-200 dark:bg-[#072010]', text: 'dark:text-green-100' },
 };
 
-const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 'priorities', onMove, onMoveSection, onMoveToParking }) => {
+const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 'priorities', onMove, onMoveSection, onMoveToParking, energyLevel, candidateTasks = [], onChoosePriority }) => {
     const [newTask, setNewTask] = useState('');
     const [editingTaskId, setEditingTaskId] = useState(null);
     const [editText, setEditText] = useState('');
     const [editSteps, setEditSteps] = useState([]);
     const [showAll, setShowAll] = useState(false);
+    const [showChoices, setShowChoices] = useState(false);
     const config = SECTION_CONFIG[category];
     const isSecondarySection = category !== 'priorities';
+    const collapseKey = `bloomspace.sectionCollapsed.${category}`;
+    const [isCollapsed, setIsCollapsed] = useState(() => isSecondarySection && localStorage.getItem(collapseKey) === 'true');
     const visibleTasks = isSecondarySection && !showAll ? tasks.slice(0, 3) : tasks;
+    const canChooseAlternative = category === 'priorities'
+        && ['typical', 'slow'].includes(energyLevel)
+        && candidateTasks.length > 0;
+
+    const toggleCollapsed = () => {
+        const next = !isCollapsed;
+        setIsCollapsed(next);
+        localStorage.setItem(collapseKey, String(next));
+    };
 
     const handleAdd = () => {
         if (newTask.trim() === '') return;
@@ -98,15 +110,22 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
                     <p className='font-bold dark:text-gray-100'>{config.title}</p>
                     <p className='text-xs text-gray-500 dark:text-gray-400'>{config.subtitle}</p>
                 </div>
-                {isSecondarySection && tasks.length > 3 ? (
-                    <button type='button' onClick={() => setShowAll(!showAll)} className='text-sm underline dark:text-gray-400'>
-                        {showAll ? 'Show less' : `See all (${tasks.length})`}
-                    </button>
-                ) : null}
+                <div className='flex items-center gap-2'>
+                    {isSecondarySection && tasks.length > 3 && !isCollapsed ? (
+                        <button type='button' onClick={() => setShowAll(!showAll)} className='text-sm underline dark:text-gray-400'>
+                            {showAll ? 'Show less' : `See all (${tasks.length})`}
+                        </button>
+                    ) : null}
+                    {isSecondarySection ? (
+                        <button type='button' onClick={toggleCollapsed} aria-expanded={!isCollapsed} aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${config.title}`} className='px-2 text-gray-500 dark:text-gray-400'>
+                            {isCollapsed ? '▸' : '▾'}
+                        </button>
+                    ) : null}
+                </div>
             </div>
 
             {/* Task List */}
-            <div className={`space-y-2 transition-opacity ${isSecondarySection ? 'opacity-60 hover:opacity-100 focus-within:opacity-100' : ''}`}>
+            {!isCollapsed && <div className={`space-y-2 transition-opacity ${isSecondarySection ? 'opacity-60 hover:opacity-100 focus-within:opacity-100' : ''}`}>
                 {visibleTasks.map(task => (
                     <div
                         key={task._id}
@@ -206,10 +225,28 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
                         </>)}
                     </div>
                 ))}
-            </div>
+            </div>}
+
+            {canChooseAlternative && (
+                <div className='mt-3 border-t border-gray-300 dark:border-gray-600 pt-2'>
+                    <button type='button' onClick={() => setShowChoices(!showChoices)} aria-expanded={showChoices} className='text-xs font-semibold text-blue-600 dark:text-blue-400'>
+                        {showChoices ? 'Hide other available tasks' : 'Choose a different task'}
+                    </button>
+                    {showChoices && (
+                        <div className='mt-2 max-h-48 overflow-y-auto rounded-lg bg-gray-100 dark:bg-gray-900/50 p-2 space-y-1'>
+                            {candidateTasks.map(task => (
+                                <div key={task._id} className='flex items-center gap-2 text-xs'>
+                                    <span className='min-w-0 flex-1 truncate dark:text-gray-300'>{task.text}</span>
+                                    <button type='button' onClick={() => onChoosePriority?.(task._id)} className='rounded bg-blue-600 px-2 py-1 font-semibold text-white'>Choose</button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/* Add New Task */}
-            <div className='mt-3 pt-3 border-t-2 border-gray-200 dark:border-gray-600'>
+            {!isCollapsed && <div className='mt-3 pt-3 border-t-2 border-gray-200 dark:border-gray-600'>
                 <div className='flex gap-2'>
                     <input
                         type="text"
@@ -226,7 +263,7 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
                         +
                     </button>
                 </div>
-            </div>
+            </div>}
         </div>
     )
 }
