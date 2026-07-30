@@ -33,6 +33,9 @@ The beta tester feedback box, optional cognitive-load breakdown, and daily
 history/calendar search are saved as items 17 through 19. They should not be
 built until the core MVP is stable.
 
+Product analytics is saved as item 20 and is required during final web and App
+Store launch preparation. The provider will be selected later.
+
 Suggested command after the change:
 
 ```bash

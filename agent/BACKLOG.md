@@ -165,6 +165,17 @@ each day. Add a calendar picker and direct date entry for jumping to a specific
 day. Add Apple Calendar-style search that can find a past task by its text and
 open the day where it appeared.
 
+### 20. Add product analytics before launch
+
+Status: Required during final web and App Store launch preparation
+
+Instrument BloomSpace to measure how clients use the core experience on web
+and in the mobile app. Choose the analytics service later when the planned
+provider is shared. Define the small set of useful events before integrating
+it, avoid collecting note or task contents, and include any privacy disclosure,
+consent, and App Store requirements. Do not build this during the current core
+MVP work, but do not launch publicly without reviewing it.
+
 ## Core Loop Acceptance Test
 
 Before design work, confirm this complete flow:
