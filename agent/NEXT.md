@@ -23,16 +23,10 @@ After coding:
 
 ## Current Next Step
 
-Manually test the two item 4 refinements: confirm `1.` followed by Space starts
-a numbered list, then create a task with indented sub-bullets and confirm Turn
-into tasks saves only the parent as a task with the sub-bullets as small steps.
-Also open Edit on a Top Priority and confirm task/step changes and step order
-remain after Save and refresh.
-
-Test editing in all three recommendation sections. Drag tasks within a section,
-between sections, and onto the Parking Lot; refresh after each move to confirm
-the order persists. Also verify the section arrows and return-to-Parking-Lot
-button work without dragging.
+Manually test item 5: simple tasks such as calls, messages, purchases, and
+payments should have no generated small steps. Planning, research, reports, and
+other multi-stage work should still receive a useful breakdown. Confirm that
+user-written sub-bullets remain unchanged.
 
 The beta tester feedback box, optional cognitive-load breakdown, and daily
 history/calendar search are saved as items 17 through 19. They should not be

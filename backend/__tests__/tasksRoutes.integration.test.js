@@ -84,7 +84,7 @@ describe('POST /api/tasks/parse', () => {
     const body = await res.json();
     expect(body.deadline).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(body.deadlineSource).toBe('inferred');
-    expect(body.steps.length).toBeGreaterThanOrEqual(3);
+    expect(body.steps).toEqual([]);
     expect(body.energyRequired).toBe('low');
   });
 

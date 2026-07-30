@@ -169,6 +169,28 @@ const detectCategory = (lower) => {
   return GENERIC_CATEGORY;
 };
 
+const shouldGenerateSteps = (lower, category) => {
+  if (['communication', 'errand', 'appointment', 'general'].includes(category.name)) {
+    return false;
+  }
+
+  if (category.name === 'admin') {
+    return /\b(tax|taxes|application|paperwork|visa|insurance|refund|register)\b/.test(lower);
+  }
+
+  if (category.name === 'chores') {
+    const simpleChore = /\b(dishes|laundry|vacuum|fold)\b/.test(lower)
+      && !/\b(house|home|apartment|garage|office|room|closet|whole|all)\b/.test(lower);
+    return !simpleChore;
+  }
+
+  if (category.name === 'deepwork') {
+    return !/\b(typo|spelling|rename|one line|quick fix)\b/.test(lower);
+  }
+
+  return ['learning', 'planning'].includes(category.name);
+};
+
 /**
  * Finds an explicit date phrase and returns a Date, or null if none.
  * Checked in order from most specific to least, so "day after tomorrow"
@@ -288,8 +310,8 @@ const parseEntry = (text, ref = new Date()) => {
     importance: detectImportance(lower, deadline, ref),
     energyRequired: category.energy,
     category: category.name,
-    steps: [...category.steps],
+    steps: shouldGenerateSteps(lower, category) ? [...category.steps] : [],
   };
 };
 
-module.exports = { parseEntry, detectExplicitDeadline, toYMD };
+module.exports = { parseEntry, detectExplicitDeadline, shouldGenerateSteps, toYMD };

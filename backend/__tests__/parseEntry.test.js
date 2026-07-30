@@ -146,20 +146,31 @@ describe('parseEntry: energy and effort', () => {
 });
 
 describe('parseEntry: steps', () => {
-  it('every entry gets between 3 and 5 steps', () => {
-    const samples = [
-      'pay rent',
-      'call mom',
-      'write the essay',
-      'research standing desks',
-      'random thing with no keywords',
-    ];
-    for (const text of samples) {
-      const { steps } = parseEntry(text, REF);
-      expect(steps.length).toBeGreaterThanOrEqual(3);
-      expect(steps.length).toBeLessThanOrEqual(5);
-      steps.forEach((s) => expect(typeof s).toBe('string'));
-    }
+  it.each([
+    'call mom',
+    'send Alex the document',
+    'buy toothpaste',
+    'book a dentist appointment',
+    'pay the electricity bill',
+    'do the dishes',
+    'random thing with no keywords',
+    'fix typo',
+  ])('does not add unnecessary steps to "%s"', (text) => {
+    expect(parseEntry(text, REF).steps).toEqual([]);
+  });
+
+  it.each([
+    'plan a birthday party',
+    'prepare the quarterly presentation',
+    'write the annual report',
+    'research standing desks',
+    'file my taxes',
+    'organize the garage',
+  ])('adds a useful-sized breakdown to "%s"', (text) => {
+    const { steps } = parseEntry(text, REF);
+    expect(steps.length).toBeGreaterThanOrEqual(3);
+    expect(steps.length).toBeLessThanOrEqual(5);
+    steps.forEach((step) => expect(typeof step).toBe('string'));
   });
 
   it('keeps the original text unchanged', () => {

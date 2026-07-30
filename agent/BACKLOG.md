@@ -54,7 +54,7 @@ Start with the smallest useful toolbar. Remove controls that add friction.
 
 ### 4. Parking Lot execution and undo
 
-Status: Core flow accepted; nested-step refinement implemented, awaiting acceptance
+Status: Accepted July 30, 2026
 
 Convert written lines into tasks, keep the original text recoverable, and let
 the user undo the conversion. Review the partial uncommitted implementation
@@ -63,6 +63,8 @@ before continuing.
 ## Task Steps
 
 ### 5. Generate steps only when useful
+
+Status: Implemented, awaiting manual acceptance
 
 Do not add generic steps to simple tasks such as logging in or sending a quick
 message. Generate steps for larger or unclear tasks, or let the user request

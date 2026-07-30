@@ -26,6 +26,26 @@ Phase 1: MVP Foundation
 
 ## Session Log
 
+### 2026-07-30: Generate small steps only when useful
+
+What changed:
+
+* Stopped generating steps for calls, messages, errands, appointments, simple
+  payments, small chores, trivial fixes, and unmatched generic notes.
+* Kept step generation for planning, learning/research, substantial deep work,
+  broad chores, and complex administrative tasks.
+* Preserved user-authored Parking Lot sub-bullets as the highest-priority step
+  source.
+* Recorded Parking Lot execution, movement, editing, and undo as accepted.
+
+What needs to happen next: manually compare simple and complex tasks, then
+begin item 6 only after item 5 is accepted.
+
+Verification: all 43 parser tests pass, along with frontend lint and production
+build. The full backend run passed 96 tests but its HTTP route-integration suite
+could not bind a temporary local server in this environment, so 8 route tests
+did not run successfully.
+
 ### 2026-07-28: Notes-style Parking Lot editor
 
 What changed:
