@@ -30,7 +30,7 @@ Phase 1: MVP Foundation
 
 What changed:
 
-* Limited Typical Day and Slow Day to 3 Top Priorities.
+* Limited Typical Day to 3 Top Priorities and Slow Day to 1.
 * Allowed up to 4 Top Priorities for Early Start.
 * Aligned the backend recommendation engine and client fallback limits.
 * Kept energy selection non-destructive: it affects the next explicit

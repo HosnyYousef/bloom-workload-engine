@@ -16,7 +16,7 @@
 
 const { scoreTask, daysUntil } = require('./scoreTask');
 
-const TODAY_COUNTS = Object.freeze({ early: 4, typical: 3, slow: 3 });
+const TODAY_COUNTS = Object.freeze({ early: 4, typical: 3, slow: 1 });
 const todayCapacity = (energyLevel) => TODAY_COUNTS[energyLevel] ?? TODAY_COUNTS.typical;
 
 // Leftovers land in "tomorrow" only when due within this many days.

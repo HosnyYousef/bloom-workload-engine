@@ -42,7 +42,7 @@ describe('recommendTasks: today selection', () => {
   it.each([
     ['early', 4],
     ['typical', 3],
-    ['slow', 3],
+    ['slow', 1],
   ])('%s mode caps today at %i tasks', (energyLevel, expected) => {
     const tasks = Array.from({ length: 8 }, (_, i) => task({ deadline: ymdOffset(i + 1) }));
     expect(recommendTasks(tasks, ctx(energyLevel)).today).toHaveLength(expected);

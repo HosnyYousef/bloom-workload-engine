@@ -50,7 +50,7 @@ export const sortTasks = (tasks, energyLevel) => {
     dontForget = later.slice(0, 3);
   } else if (energyLevel === 'slow') {
     const quickTasks = urgent.filter(t => !t.hours || t.hours <= 1);
-    priorities = quickTasks.slice(0, 3);
+    priorities = quickTasks.slice(0, 1);
     tomorrowTasks = soon.slice(0, 2);
     dontForget = later.slice(0, 2);
   }

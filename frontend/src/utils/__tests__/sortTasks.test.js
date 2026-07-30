@@ -48,7 +48,7 @@ describe('sortTasks', () => {
         _id: `h${i}`, text: `High ${i}`, importance: 'high', hours: 1,
       }));
       const { priorities } = sortTasks(many, 'typical');
-      expect(priorities.length).toBeLessThanOrEqual(3);
+      expect(priorities.length).toBeLessThanOrEqual(1);
     });
 
     it('caps tomorrowTasks at 3 tasks', () => {

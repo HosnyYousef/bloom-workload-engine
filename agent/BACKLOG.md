@@ -92,8 +92,9 @@ Status: Required for MVP
 
 Implementation status: Implemented, awaiting manual acceptance
 
-Recommend 3 tasks on a Typical Day or Slow Day. Allow up to 4 tasks when the
-user chooses Early Start. Keep the daily list intentionally short.
+Recommend 3 tasks on a Typical Day and 1 task on a Slow Day. Allow up to 4
+tasks when the user chooses Early Start. Keep the daily list intentionally
+short.
 
 ### 9. Explain why a task was selected
 
