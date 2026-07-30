@@ -23,10 +23,10 @@ After coding:
 
 ## Current Next Step
 
-Manually test item 6 with a party, presentation, report, research topic, taxes,
-and a broad organization task. Confirm every generated step refers to the real
-work, stays concise, and avoids generic setup or timer instructions. Confirm
-again that user-written sub-bullets remain unchanged.
+Manually test item 7: check individual small steps in all three recommendation
+sections, refresh, and confirm progress remains. Edit and reorder a mixture of
+complete and incomplete steps and confirm their completion states remain. Mark
+the parent task complete and confirm its step history is still available.
 
 The beta tester feedback box, optional cognitive-load breakdown, and daily
 history/calendar search are saved as items 17 through 19. They should not be

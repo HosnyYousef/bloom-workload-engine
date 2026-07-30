@@ -26,6 +26,20 @@ Phase 1: MVP Foundation
 
 ## Session Log
 
+### 2026-07-30: Persistent small-step checkboxes
+
+What changed:
+
+* Added a checkbox beside every small step in all recommendation sections.
+* Saved each step independently without completing the parent task.
+* Added completed-step styling and an `x of y small steps complete` summary.
+* Kept step progress visible after the parent task is completed and preserved
+  completion while editing or reordering steps.
+* Recorded item 6 as accepted after manual testing.
+
+What needs to happen next: test step completion, refresh persistence, editing,
+reordering, and parent-task completion before accepting item 7.
+
 ### 2026-07-30: Make generated steps task-specific
 
 What changed:

@@ -72,12 +72,14 @@ them.
 
 ### 6. Make steps specific to the task
 
-Status: Implemented, awaiting manual acceptance
+Status: Accepted July 30, 2026
 
 Steps should perform the actual task. Avoid generic preparation that creates
 more work unless clarification is genuinely needed.
 
 ### 7. Add step checkboxes
+
+Status: Implemented, awaiting manual acceptance
 
 Show a small checkbox beside each step. Save step completion separately from
 completion of the main task.

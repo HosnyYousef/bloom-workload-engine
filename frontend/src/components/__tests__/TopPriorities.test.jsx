@@ -183,4 +183,41 @@ describe('TopPriorities', () => {
     expect(onMoveSection).toHaveBeenCalledWith('abc6', 1);
     expect(onMoveToParking).toHaveBeenCalledWith('abc6');
   });
+
+  it('checks one small step without completing the main task', async () => {
+    const user = userEvent.setup();
+    const tasks = [{
+      _id: 'abc7',
+      text: 'Prepare workshop',
+      completed: false,
+      steps: [
+        { text: 'Print worksheets', done: false },
+        { text: 'Test projector', done: true },
+      ],
+    }];
+    render(<TopPriorities tasks={tasks} onToggle={onToggle} onDelete={onDelete} onAdd={onAdd} onUpdate={onUpdate} />);
+
+    expect(screen.getByText('1 of 2 small steps complete')).toBeInTheDocument();
+    await user.click(screen.getByRole('checkbox', { name: 'Complete step: Print worksheets' }));
+
+    expect(onUpdate).toHaveBeenCalledWith('abc7', {
+      steps: [
+        { text: 'Print worksheets', done: true },
+        { text: 'Test projector', done: true },
+      ],
+    });
+    expect(onToggle).not.toHaveBeenCalled();
+  });
+
+  it('shows completed step history when the main task is completed', () => {
+    const tasks = [{
+      _id: 'abc8',
+      text: 'Completed task',
+      completed: true,
+      steps: [{ text: 'Finished step', done: true }],
+    }];
+    render(<TopPriorities tasks={tasks} onToggle={onToggle} onDelete={onDelete} onAdd={onAdd} onUpdate={onUpdate} />);
+
+    expect(screen.getByText('1 of 1 small steps complete')).toBeInTheDocument();
+  });
 });

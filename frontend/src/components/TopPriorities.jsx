@@ -72,6 +72,13 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
         }
     }
 
+    const toggleStep = (task, stepIndex) => {
+        const steps = task.steps.map((step, index) => index === stepIndex
+            ? { ...step, done: !step.done }
+            : step);
+        onUpdate(task._id, { steps });
+    }
+
     return (
         <div
             className={`card ${config.card} border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-44 transition-colors`}
@@ -168,16 +175,22 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
                             </button>
                         </div>
                         {/* Sub-steps suggested by the engine, collapsed by default */}
-                        {task.steps?.length > 0 && !task.completed && (
+                        {task.steps?.length > 0 && (
                             <details className='ml-6 mt-1'>
                                 <summary className='text-xs text-gray-500 dark:text-gray-400 cursor-pointer select-none'>
-                                    {task.steps.length} small steps
+                                    {task.steps.filter(step => step.done).length} of {task.steps.length} small steps complete
                                 </summary>
                                 <ul className='mt-1 space-y-1'>
                                     {task.steps.map((step, i) => (
-                                        <li key={i} className='text-xs text-gray-600 dark:text-gray-300 flex gap-1'>
-                                            <span className='text-gray-400'>{i + 1}.</span>
-                                            <span>{step.text}</span>
+                                        <li key={step._id || i} className='text-xs text-gray-600 dark:text-gray-300 flex items-start gap-2'>
+                                            <input
+                                                type='checkbox'
+                                                checked={Boolean(step.done)}
+                                                onChange={() => toggleStep(task, i)}
+                                                aria-label={`Complete step: ${step.text}`}
+                                                className='mt-0.5 cursor-pointer'
+                                            />
+                                            <span className={step.done ? 'line-through text-gray-400 dark:text-gray-500' : ''}>{step.text}</span>
                                         </li>
                                     ))}
                                 </ul>
