@@ -23,10 +23,10 @@ After coding:
 
 ## Current Next Step
 
-Manually test item 5: simple tasks such as calls, messages, purchases, and
-payments should have no generated small steps. Planning, research, reports, and
-other multi-stage work should still receive a useful breakdown. Confirm that
-user-written sub-bullets remain unchanged.
+Manually test item 6 with a party, presentation, report, research topic, taxes,
+and a broad organization task. Confirm every generated step refers to the real
+work, stays concise, and avoids generic setup or timer instructions. Confirm
+again that user-written sub-bullets remain unchanged.
 
 The beta tester feedback box, optional cognitive-load breakdown, and daily
 history/calendar search are saved as items 17 through 19. They should not be

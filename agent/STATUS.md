@@ -26,6 +26,20 @@ Phase 1: MVP Foundation
 
 ## Session Log
 
+### 2026-07-30: Make generated steps task-specific
+
+What changed:
+
+* Replaced broad category templates with task-aware steps that include the
+  actual task subject.
+* Added dedicated actionable flows for parties, presentations, reports, taxes,
+  applications, research, planning, broad chores, and other deep work.
+* Removed timer/setup filler from newly generated breakdowns.
+* Recorded item 5 as accepted after manual testing.
+
+What needs to happen next: manually review the generated breakdowns for several
+large tasks, then begin item 7 only after item 6 is accepted.
+
 ### 2026-07-30: Generate small steps only when useful
 
 What changed:

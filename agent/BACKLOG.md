@@ -64,13 +64,15 @@ before continuing.
 
 ### 5. Generate steps only when useful
 
-Status: Implemented, awaiting manual acceptance
+Status: Accepted July 30, 2026
 
 Do not add generic steps to simple tasks such as logging in or sending a quick
 message. Generate steps for larger or unclear tasks, or let the user request
 them.
 
 ### 6. Make steps specific to the task
+
+Status: Implemented, awaiting manual acceptance
 
 Steps should perform the actual task. Avoid generic preparation that creates
 more work unless clarification is genuinely needed.

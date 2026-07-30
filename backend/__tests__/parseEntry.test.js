@@ -173,6 +173,31 @@ describe('parseEntry: steps', () => {
     steps.forEach((step) => expect(typeof step).toBe('string'));
   });
 
+  it('creates presentation steps that mention slides and the presentation subject', () => {
+    const { steps } = parseEntry('prepare the quarterly presentation', REF);
+    expect(steps.join(' ')).toMatch(/quarterly presentation/i);
+    expect(steps.join(' ')).toMatch(/slide/i);
+  });
+
+  it('creates tax steps that cover tax documents, review, and submission', () => {
+    const { steps } = parseEntry('file my taxes', REF);
+    expect(steps.join(' ')).toMatch(/income slips|receipts/i);
+    expect(steps.join(' ')).toMatch(/review/i);
+    expect(steps.join(' ')).toMatch(/submit/i);
+  });
+
+  it('uses the research subject in learning steps', () => {
+    const { steps } = parseEntry('research standing desks', REF);
+    expect(steps.filter(step => /standing desks/i.test(step)).length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('avoids the old generic setup and timer filler', () => {
+    const samples = ['plan a birthday party', 'prepare the quarterly presentation', 'research standing desks'];
+    for (const text of samples) {
+      expect(parseEntry(text, REF).steps.join(' ')).not.toMatch(/set up what you need|first ten minutes|25 minute timer/i);
+    }
+  });
+
   it('keeps the original text unchanged', () => {
     expect(parseEntry('  Submit the report by Friday  ', REF).text).toBe(
       'Submit the report by Friday'

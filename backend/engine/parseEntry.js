@@ -191,6 +191,86 @@ const shouldGenerateSteps = (lower, category) => {
   return ['learning', 'planning'].includes(category.name);
 };
 
+const taskSubject = (raw) => raw
+  .replace(/^(?:plan|prepare|write|draft|build|code|design|create|develop|finish|research|learn|study|read|organize|clean|file)\s+/i, '')
+  .replace(/\s+(?:today|tomorrow|tonight|by\s+\w+|before\s+\w+)$/i, '')
+  .trim();
+
+const buildSpecificSteps = (raw, lower, category) => {
+  const subject = taskSubject(raw) || 'the task';
+
+  if (/\b(birthday|party)\b/.test(lower)) return [
+    'Choose the date, budget, and guest list',
+    'Pick and reserve the location',
+    'Send the invitations',
+    'Arrange the food, decorations, and supplies',
+    'Confirm the final details with guests and vendors',
+  ];
+
+  if (/\bpresentation\b/.test(lower)) return [
+    `Gather the key facts and results for ${subject}`,
+    'Choose the main message for the audience',
+    'Draft the slide outline',
+    'Build the slides with supporting visuals',
+    'Review the deck and rehearse once',
+  ];
+
+  if (/\breport\b/.test(lower)) return [
+    `Gather the data and source material for ${subject}`,
+    'Outline the required sections',
+    'Draft each section from the evidence',
+    'Check the conclusions, numbers, and missing details',
+    'Edit and prepare the final version',
+  ];
+
+  if (/\b(tax|taxes)\b/.test(lower)) return [
+    'Gather income slips, receipts, and deduction records',
+    'Confirm the filing deadline and missing documents',
+    'Enter the income and deductions',
+    'Review the return for errors or omissions',
+    'Submit the return and save the confirmation',
+  ];
+
+  if (/\b(application|visa|register|paperwork)\b/.test(lower)) return [
+    `Open the requirements for ${subject}`,
+    'Gather the required documents and account details',
+    'Complete each required section',
+    'Review names, dates, and attachments',
+    'Submit it and save the confirmation',
+  ];
+
+  if (category.name === 'learning') return [
+    `Write the main question you need answered about ${subject}`,
+    `Choose two or three reliable sources about ${subject}`,
+    'Review the sources and record the useful findings',
+    `Summarize what you learned about ${subject}`,
+  ];
+
+  if (category.name === 'chores') return [
+    `Choose the first visible area of ${subject}`,
+    `Remove rubbish and items that do not belong in ${subject}`,
+    'Group the remaining items by where they belong',
+    `Put each group away and finish the surfaces in ${subject}`,
+  ];
+
+  if (category.name === 'planning') return [
+    `Define the desired result for ${subject}`,
+    `List the people, budget, timing, and constraints for ${subject}`,
+    'Choose the next three concrete actions',
+    'Schedule the first action',
+  ];
+
+  if (category.name === 'deepwork') return [
+    `Define what a finished ${subject} must include`,
+    `Outline the main parts of ${subject}`,
+    'Complete the first part',
+    `Finish the remaining parts of ${subject}`,
+    `Review and finalize ${subject}`,
+  ];
+
+  return [...category.steps];
+};
+
 /**
  * Finds an explicit date phrase and returns a Date, or null if none.
  * Checked in order from most specific to least, so "day after tomorrow"
@@ -310,8 +390,8 @@ const parseEntry = (text, ref = new Date()) => {
     importance: detectImportance(lower, deadline, ref),
     energyRequired: category.energy,
     category: category.name,
-    steps: shouldGenerateSteps(lower, category) ? [...category.steps] : [],
+    steps: shouldGenerateSteps(lower, category) ? buildSpecificSteps(raw, lower, category) : [],
   };
 };
 
-module.exports = { parseEntry, detectExplicitDeadline, shouldGenerateSteps, toYMD };
+module.exports = { buildSpecificSteps, parseEntry, detectExplicitDeadline, shouldGenerateSteps, toYMD };
