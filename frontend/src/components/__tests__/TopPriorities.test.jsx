@@ -161,4 +161,26 @@ describe('TopPriorities', () => {
 
     expect(onUpdate).toHaveBeenCalledWith('abc4', { text: 'New name', steps: [] });
   });
+
+  it('moves a task between sections and back to the Parking Lot with visible controls', async () => {
+    const user = userEvent.setup();
+    const onMoveSection = vi.fn();
+    const onMoveToParking = vi.fn();
+    const tasks = [{ _id: 'abc6', text: 'Move me', completed: false, steps: [] }];
+    render(<TopPriorities
+      tasks={tasks}
+      onToggle={onToggle}
+      onDelete={onDelete}
+      onAdd={onAdd}
+      onUpdate={onUpdate}
+      onMoveSection={onMoveSection}
+      onMoveToParking={onMoveToParking}
+    />);
+
+    await user.click(screen.getByRole('button', { name: 'Move Move me down a section' }));
+    await user.click(screen.getByRole('button', { name: 'Move Move me to Parking Lot' }));
+
+    expect(onMoveSection).toHaveBeenCalledWith('abc6', 1);
+    expect(onMoveToParking).toHaveBeenCalledWith('abc6');
+  });
 });

@@ -29,6 +29,11 @@ into tasks saves only the parent as a task with the sub-bullets as small steps.
 Also open Edit on a Top Priority and confirm task/step changes and step order
 remain after Save and refresh.
 
+Test editing in all three recommendation sections. Drag tasks within a section,
+between sections, and onto the Parking Lot; refresh after each move to confirm
+the order persists. Also verify the section arrows and return-to-Parking-Lot
+button work without dragging.
+
 The beta tester feedback box, optional cognitive-load breakdown, and daily
 history/calendar search are saved as items 17 through 19. They should not be
 built until the core MVP is stable.

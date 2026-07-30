@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { editorTextFromElement, sanitizeEditorHtml, structuredEntriesFromElement } from "../utils/splitParkingLotEntries";
 
 const DRAFT_KEY = 'bloomspace.parkingLotDraft';
@@ -12,6 +12,7 @@ const ParkingLot = ({
     canUndo,
     onSelect,
     selectedTaskId,
+    onDropTask,
 }) => {
     // Restore once. Re-reading this after every input makes React replace the
     // editable HTML and resets the caret, which causes new text to appear backwards.
@@ -26,6 +27,7 @@ const ParkingLot = ({
     const [isExecuting, setIsExecuting] = useState(false);
     const [isUndoing, setIsUndoing] = useState(false);
     const [error, setError] = useState('');
+    const [isTaskDragOver, setIsTaskDragOver] = useState(false);
 
     useLayoutEffect(() => {
         if (editorRef.current) editorRef.current.innerHTML = initialDraft;
@@ -38,6 +40,23 @@ const ParkingLot = ({
         localStorage.setItem(DRAFT_KEY, cleanHtml);
         setDraftText(editorTextFromElement(editor));
     };
+
+    useEffect(() => {
+        const appendTaskText = (event) => {
+            const editor = editorRef.current;
+            if (!editor || !event.detail?.text) return;
+            for (const line of event.detail.text.split('\n')) {
+                const block = document.createElement('div');
+                block.textContent = line;
+                editor.appendChild(block);
+            }
+            saveDraft();
+            editor.focus();
+            editor.scrollTop = editor.scrollHeight;
+        };
+        window.addEventListener('bloomspace:addToParkingLot', appendTaskText);
+        return () => window.removeEventListener('bloomspace:addToParkingLot', appendTaskText);
+    });
 
     const formatDraft = (command) => {
         editorRef.current?.focus();
@@ -161,7 +180,24 @@ const ParkingLot = ({
     const unsortedTasks = tasks.filter(task => !task.sorted);
 
     return (
-        <section className="card bg-pink-300 dark:bg-[#200a12] border-2 border-black dark:border-gray-700 rounded-2xl p-6 min-h-150 flex flex-col transition-colors">
+        <section
+            className={`card bg-pink-300 dark:bg-[#200a12] border-2 rounded-2xl p-6 min-h-150 flex flex-col transition-colors ${isTaskDragOver ? 'border-yellow-400 ring-4 ring-yellow-400/30' : 'border-black dark:border-gray-700'}`}
+            onDragOver={(event) => {
+                if (event.dataTransfer.types.includes('application/x-bloomspace-task')) {
+                    event.preventDefault();
+                    setIsTaskDragOver(true);
+                }
+            }}
+            onDragLeave={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) setIsTaskDragOver(false);
+            }}
+            onDrop={(event) => {
+                event.preventDefault();
+                setIsTaskDragOver(false);
+                const taskId = event.dataTransfer.getData('application/x-bloomspace-task');
+                if (taskId) onDropTask?.(taskId);
+            }}
+        >
             <div className="flex flex-wrap justify-between items-start gap-3 mb-4">
                 <div>
                     <h2 className="font-bold text-2xl dark:text-gray-100">PARKING LOT</h2>

@@ -60,6 +60,12 @@ What changed:
   editing, adding, removing, or reordering its small steps.
 * Added Ctrl/Cmd+Enter as the Save shortcut while the Top Priority inline
   editor is focused, matching the Parking Lot submission convention.
+* Shared task and small-step editing across Top Priorities, For Tomorrow, and
+  Don't Forget.
+* Added persisted drag-and-drop ordering within and between recommendation
+  sections, plus visible controls for moving a task up or down a section.
+* Made the Parking Lot a task drop target and added a keyboard/touch-friendly
+  return action that restores the task and its steps as editable text.
 
 What works: the production frontend build and lint check pass.
 

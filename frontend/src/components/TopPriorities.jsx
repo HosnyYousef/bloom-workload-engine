@@ -1,20 +1,32 @@
 import { useState } from 'react'
 
-const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate }) => {
+const SECTION_CONFIG = {
+    priorities: { title: 'Top Priorities', subtitle: 'Your focus for today', placeholder: 'Add priority task...', defaults: { hours: 1, deadline: '', importance: 'high' }, card: 'bg-white dark:bg-gray-800', text: 'dark:text-gray-200' },
+    tomorrow: { title: 'For Tomorrow', subtitle: 'Important, but not needed today', placeholder: 'Add task for tomorrow...', defaults: { hours: 1, importance: 'medium' }, card: 'bg-orange-100 dark:bg-[#1c0d00]', text: 'dark:text-orange-100' },
+    dontForget: { title: "Don't Forget", subtitle: 'Saved safely for later', placeholder: 'Add reminder...', defaults: { hours: 0.5, deadline: '', importance: 'low' }, card: 'bg-green-200 dark:bg-[#072010]', text: 'dark:text-green-100' },
+};
+
+const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 'priorities', onMove, onMoveSection, onMoveToParking }) => {
     const [newTask, setNewTask] = useState('');
     const [editingTaskId, setEditingTaskId] = useState(null);
     const [editText, setEditText] = useState('');
     const [editSteps, setEditSteps] = useState([]);
+    const config = SECTION_CONFIG[category];
 
     const handleAdd = () => {
         if (newTask.trim() === '') return;
+        const defaults = { ...config.defaults };
+        if (category === 'tomorrow') {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            defaults.deadline = tomorrow.toISOString().split('T')[0];
+        }
         onAdd({
             text: newTask,
-            hours: 1,
-            deadline: '',
-            importance: 'high',
+            ...defaults,
             sorted: true,
-            sortedCategory: 'priorities'
+            sortedCategory: category,
+            sectionOrder: tasks.length,
         })
         setNewTask('');
     }
@@ -61,12 +73,20 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate }) => {
     }
 
     return (
-        <div className='card bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-44 transition-colors'>
+        <div
+            className={`card ${config.card} border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-44 transition-colors`}
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={(event) => {
+                event.preventDefault();
+                const taskId = event.dataTransfer.getData('application/x-bloomspace-task');
+                if (taskId) onMove?.(taskId, category, tasks.length);
+            }}
+        >
             {/* Header */}
             <div className='flex justify-between items-start border-b-2 border-black dark:border-gray-600 pb-2 mb-3'>
                 <div>
-                    <p className='font-bold dark:text-gray-100'>Top Priorities</p>
-                    <p className='text-xs text-gray-500 dark:text-gray-400'>Your focus for today</p>
+                    <p className='font-bold dark:text-gray-100'>{config.title}</p>
+                    <p className='text-xs text-gray-500 dark:text-gray-400'>{config.subtitle}</p>
                 </div>
                 <button className='text-sm underline dark:text-gray-400'>See all...</button>
             </div>
@@ -74,7 +94,21 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate }) => {
             {/* Task List */}
             <div className="space-y-2">
                 {tasks.map(task => (
-                    <div key={task._id}>
+                    <div
+                        key={task._id}
+                        draggable={editingTaskId !== task._id}
+                        onDragStart={(event) => {
+                            event.dataTransfer.effectAllowed = 'move';
+                            event.dataTransfer.setData('application/x-bloomspace-task', task._id);
+                        }}
+                        onDragOver={(event) => event.preventDefault()}
+                        onDrop={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            const taskId = event.dataTransfer.getData('application/x-bloomspace-task');
+                            if (taskId) onMove?.(taskId, category, tasks.findIndex(item => item._id === task._id));
+                        }}
+                    >
                         {editingTaskId === task._id ? (
                             <div onKeyDown={handleEditorKeyDown} className='ml-6 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/50 p-3 space-y-2'>
                                 <label className='block text-xs font-semibold text-gray-600 dark:text-gray-300'>Task name</label>
@@ -106,13 +140,14 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate }) => {
                             </div>
                         ) : (<>
                         <div className='flex items-center gap-2 group'>
+                            <span aria-label={`Drag ${task.text}`} title='Drag to reorder or move' className='cursor-grab select-none text-gray-400'>⋮⋮</span>
                             <input
                                 type="checkbox"
                                 checked={task.completed}
                                 onChange={() => onToggle(task._id)}
                                 className='cursor-pointer'
                             />
-                            <span className={`flex-1 dark:text-gray-200 ${task.completed ? 'line-through text-gray-400 dark:text-gray-500' : ''}`}>
+                            <span className={`flex-1 ${config.text} ${task.completed ? 'line-through text-gray-400 dark:text-gray-500' : ''}`}>
                                 {task.text}
                             </span>
                             <button
@@ -122,6 +157,9 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate }) => {
                             >
                                 Edit
                             </button>
+                            <button type='button' onClick={() => onMoveSection?.(task._id, -1)} disabled={category === 'priorities'} aria-label={`Move ${task.text} up a section`} title='Move up a section' className='text-xs text-gray-500 hover:text-gray-900 dark:hover:text-white disabled:hidden'>▲</button>
+                            <button type='button' onClick={() => onMoveSection?.(task._id, 1)} disabled={category === 'dontForget'} aria-label={`Move ${task.text} down a section`} title='Move down a section' className='text-xs text-gray-500 hover:text-gray-900 dark:hover:text-white disabled:hidden'>▼</button>
+                            <button type='button' onClick={() => onMoveToParking?.(task._id)} aria-label={`Move ${task.text} to Parking Lot`} title='Move to Parking Lot' className='text-xs text-gray-500 hover:text-pink-600'>↩</button>
                             <button
                                 onClick={() => onDelete(task._id)}
                                 className='text-red-500 dark:text-red-400 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity'
@@ -158,7 +196,7 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate }) => {
                         value={newTask}
                         onChange={(e) => setNewTask(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-                        placeholder='Add priority task...'
+                        placeholder={config.placeholder}
                         className='flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500'
                     />
                     <button

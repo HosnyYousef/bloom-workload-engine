@@ -87,9 +87,10 @@ const App = () => {
   // DERIVED STATE - show SORTED tasks in the right panels
   const sortedTasksOnly = tasks.filter(t => t.sorted)
 
-  const allPriorities = sortedTasksOnly.filter(t => t.sortedCategory === 'priorities')
-  const allTomorrowTasks = sortedTasksOnly.filter(t => t.sortedCategory === 'tomorrow');
-  const allDontForget = sortedTasksOnly.filter(t => t.sortedCategory === 'dontForget');
+  const bySectionOrder = (a, b) => (a.sectionOrder ?? Number.MAX_SAFE_INTEGER) - (b.sectionOrder ?? Number.MAX_SAFE_INTEGER);
+  const allPriorities = sortedTasksOnly.filter(t => t.sortedCategory === 'priorities').sort(bySectionOrder)
+  const allTomorrowTasks = sortedTasksOnly.filter(t => t.sortedCategory === 'tomorrow').sort(bySectionOrder);
+  const allDontForget = sortedTasksOnly.filter(t => t.sortedCategory === 'dontForget').sort(bySectionOrder);
 
   // The engine already picks exactly 3 for today (energy level changes
   // which 3 via scoring), so no extra slicing here.
@@ -173,6 +174,59 @@ const App = () => {
       setTasks(tasks.map(task => task._id === id ? response.data : task))
     } catch (err) {
       console.error('❌ Failed to update task:', err)
+    }
+  };
+
+  const moveTask = async (taskId, targetCategory, targetIndex) => {
+    const snapshot = tasks;
+    const movingTask = tasks.find(task => task._id === taskId);
+    if (!movingTask) return false;
+
+    const sourceCategory = movingTask.sortedCategory;
+    const sourceTasks = tasks.filter(task => task.sortedCategory === sourceCategory && task._id !== taskId).sort(bySectionOrder);
+    const targetTasks = tasks.filter(task => task.sortedCategory === targetCategory && task._id !== taskId).sort(bySectionOrder);
+    const insertAt = Math.max(0, Math.min(targetIndex ?? targetTasks.length, targetTasks.length));
+    targetTasks.splice(insertAt, 0, movingTask);
+
+    const updates = new Map();
+    sourceTasks.forEach((task, index) => updates.set(task._id, { sectionOrder: index }));
+    targetTasks.forEach((task, index) => updates.set(task._id, {
+      sectionOrder: index,
+      sorted: true,
+      sortedCategory: targetCategory,
+      sortedAt: task._id === taskId ? Date.now() : task.sortedAt,
+    }));
+
+    setTasks(current => current.map(task => updates.has(task._id) ? { ...task, ...updates.get(task._id) } : task));
+    try {
+      await Promise.all([...updates].map(([id, taskUpdates]) => api.put(`/tasks/${id}`, taskUpdates)));
+      return true;
+    } catch (err) {
+      console.error('❌ Failed to move task:', err);
+      setTasks(snapshot);
+      return false;
+    }
+  };
+
+  const moveTaskBySection = (taskId, offset) => {
+    const categories = ['priorities', 'tomorrow', 'dontForget'];
+    const task = tasks.find(item => item._id === taskId);
+    const targetCategory = categories[categories.indexOf(task?.sortedCategory) + offset];
+    if (targetCategory) moveTask(taskId, targetCategory);
+  };
+
+  const moveTaskToParkingLot = async (taskId) => {
+    const task = tasks.find(item => item._id === taskId);
+    if (!task) return false;
+    const lines = [task.text, ...(task.steps || []).map(step => `    - ${step.text}`)];
+    try {
+      await api.delete(`/tasks/${taskId}`);
+      setTasks(current => current.filter(item => item._id !== taskId));
+      window.dispatchEvent(new CustomEvent('bloomspace:addToParkingLot', { detail: { text: lines.join('\n') } }));
+      return true;
+    } catch (err) {
+      console.error('❌ Failed to move task to Parking Lot:', err);
+      return false;
     }
   };
 
@@ -392,18 +446,29 @@ const App = () => {
               onDelete={deleteTask}
               onAdd={addTask}
               onUpdate={updateTask}
+              onMove={moveTask}
+              onMoveSection={moveTaskBySection}
+              onMoveToParking={moveTaskToParkingLot}
             />
             <ForTomorrow
               tasks={tomorrowTasks}
               onToggle={toggleTask}
               onDelete={deleteTask}
               onAdd={addTask}
+              onUpdate={updateTask}
+              onMove={moveTask}
+              onMoveSection={moveTaskBySection}
+              onMoveToParking={moveTaskToParkingLot}
             />
             <DontForget
               tasks={dontForget}
               onToggle={toggleTask}
               onDelete={deleteTask}
               onAdd={addTask}
+              onUpdate={updateTask}
+              onMove={moveTask}
+              onMoveSection={moveTaskBySection}
+              onMoveToParking={moveTaskToParkingLot}
             />
             {/* Notes visible in sidebar on desktop only */}
             <div className="hidden lg:block">
@@ -424,6 +489,7 @@ const App = () => {
               canUndo={Boolean(organizeUndoSnapshot)}
               onSelect={handleSelectTask}
               selectedTaskId={selectedTask?._id}
+              onDropTask={moveTaskToParkingLot}
             />
           </div>
 
