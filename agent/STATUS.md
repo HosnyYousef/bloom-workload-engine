@@ -36,6 +36,14 @@ What changed:
 * Kept energy selection non-destructive: it affects the next explicit
   organization and does not immediately overwrite manual task placement.
 * Recorded persistent small-step checkboxes as accepted.
+* Made energy-level changes immediately rerun recommendation and update the
+  focused list.
+* Limited Tomorrow and Don't Forget to three visible items by default, with
+  subdued styling and a working See all/Show less control for overflow.
+* Renamed Turn into tasks to Organize Parking Lot to clarify that it converts,
+  groups, and categorizes the captured writing.
+* Tightened Tomorrow to near-term work due within three days; later major work
+  remains in Don't Forget, where the three highest-ranked items show first.
 
 What needs to happen next: organize at least eight tasks under each energy mode
 and confirm the 4/3/3 capacities and energy-appropriate selection.

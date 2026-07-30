@@ -25,6 +25,7 @@ describe('applyRecommendations', () => {
       sortedCategory: 'priorities',
       sortedAt: NOW,
       score: 0.9,
+      sectionOrder: 0,
     });
   });
 
@@ -32,6 +33,16 @@ describe('applyRecommendations', () => {
     const result = applyRecommendations(localTasks, response, NOW);
     expect(result.find((t) => t._id === 'b').sortedCategory).toBe('tomorrow');
     expect(result.find((t) => t._id === 'c').sortedCategory).toBe('dontForget');
+  });
+
+  it('resets saved manual order to the new recommendation order', () => {
+    const result = applyRecommendations(
+      [{ _id: 'x', sectionOrder: 9 }, { _id: 'y', sectionOrder: 2 }],
+      { today: [{ _id: 'y', score: 1 }, { _id: 'x', score: 0.9 }] },
+      NOW
+    );
+    expect(result.find((task) => task._id === 'y').sectionOrder).toBe(0);
+    expect(result.find((task) => task._id === 'x').sectionOrder).toBe(1);
   });
 
   it('re-buckets a task that was already sorted (c moves out of priorities)', () => {

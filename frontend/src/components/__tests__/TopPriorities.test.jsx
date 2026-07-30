@@ -220,4 +220,20 @@ describe('TopPriorities', () => {
 
     expect(screen.getByText('1 of 1 small steps complete')).toBeInTheDocument();
   });
+
+  it('shows only three secondary tasks until See all is selected', async () => {
+    const user = userEvent.setup();
+    const tasks = Array.from({ length: 5 }, (_, index) => ({
+      _id: `secondary-${index}`,
+      text: `Secondary task ${index + 1}`,
+      completed: false,
+      steps: [],
+    }));
+    render(<TopPriorities tasks={tasks} category='tomorrow' onToggle={onToggle} onDelete={onDelete} onAdd={onAdd} onUpdate={onUpdate} />);
+
+    expect(screen.getByText('Secondary task 3')).toBeInTheDocument();
+    expect(screen.queryByText('Secondary task 4')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'See all (5)' }));
+    expect(screen.getByText('Secondary task 4')).toBeInTheDocument();
+  });
 });

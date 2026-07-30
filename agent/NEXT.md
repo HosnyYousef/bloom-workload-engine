@@ -26,7 +26,9 @@ After coding:
 Manually test item 8 with at least eight new tasks. Select an energy mode before
 running Turn into tasks: Early Start should place at most 4 in Top Priorities;
 Typical Day and Slow Day should place at most 3. Slow Day should favor lighter
-tasks, and changing the selector alone should not overwrite manual placement.
+tasks. Changing the selector should now immediately recalculate recommendations.
+Tomorrow and Don't Forget should show three subdued items each until See all is
+selected. Confirm the renamed Organize Parking Lot action remains clear.
 
 The beta tester feedback box, optional cognitive-load breakdown, and daily
 history/calendar search are saved as items 17 through 19. They should not be

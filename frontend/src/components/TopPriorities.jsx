@@ -11,7 +11,10 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
     const [editingTaskId, setEditingTaskId] = useState(null);
     const [editText, setEditText] = useState('');
     const [editSteps, setEditSteps] = useState([]);
+    const [showAll, setShowAll] = useState(false);
     const config = SECTION_CONFIG[category];
+    const isSecondarySection = category !== 'priorities';
+    const visibleTasks = isSecondarySection && !showAll ? tasks.slice(0, 3) : tasks;
 
     const handleAdd = () => {
         if (newTask.trim() === '') return;
@@ -95,12 +98,16 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
                     <p className='font-bold dark:text-gray-100'>{config.title}</p>
                     <p className='text-xs text-gray-500 dark:text-gray-400'>{config.subtitle}</p>
                 </div>
-                <button className='text-sm underline dark:text-gray-400'>See all...</button>
+                {isSecondarySection && tasks.length > 3 ? (
+                    <button type='button' onClick={() => setShowAll(!showAll)} className='text-sm underline dark:text-gray-400'>
+                        {showAll ? 'Show less' : `See all (${tasks.length})`}
+                    </button>
+                ) : null}
             </div>
 
             {/* Task List */}
-            <div className="space-y-2">
-                {tasks.map(task => (
+            <div className={`space-y-2 transition-opacity ${isSecondarySection ? 'opacity-60 hover:opacity-100 focus-within:opacity-100' : ''}`}>
+                {visibleTasks.map(task => (
                     <div
                         key={task._id}
                         draggable={editingTaskId !== task._id}

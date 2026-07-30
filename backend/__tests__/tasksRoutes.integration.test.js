@@ -130,6 +130,7 @@ describe('POST /api/tasks/recommend', () => {
     expect(categories.filter((c) => c === 'priorities')).toHaveLength(3);
     ops.forEach((op) => {
       expect(op.updateOne.update.sorted).toBe(true);
+      expect(op.updateOne.update.sectionOrder).toEqual(expect.any(Number));
       expect(['priorities', 'tomorrow', 'dontForget']).toContain(op.updateOne.update.sortedCategory);
     });
   });

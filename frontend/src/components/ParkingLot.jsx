@@ -220,7 +220,7 @@ const ParkingLot = ({
                         disabled={!draftText.trim() || isExecuting || isUndoing}
                         className="btn px-4 py-2 bg-yellow-400 border-2 border-black dark:border-yellow-600 rounded-xl font-bold hover:bg-yellow-500 disabled:opacity-60 dark:text-gray-900"
                     >
-                        {isExecuting ? 'Organizing...' : 'Turn into tasks'}
+                        {isExecuting ? 'Organizing...' : 'Organize Parking Lot'}
                     </button>
                 </div>
             </div>
@@ -248,7 +248,7 @@ const ParkingLot = ({
                     className="parking-lot-editor w-full h-80 overflow-y-auto p-5 bg-transparent text-gray-900 dark:text-gray-100 focus:outline-none leading-7 whitespace-pre-wrap"
                 />
                 <div className="px-5 py-2 border-t border-pink-300 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-400">
-                    Saved · Tab indents · “- ” starts a list · Ctrl/Cmd+Enter turns into tasks · Ctrl/Cmd+Z undo
+                    Saved · Tab indents · “- ” starts a list · Ctrl/Cmd+Enter organizes · Ctrl/Cmd+Z undo
                 </div>
             </div>
 

@@ -111,6 +111,18 @@ describe('recommendTasks: bucketing the rest', () => {
     expect(dontForget.map((i) => i.task._id)).toContain(tasks[3]._id);
   });
 
+  it('keeps a high-scoring future project in dontForget instead of tomorrow', () => {
+    const tasks = [
+      task({ deadline: ymdOffset(0), importance: 'high' }),
+      task({ deadline: ymdOffset(0), importance: 'high' }),
+      task({ deadline: ymdOffset(1), importance: 'high' }),
+      task({ deadline: ymdOffset(30), importance: 'high', hours: 5, text: 'major future project' }),
+    ];
+    const { tomorrow, dontForget } = recommendTasks(tasks, ctx());
+    expect(dontForget.map((item) => item.task._id)).toContain(tasks[3]._id);
+    expect(tomorrow.map((item) => item.task._id)).not.toContain(tasks[3]._id);
+  });
+
   it('every open task lands in exactly one bucket', () => {
     const tasks = Array.from({ length: 10 }, (_, i) =>
       task({ deadline: i % 2 ? ymdOffset(i) : '', text: `task ${i}` })

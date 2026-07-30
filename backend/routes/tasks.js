@@ -71,11 +71,11 @@ router.post('/recommend', protect, async (req, res) => {
       ];
       const ops = [];
       for (const [bucket, category] of buckets) {
-        for (const item of result[bucket]) {
+        for (const [sectionOrder, item] of result[bucket].entries()) {
           ops.push({
             updateOne: {
               filter: { _id: item.task._id },
-              update: { sorted: true, sortedCategory: category, sortedAt: Date.now() },
+              update: { sorted: true, sortedCategory: category, sortedAt: Date.now(), sectionOrder },
             },
           });
         }

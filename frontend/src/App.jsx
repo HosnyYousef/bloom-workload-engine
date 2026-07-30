@@ -230,13 +230,13 @@ const App = () => {
     }
   };
 
-  const handleOrganize = async () => {
+  const handleOrganize = async (selectedEnergyLevel = energyLevel) => {
     try {
       // The engine scores every open task (urgency, goal alignment, energy
       // fit, time left today) and returns the top 3 plus the other buckets.
       // persist: true writes the categories server-side in the same call.
       const { data } = await api.post('/tasks/recommend', {
-        energyLevel,
+        energyLevel: selectedEnergyLevel,
         persist: true
       });
       setTasks(prev => applyRecommendations(prev, data));
@@ -252,7 +252,7 @@ const App = () => {
     // works if the engine endpoint is unreachable
     const unsortedTasks = tasks.filter(t => !t.sorted);
 
-    const { priorities, tomorrowTasks, dontForget } = sortTasks(unsortedTasks, energyLevel);
+    const { priorities, tomorrowTasks, dontForget } = sortTasks(unsortedTasks, selectedEnergyLevel);
 
     const sortedResults = [
       ...priorities.map(t => ({ id: t._id, category: 'priorities' })),
@@ -283,6 +283,11 @@ const App = () => {
     );
 
     return { fallback: true };
+  };
+
+  const handleEnergyChange = async (level) => {
+    setEnergyLevel(level);
+    if (user && tasks.length > 0) await handleOrganize(level);
   };
 
   const handleExecuteParkingLot = async (entries) => {
@@ -387,7 +392,7 @@ const App = () => {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-950 transition-colors">
       <Navbar
         energyLevel={energyLevel}
-        onEnergyChange={setEnergyLevel}
+        onEnergyChange={handleEnergyChange}
         onLogout={handleLogout}
         darkMode={darkMode}
         onToggleDark={() => setDarkMode(d => !d)}

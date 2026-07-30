@@ -19,10 +19,8 @@ const { scoreTask, daysUntil } = require('./scoreTask');
 const TODAY_COUNTS = Object.freeze({ early: 4, typical: 3, slow: 3 });
 const todayCapacity = (energyLevel) => TODAY_COUNTS[energyLevel] ?? TODAY_COUNTS.typical;
 
-// Leftovers land in "tomorrow" when due within this many days...
+// Leftovers land in "tomorrow" only when due within this many days.
 const TOMORROW_DEADLINE_DAYS = 3;
-// ...or when they scored at least this much. Assumption to review.
-const TOMORROW_SCORE_FLOOR = 0.55;
 
 /**
  * Sort: score desc, then earlier deadline, then older createdAt.
@@ -59,11 +57,11 @@ const recommendTasks = (tasks, context = {}) => {
   for (const item of rest) {
     const days = daysUntil(item.task.deadline, now);
     const dueSoon = days !== null && days <= TOMORROW_DEADLINE_DAYS;
-    if (dueSoon || item.score >= TOMORROW_SCORE_FLOOR) tomorrow.push(item);
+    if (dueSoon) tomorrow.push(item);
     else dontForget.push(item);
   }
 
   return { today, tomorrow, dontForget };
 };
 
-module.exports = { recommendTasks, TODAY_COUNTS, todayCapacity, TOMORROW_DEADLINE_DAYS, TOMORROW_SCORE_FLOOR };
+module.exports = { recommendTasks, TODAY_COUNTS, todayCapacity, TOMORROW_DEADLINE_DAYS };

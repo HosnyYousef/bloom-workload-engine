@@ -14,8 +14,8 @@ export const applyRecommendations = (tasks, response, now = Date.now()) => {
 
   const byId = new Map();
   for (const [bucket, category] of buckets) {
-    for (const item of response?.[bucket] || []) {
-      byId.set(item._id, { category, score: item.score });
+    for (const [sectionOrder, item] of (response?.[bucket] || []).entries()) {
+      byId.set(item._id, { category, score: item.score, sectionOrder });
     }
   }
 
@@ -28,6 +28,7 @@ export const applyRecommendations = (tasks, response, now = Date.now()) => {
       sortedCategory: hit.category,
       sortedAt: now,
       score: hit.score,
+      sectionOrder: hit.sectionOrder,
     };
   });
 };

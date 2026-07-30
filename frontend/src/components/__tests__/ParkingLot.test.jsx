@@ -65,7 +65,7 @@ describe('ParkingLot', () => {
 
     expect(editor.innerHTML).toBe('');
     expect(localStorage.getItem('bloomspace.parkingLotDraft')).toBe('');
-    expect(screen.getByRole('button', { name: 'Turn into tasks' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Organize Parking Lot' })).toBeDisabled();
   });
 
   it('supports Ctrl/Cmd formatting shortcuts without blocking native editing shortcuts', () => {
@@ -165,7 +165,7 @@ describe('ParkingLot', () => {
 
     textbox.innerHTML = '<div>- Call dentist</div><div>* finish report by Friday</div>';
     fireEvent.input(textbox);
-    fireEvent.click(screen.getByRole('button', { name: 'Turn into tasks' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Organize Parking Lot' }));
 
     await waitFor(() => expect(onExecute).toHaveBeenCalledWith([
       { text: 'Call dentist', steps: [] },
@@ -179,7 +179,7 @@ describe('ParkingLot', () => {
     const textbox = screen.getByRole('textbox', { name: 'Parking Lot notes' });
     textbox.innerHTML = 'Renew insurance';
     fireEvent.input(textbox);
-    fireEvent.click(screen.getByRole('button', { name: 'Turn into tasks' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Organize Parking Lot' }));
     await waitFor(() => expect(textbox).toHaveTextContent(''));
 
     rerender(<ParkingLot {...defaultProps} canUndo />);
