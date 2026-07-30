@@ -105,10 +105,13 @@ describe('recommendTasks: bucketing the rest', () => {
       task({ deadline: ymdOffset(0), importance: 'high' }),
       task({ deadline: ymdOffset(0), importance: 'high' }),
       task({ deadline: ymdOffset(1), importance: 'high' }),
+      task({ deadline: ymdOffset(2), importance: 'medium' }),
+      task({ deadline: ymdOffset(3), importance: 'medium' }),
+      task({ deadline: ymdOffset(4), importance: 'medium' }),
       task({ deadline: ymdOffset(30), importance: 'low', text: 'far away' }),
     ];
     const { dontForget } = recommendTasks(tasks, ctx());
-    expect(dontForget.map((i) => i.task._id)).toContain(tasks[3]._id);
+    expect(dontForget.map((i) => i.task._id)).toContain(tasks[6]._id);
   });
 
   it('keeps a high-scoring future project in dontForget instead of tomorrow', () => {
@@ -116,11 +119,25 @@ describe('recommendTasks: bucketing the rest', () => {
       task({ deadline: ymdOffset(0), importance: 'high' }),
       task({ deadline: ymdOffset(0), importance: 'high' }),
       task({ deadline: ymdOffset(1), importance: 'high' }),
+      task({ deadline: ymdOffset(2), importance: 'medium' }),
+      task({ deadline: ymdOffset(2), importance: 'medium' }),
+      task({ deadline: ymdOffset(3), importance: 'medium' }),
       task({ deadline: ymdOffset(30), importance: 'high', hours: 5, text: 'major future project' }),
     ];
     const { tomorrow, dontForget } = recommendTasks(tasks, ctx());
-    expect(dontForget.map((item) => item.task._id)).toContain(tasks[3]._id);
-    expect(tomorrow.map((item) => item.task._id)).not.toContain(tasks[3]._id);
+    expect(dontForget.map((item) => item.task._id)).toContain(tasks[6]._id);
+    expect(tomorrow.map((item) => item.task._id)).not.toContain(tasks[6]._id);
+  });
+
+  it('fills tomorrow with the next three tasks when none are due soon', () => {
+    const tasks = Array.from({ length: 9 }, (_, index) => task({
+      deadline: ymdOffset(index + 10),
+      text: `future task ${index}`,
+    }));
+    const { today, tomorrow, dontForget } = recommendTasks(tasks, ctx());
+    expect(today).toHaveLength(3);
+    expect(tomorrow).toHaveLength(3);
+    expect(dontForget).toHaveLength(3);
   });
 
   it('every open task lands in exactly one bucket', () => {

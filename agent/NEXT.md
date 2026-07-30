@@ -30,6 +30,10 @@ tasks. Changing the selector should now immediately recalculate recommendations.
 Tomorrow and Don't Forget should show three subdued items each until See all is
 selected. Confirm the renamed Organize Parking Lot action remains clear.
 
+Current focused check: Tomorrow should contain three next-up tasks whenever at
+least three tasks remain after Top Priorities. Due-soon tasks must appear before
+later filler tasks. Parking Lot library work is intentionally separate.
+
 The beta tester feedback box, optional cognitive-load breakdown, and daily
 history/calendar search are saved as items 17 through 19. They should not be
 built until the core MVP is stable.

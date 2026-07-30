@@ -21,6 +21,7 @@ const todayCapacity = (energyLevel) => TODAY_COUNTS[energyLevel] ?? TODAY_COUNTS
 
 // Leftovers land in "tomorrow" only when due within this many days.
 const TOMORROW_DEADLINE_DAYS = 3;
+const TOMORROW_COUNT = 3;
 
 /**
  * Sort: score desc, then earlier deadline, then older createdAt.
@@ -52,16 +53,20 @@ const recommendTasks = (tasks, context = {}) => {
   const today = scored.slice(0, capacity);
   const rest = scored.slice(capacity);
 
-  const tomorrow = [];
-  const dontForget = [];
+  const dueSoon = [];
+  const later = [];
   for (const item of rest) {
     const days = daysUntil(item.task.deadline, now);
-    const dueSoon = days !== null && days <= TOMORROW_DEADLINE_DAYS;
-    if (dueSoon) tomorrow.push(item);
-    else dontForget.push(item);
+    if (days !== null && days <= TOMORROW_DEADLINE_DAYS) dueSoon.push(item);
+    else later.push(item);
   }
+
+  const nextUp = [...dueSoon, ...later];
+  const tomorrow = nextUp.slice(0, TOMORROW_COUNT);
+  const tomorrowIds = new Set(tomorrow.map((item) => item.task._id));
+  const dontForget = rest.filter((item) => !tomorrowIds.has(item.task._id));
 
   return { today, tomorrow, dontForget };
 };
 
-module.exports = { recommendTasks, TODAY_COUNTS, todayCapacity, TOMORROW_DEADLINE_DAYS };
+module.exports = { recommendTasks, TODAY_COUNTS, todayCapacity, TOMORROW_COUNT, TOMORROW_DEADLINE_DAYS };

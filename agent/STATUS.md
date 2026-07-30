@@ -44,6 +44,8 @@ What changed:
   groups, and categorizes the captured writing.
 * Tightened Tomorrow to near-term work due within three days; later major work
   remains in Don't Forget, where the three highest-ranked items show first.
+* Followed up by making Tomorrow fill to three tasks when fewer than three are
+  due soon, using the highest-ranked remaining next-up work.
 
 What needs to happen next: organize at least eight tasks under each energy mode
 and confirm the 4/3/3 capacities and energy-appropriate selection.
