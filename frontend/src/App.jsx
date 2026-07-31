@@ -12,7 +12,7 @@ import ProgressBar from "./components/ProgressBar"
 
 import api from "./services/api";
 import { sortTasks } from "./utils/sortTasks";
-import { applyRecommendations, applySavedPriorityChoice } from "./utils/applyRecommendations";
+import { applyRecommendations, applySavedPriorityOrder } from "./utils/applyRecommendations";
 
 const App = () => {
   const [energyLevel, setEnergyLevel] = useState('typical');
@@ -207,6 +207,14 @@ const App = () => {
     setTasks(current => current.map(task => updates.has(task._id) ? { ...task, ...updates.get(task._id) } : task));
     try {
       await Promise.all([...updates].map(([id, taskUpdates]) => api.put(`/tasks/${id}`, taskUpdates)));
+      if (targetCategory === 'priorities' || sourceCategory === 'priorities') {
+        const nextTasks = tasks.map(task => updates.has(task._id) ? { ...task, ...updates.get(task._id) } : task);
+        const priorityOrder = nextTasks
+          .filter(task => task.sortedCategory === 'priorities' && !task.completed)
+          .sort(bySectionOrder)
+          .map(task => task._id);
+        localStorage.setItem(`bloomspace.priorityOrder.${energyLevel}`, JSON.stringify(priorityOrder));
+      }
       return true;
     } catch (err) {
       console.error('❌ Failed to move task:', err);
@@ -251,7 +259,13 @@ const App = () => {
     setTasks(current => current.map(task => updates.has(task._id) ? { ...task, ...updates.get(task._id) } : task));
     try {
       await Promise.all([...updates].map(([id, taskUpdates]) => api.put(`/tasks/${id}`, taskUpdates)));
-      localStorage.setItem(`bloomspace.priorityChoice.${energyLevel}`, taskId);
+      const nextTasks = tasks.map(task => updates.has(task._id) ? { ...task, ...updates.get(task._id) } : task);
+      const priorityOrder = nextTasks
+        .filter(task => task.sortedCategory === 'priorities' && !task.completed)
+        .sort(bySectionOrder)
+        .map(task => task._id);
+      localStorage.setItem(`bloomspace.priorityOrder.${energyLevel}`, JSON.stringify(priorityOrder));
+      localStorage.removeItem(`bloomspace.priorityChoice.${energyLevel}`);
       return true;
     } catch (err) {
       console.error('❌ Failed to choose priority task:', err);
@@ -284,31 +298,27 @@ const App = () => {
         energyLevel: selectedEnergyLevel,
         persist: true
       });
-      const savedChoice = ['typical', 'slow'].includes(selectedEnergyLevel)
-        ? localStorage.getItem(`bloomspace.priorityChoice.${selectedEnergyLevel}`)
-        : null;
-      const data = applySavedPriorityChoice(engineRecommendations, savedChoice);
+      let savedOrder = [];
+      if (['typical', 'slow'].includes(selectedEnergyLevel)) {
+        try {
+          savedOrder = JSON.parse(localStorage.getItem(`bloomspace.priorityOrder.${selectedEnergyLevel}`) || '[]');
+        } catch {
+          savedOrder = [];
+        }
+        const legacyChoice = localStorage.getItem(`bloomspace.priorityChoice.${selectedEnergyLevel}`);
+        if (!savedOrder.length && legacyChoice) savedOrder = [legacyChoice];
+      }
+      const data = applySavedPriorityOrder(engineRecommendations, savedOrder);
 
       if (data !== engineRecommendations) {
-        const chosenTask = data.today[data.today.length - 1];
-        const returnBucket = ['tomorrow', 'dontForget'].find(bucket =>
-          data[bucket]?.some(task => task._id === engineRecommendations.today[engineRecommendations.today.length - 1]?._id)
-        );
-        const displacedTask = engineRecommendations.today[engineRecommendations.today.length - 1];
-        await Promise.all([
-          api.put(`/tasks/${chosenTask._id}`, {
+        await Promise.all(['today', 'tomorrow', 'dontForget'].flatMap(bucket =>
+          data[bucket].map((task, sectionOrder) => api.put(`/tasks/${task._id}`, {
             sorted: true,
-            sortedCategory: 'priorities',
+            sortedCategory: bucket === 'today' ? 'priorities' : bucket,
             sortedAt: Date.now(),
-            sectionOrder: data.today.length - 1,
-          }),
-          returnBucket && displacedTask ? api.put(`/tasks/${displacedTask._id}`, {
-            sorted: true,
-            sortedCategory: returnBucket,
-            sortedAt: Date.now(),
-            sectionOrder: data[returnBucket].findIndex(task => task._id === displacedTask._id),
-          }) : Promise.resolve(),
-        ]);
+            sectionOrder,
+          }))
+        ));
       }
       setTasks(prev => applyRecommendations(prev, data));
       setOrganizeSummary(

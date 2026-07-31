@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const SECTION_CONFIG = {
     priorities: { title: 'Top Priorities', subtitle: 'Your focus for today', placeholder: 'Add priority task...', defaults: { hours: 1, deadline: '', importance: 'high' }, card: 'bg-white dark:bg-gray-800', text: 'dark:text-gray-200' },
@@ -100,6 +100,18 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
         setIsDragTarget(false);
         setDropIndex(null);
     };
+
+    useEffect(() => {
+        const clearOnEscape = (event) => {
+            if (event.key === 'Escape') clearDropCue();
+        };
+        document.addEventListener('keydown', clearOnEscape);
+        document.addEventListener('dragend', clearDropCue);
+        return () => {
+            document.removeEventListener('keydown', clearOnEscape);
+            document.removeEventListener('dragend', clearDropCue);
+        };
+    }, []);
 
     const beginDragging = (event, task) => {
         event.dataTransfer.effectAllowed = 'move';
@@ -228,7 +240,13 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
                                 onChange={() => onToggle(task._id)}
                                 className='cursor-pointer'
                             />
-                            <span className={`flex-1 ${config.text} ${task.completed ? 'line-through text-gray-400 dark:text-gray-500' : ''}`}>
+                            <span
+                                draggable
+                                onDragStart={(event) => beginDragging(event, task)}
+                                onDragEnd={clearDropCue}
+                                title='Drag to reorder or move'
+                                className={`flex-1 cursor-grab active:cursor-grabbing ${config.text} ${task.completed ? 'line-through text-gray-400 dark:text-gray-500' : ''}`}
+                            >
                                 {task.text}
                             </span>
                             <button

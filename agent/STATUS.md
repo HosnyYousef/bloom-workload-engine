@@ -257,6 +257,26 @@ so the focused tests could not execute in this environment.
 What needs to happen next: manually verify the saved choices and drag cues in
 the deployed browser, then continue with the separate Parking Lot task library.
 
+### 2026-07-31: Preserve full priority order by energy mode
+
+What changed:
+
+* Typical and Slow Day now remember their complete chosen priority order rather
+  than only one manually selected task.
+* Switching away and back reapplies that mode's saved selection and order after
+  the recommendation engine runs.
+* Tasks can be dragged from either their title or the drag grip.
+* Escape follows the native cancel-drag convention and also clears BloomSpace's
+  section glow and insertion marker.
+
+What works: frontend lint and the production build pass.
+
+What is broken: no confirmed failure; browser acceptance is still required for
+native dragging and switching repeatedly among energy modes.
+
+What needs to happen next: test Typical and Slow with different selections and
+orders, including refresh, then continue with the Parking Lot task library.
+
 Update this file after every coding session.
 
 Include:

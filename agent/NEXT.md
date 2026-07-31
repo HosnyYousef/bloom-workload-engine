@@ -34,11 +34,11 @@ Current focused check: Tomorrow should contain three next-up tasks whenever at
 least three tasks remain after Top Priorities. Due-soon tasks must appear before
 later filler tasks. Parking Lot library work is intentionally separate.
 
-Tomorrow and Don't Forget collapse memory is accepted. Confirm that a manually
-chosen Typical task remains selected after switching away and back, then repeat
-for Slow Day. While dragging, confirm only one task title follows the pointer,
-the destination section glows, the insertion line matches the final persisted
-position, and a refresh preserves that order.
+Tomorrow and Don't Forget collapse memory and the first drag cues are accepted.
+Give Typical and Slow Day different priority selections and orders, switch among
+all three modes several times, and confirm each saved mode returns unchanged.
+Refresh and repeat. Also confirm dragging works from both the title and grip,
+and that Escape cancels without moving the task or leaving visual cues behind.
 
 After these checks pass, begin the separate Parking Lot task-library design:
 an overlay for finding and managing all parked tasks without crowding the daily
