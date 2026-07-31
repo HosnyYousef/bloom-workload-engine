@@ -37,6 +37,7 @@ const App = () => {
   const [tasksLoading, setTasksLoading] = useState(false);
   const [organizeSummary, setOrganizeSummary] = useState('');
   const skipNextTaskFetch = useRef(false);
+  const recommendationRequestId = useRef(0);
 
   const [selectedTask, setSelectedTask] = useState(null);
   const [organizeUndoSnapshot, setOrganizeUndoSnapshot] = useState(null);
@@ -204,20 +205,24 @@ const App = () => {
       sortedAt: task._id === taskId ? Date.now() : task.sortedAt,
     }));
 
-    setTasks(current => current.map(task => updates.has(task._id) ? { ...task, ...updates.get(task._id) } : task));
+    const nextTasks = tasks.map(task => updates.has(task._id) ? { ...task, ...updates.get(task._id) } : task);
+    const preferenceKey = `bloomspace.priorityOrder.${energyLevel}`;
+    const previousPreference = localStorage.getItem(preferenceKey);
+    if (targetCategory === 'priorities' || sourceCategory === 'priorities') {
+      const priorityOrder = nextTasks
+        .filter(task => task.sortedCategory === 'priorities' && !task.completed)
+        .sort(bySectionOrder)
+        .map(task => task._id);
+      localStorage.setItem(preferenceKey, JSON.stringify(priorityOrder));
+    }
+    setTasks(nextTasks);
     try {
       await Promise.all([...updates].map(([id, taskUpdates]) => api.put(`/tasks/${id}`, taskUpdates)));
-      if (targetCategory === 'priorities' || sourceCategory === 'priorities') {
-        const nextTasks = tasks.map(task => updates.has(task._id) ? { ...task, ...updates.get(task._id) } : task);
-        const priorityOrder = nextTasks
-          .filter(task => task.sortedCategory === 'priorities' && !task.completed)
-          .sort(bySectionOrder)
-          .map(task => task._id);
-        localStorage.setItem(`bloomspace.priorityOrder.${energyLevel}`, JSON.stringify(priorityOrder));
-      }
       return true;
     } catch (err) {
       console.error('❌ Failed to move task:', err);
+      if (previousPreference === null) localStorage.removeItem(preferenceKey);
+      else localStorage.setItem(preferenceKey, previousPreference);
       setTasks(snapshot);
       return false;
     }
@@ -238,13 +243,14 @@ const App = () => {
     const currentPriorities = tasks
       .filter(task => task.sortedCategory === 'priorities' && !task.completed && task._id !== taskId)
       .sort(bySectionOrder);
+    const selectedPriorities = [candidate, ...currentPriorities].slice(0, capacity);
     const demoted = currentPriorities.length >= capacity ? currentPriorities[capacity - 1] : null;
-    const updates = new Map([[taskId, {
+    const updates = new Map(selectedPriorities.map((task, sectionOrder) => [task._id, {
       sorted: true,
       sortedCategory: 'priorities',
-      sortedAt: Date.now(),
-      sectionOrder: Math.min(currentPriorities.length, capacity - 1),
-    }]]);
+      sortedAt: task._id === taskId ? Date.now() : task.sortedAt,
+      sectionOrder,
+    }]));
 
     if (demoted) {
       const destinationTasks = tasks.filter(task => task.sortedCategory === candidate.sortedCategory && task._id !== taskId);
@@ -256,19 +262,23 @@ const App = () => {
       });
     }
 
-    setTasks(current => current.map(task => updates.has(task._id) ? { ...task, ...updates.get(task._id) } : task));
+    const nextTasks = tasks.map(task => updates.has(task._id) ? { ...task, ...updates.get(task._id) } : task);
+    const preferenceKey = `bloomspace.priorityOrder.${energyLevel}`;
+    const previousPreference = localStorage.getItem(preferenceKey);
+    const priorityOrder = nextTasks
+      .filter(task => task.sortedCategory === 'priorities' && !task.completed)
+      .sort(bySectionOrder)
+      .map(task => task._id);
+    localStorage.setItem(preferenceKey, JSON.stringify(priorityOrder));
+    localStorage.removeItem(`bloomspace.priorityChoice.${energyLevel}`);
+    setTasks(nextTasks);
     try {
       await Promise.all([...updates].map(([id, taskUpdates]) => api.put(`/tasks/${id}`, taskUpdates)));
-      const nextTasks = tasks.map(task => updates.has(task._id) ? { ...task, ...updates.get(task._id) } : task);
-      const priorityOrder = nextTasks
-        .filter(task => task.sortedCategory === 'priorities' && !task.completed)
-        .sort(bySectionOrder)
-        .map(task => task._id);
-      localStorage.setItem(`bloomspace.priorityOrder.${energyLevel}`, JSON.stringify(priorityOrder));
-      localStorage.removeItem(`bloomspace.priorityChoice.${energyLevel}`);
       return true;
     } catch (err) {
       console.error('❌ Failed to choose priority task:', err);
+      if (previousPreference === null) localStorage.removeItem(preferenceKey);
+      else localStorage.setItem(preferenceKey, previousPreference);
       setTasks(snapshot);
       return false;
     }
@@ -290,6 +300,7 @@ const App = () => {
   };
 
   const handleOrganize = async (selectedEnergyLevel = energyLevel) => {
+    const requestId = ++recommendationRequestId.current;
     try {
       // The engine scores every open task (urgency, goal alignment, energy
       // fit, time left today) and returns the top 3 plus the other buckets.
@@ -298,6 +309,7 @@ const App = () => {
         energyLevel: selectedEnergyLevel,
         persist: true
       });
+      if (requestId !== recommendationRequestId.current) return false;
       let savedOrder = [];
       if (['typical', 'slow'].includes(selectedEnergyLevel)) {
         try {

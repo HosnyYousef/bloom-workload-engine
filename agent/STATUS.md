@@ -277,6 +277,26 @@ native dragging and switching repeatedly among energy modes.
 What needs to happen next: test Typical and Slow with different selections and
 orders, including refresh, then continue with the Parking Lot task library.
 
+### 2026-07-31: Save manual priority decisions immediately
+
+What changed:
+
+* Manual priority order is now saved locally at the moment of a drop instead of
+  waiting for every server update to finish.
+* Choosing an alternative makes it the first priority and renumbers the rest of
+  the section without duplicate order values.
+* Failed saves restore the previous local preference and task state.
+* Late recommendation responses no longer replace the newest selected energy
+  mode on screen.
+
+What works: frontend lint and the production build pass.
+
+What is broken: no confirmed failure; the deployed app needs another repeated
+mode-switch acceptance check.
+
+What needs to happen next: choose and reorder priorities in Typical and Slow,
+switch among modes, and confirm each arrangement returns exactly.
+
 Update this file after every coding session.
 
 Include:

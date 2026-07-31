@@ -40,6 +40,10 @@ all three modes several times, and confirm each saved mode returns unchanged.
 Refresh and repeat. Also confirm dragging works from both the title and grip,
 and that Escape cancels without moving the task or leaving visual cues behind.
 
+The latest refinement saves drops immediately and places a task selected through
+Choose a different task in the first position. Confirm both behaviors before
+accepting energy-mode priority memory.
+
 After these checks pass, begin the separate Parking Lot task-library design:
 an overlay for finding and managing all parked tasks without crowding the daily
 focus view.
