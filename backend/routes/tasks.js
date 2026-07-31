@@ -3,7 +3,7 @@ const router = express.Router();
 const Task = require('../models/Task');
 const { protect } = require('../middleware/auth');
 const { parseEntry } = require('../engine/parseEntry');
-const { recommendTasks } = require('../engine/recommend');
+const { recommendTasks, applyPriorityPlan, todayCapacity } = require('../engine/recommend');
 
 // @route   GET /api/tasks
 // @desc    Get all tasks for logged-in user
@@ -53,15 +53,19 @@ router.post('/parse', protect, (req, res) => {
 // @access  Private
 router.post('/recommend', protect, async (req, res) => {
   try {
-    const { energyLevel = 'typical', persist = false } = req.body;
+    const { energyLevel = 'typical', persist = false, preferredTodayIds } = req.body;
 
     const tasks = await Task.find({ user: req.user._id, completed: false });
 
-    const result = recommendTasks(tasks, {
+    const recommendations = recommendTasks(tasks, {
       now: new Date(),
       energy: { level: energyLevel },
       goals: req.user.goals || {},
     });
+    const savedPlan = Array.isArray(preferredTodayIds)
+      ? preferredTodayIds
+      : Array.from(req.user.priorityPlans?.[energyLevel] || []);
+    const result = applyPriorityPlan(recommendations, savedPlan);
 
     if (persist) {
       const buckets = [
@@ -81,6 +85,9 @@ router.post('/recommend', protect, async (req, res) => {
         }
       }
       if (ops.length > 0) await Task.bulkWrite(ops);
+      req.user.priorityPlans = req.user.priorityPlans || {};
+      req.user.priorityPlans[energyLevel] = result.today.map(item => item.task._id);
+      if (typeof req.user.save === 'function') await req.user.save();
     }
 
     const serialize = (item) => ({
@@ -97,6 +104,25 @@ router.post('/recommend', protect, async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+});
+
+// @route   PUT /api/tasks/priority-plan/:energyLevel
+// @desc    Save the user's explicit ordered priorities for one energy mode.
+// @access  Private
+router.put('/priority-plan/:energyLevel', protect, async (req, res) => {
+  const { energyLevel } = req.params;
+  const taskIds = Array.isArray(req.body.taskIds) ? req.body.taskIds.map(String) : null;
+  if (!['early', 'typical', 'slow'].includes(energyLevel)) {
+    return res.status(400).json({ message: 'Invalid energy level' });
+  }
+  if (!taskIds || taskIds.length > todayCapacity(energyLevel) || new Set(taskIds).size !== taskIds.length) {
+    return res.status(400).json({ message: 'Invalid priority plan' });
+  }
+
+  req.user.priorityPlans = req.user.priorityPlans || {};
+  req.user.priorityPlans[energyLevel] = taskIds;
+  await req.user.save();
+  return res.status(200).json({ energyLevel, taskIds });
 });
 
 // @route   PUT /api/tasks/:id

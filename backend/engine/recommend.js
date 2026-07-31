@@ -19,6 +19,46 @@ const { scoreTask, daysUntil } = require('./scoreTask');
 const TODAY_COUNTS = Object.freeze({ early: 4, typical: 3, slow: 1 });
 const todayCapacity = (energyLevel) => TODAY_COUNTS[energyLevel] ?? TODAY_COUNTS.typical;
 
+const taskId = (item) => String(item.task._id);
+
+const applyPriorityPlan = (result, preferredTaskIds = []) => {
+  if (!preferredTaskIds.length || !result.today.length) return result;
+
+  const buckets = ['today', 'tomorrow', 'dontForget'];
+  const locations = new Map();
+  buckets.forEach(bucket => result[bucket].forEach(item => {
+    locations.set(taskId(item), { item, bucket });
+  }));
+
+  const capacity = result.today.length;
+  const desiredIds = preferredTaskIds
+    .map(String)
+    .filter((id, index, ids) => locations.has(id) && ids.indexOf(id) === index)
+    .slice(0, capacity);
+  result.today.forEach(item => {
+    const id = taskId(item);
+    if (desiredIds.length < capacity && !desiredIds.includes(id)) desiredIds.push(id);
+  });
+
+  const originalTodayIds = result.today.map(taskId);
+  const addedIds = desiredIds.filter(id => !originalTodayIds.includes(id));
+  const displacedItems = result.today.filter(item => !desiredIds.includes(taskId(item)));
+  const next = {
+    ...result,
+    today: desiredIds.map(id => locations.get(id).item),
+    tomorrow: [...result.tomorrow],
+    dontForget: [...result.dontForget],
+  };
+
+  addedIds.forEach((id, index) => {
+    const sourceBucket = locations.get(id).bucket;
+    next[sourceBucket] = next[sourceBucket].filter(item => taskId(item) !== id);
+    if (displacedItems[index]) next[sourceBucket].push(displacedItems[index]);
+  });
+
+  return next;
+};
+
 // Leftovers land in "tomorrow" only when due within this many days.
 const TOMORROW_DEADLINE_DAYS = 3;
 const TOMORROW_COUNT = 3;
@@ -69,4 +109,4 @@ const recommendTasks = (tasks, context = {}) => {
   return { today, tomorrow, dontForget };
 };
 
-module.exports = { recommendTasks, TODAY_COUNTS, todayCapacity, TOMORROW_COUNT, TOMORROW_DEADLINE_DAYS };
+module.exports = { recommendTasks, applyPriorityPlan, TODAY_COUNTS, todayCapacity, TOMORROW_COUNT, TOMORROW_DEADLINE_DAYS };

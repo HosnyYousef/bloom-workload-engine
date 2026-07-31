@@ -1,4 +1,4 @@
-const { recommendTasks, TODAY_COUNTS } = require('../engine/recommend');
+const { recommendTasks, applyPriorityPlan, TODAY_COUNTS } = require('../engine/recommend');
 
 // Monday July 6 2026, 9am local time
 const REF = new Date(2026, 6, 6, 9, 0, 0);
@@ -189,5 +189,28 @@ describe('recommendTasks: deterministic tiebreaks', () => {
     const r2 = recommendTasks([newer, earlierDeadline, older], ctx());
     const r3 = recommendTasks([older, newer, earlierDeadline], ctx());
     expect(r2.today.map((i) => i.task._id)).toEqual(r3.today.map((i) => i.task._id));
+  });
+});
+
+describe('applyPriorityPlan', () => {
+  it('makes the saved order authoritative and keeps every task in one bucket', () => {
+    const tasks = Array.from({ length: 7 }, (_, index) => task({ text: `task ${index}` }));
+    const recommendations = recommendTasks(tasks, ctx('typical'));
+    const chosenFromLater = recommendations.dontForget[0].task._id;
+    const second = recommendations.today[1].task._id;
+
+    const result = applyPriorityPlan(recommendations, [chosenFromLater, second]);
+    expect(result.today.map(item => item.task._id).slice(0, 2)).toEqual([chosenFromLater, second]);
+
+    const allIds = [...result.today, ...result.tomorrow, ...result.dontForget].map(item => item.task._id);
+    expect(new Set(allIds).size).toBe(tasks.length);
+  });
+
+  it('fills gaps left by completed or deleted saved tasks', () => {
+    const tasks = Array.from({ length: 5 }, (_, index) => task({ text: `task ${index}` }));
+    const recommendations = recommendTasks(tasks, ctx('typical'));
+    const result = applyPriorityPlan(recommendations, ['missing', recommendations.today[2].task._id]);
+    expect(result.today).toHaveLength(3);
+    expect(result.today[0].task._id).toBe(recommendations.today[2].task._id);
   });
 });

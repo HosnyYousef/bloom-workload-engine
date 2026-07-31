@@ -12,10 +12,13 @@ import ProgressBar from "./components/ProgressBar"
 
 import api from "./services/api";
 import { sortTasks } from "./utils/sortTasks";
-import { applyRecommendations, applySavedPriorityOrder } from "./utils/applyRecommendations";
+import { applyRecommendations } from "./utils/applyRecommendations";
 
 const App = () => {
-  const [energyLevel, setEnergyLevel] = useState('typical');
+  const [energyLevel, setEnergyLevel] = useState(() => {
+    const savedEnergyLevel = localStorage.getItem('bloomspace.energyLevel');
+    return ['early', 'typical', 'slow'].includes(savedEnergyLevel) ? savedEnergyLevel : 'typical';
+  });
   const [statsOpen, setStatsOpen] = useState(false);
 
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') !== 'false');
@@ -208,8 +211,9 @@ const App = () => {
     const nextTasks = tasks.map(task => updates.has(task._id) ? { ...task, ...updates.get(task._id) } : task);
     const preferenceKey = `bloomspace.priorityOrder.${energyLevel}`;
     const previousPreference = localStorage.getItem(preferenceKey);
+    let priorityOrder = null;
     if (targetCategory === 'priorities' || sourceCategory === 'priorities') {
-      const priorityOrder = nextTasks
+      priorityOrder = nextTasks
         .filter(task => task.sortedCategory === 'priorities' && !task.completed)
         .sort(bySectionOrder)
         .map(task => task._id);
@@ -217,7 +221,10 @@ const App = () => {
     }
     setTasks(nextTasks);
     try {
-      await Promise.all([...updates].map(([id, taskUpdates]) => api.put(`/tasks/${id}`, taskUpdates)));
+      await Promise.all([
+        ...[...updates].map(([id, taskUpdates]) => api.put(`/tasks/${id}`, taskUpdates)),
+        priorityOrder && api.put(`/tasks/priority-plan/${energyLevel}`, { taskIds: priorityOrder }),
+      ].filter(Boolean));
       return true;
     } catch (err) {
       console.error('❌ Failed to move task:', err);
@@ -273,7 +280,10 @@ const App = () => {
     localStorage.removeItem(`bloomspace.priorityChoice.${energyLevel}`);
     setTasks(nextTasks);
     try {
-      await Promise.all([...updates].map(([id, taskUpdates]) => api.put(`/tasks/${id}`, taskUpdates)));
+      await Promise.all([
+        ...[...updates].map(([id, taskUpdates]) => api.put(`/tasks/${id}`, taskUpdates)),
+        api.put(`/tasks/priority-plan/${energyLevel}`, { taskIds: priorityOrder }),
+      ]);
       return true;
     } catch (err) {
       console.error('❌ Failed to choose priority task:', err);
@@ -305,33 +315,25 @@ const App = () => {
       // The engine scores every open task (urgency, goal alignment, energy
       // fit, time left today) and returns the top 3 plus the other buckets.
       // persist: true writes the categories server-side in the same call.
-      const { data: engineRecommendations } = await api.post('/tasks/recommend', {
-        energyLevel: selectedEnergyLevel,
-        persist: true
-      });
-      if (requestId !== recommendationRequestId.current) return false;
       let savedOrder = [];
-      if (['typical', 'slow'].includes(selectedEnergyLevel)) {
-        try {
-          savedOrder = JSON.parse(localStorage.getItem(`bloomspace.priorityOrder.${selectedEnergyLevel}`) || '[]');
-        } catch {
-          savedOrder = [];
-        }
-        const legacyChoice = localStorage.getItem(`bloomspace.priorityChoice.${selectedEnergyLevel}`);
-        if (!savedOrder.length && legacyChoice) savedOrder = [legacyChoice];
+      try {
+        savedOrder = JSON.parse(localStorage.getItem(`bloomspace.priorityOrder.${selectedEnergyLevel}`) || '[]');
+      } catch {
+        savedOrder = [];
       }
-      const data = applySavedPriorityOrder(engineRecommendations, savedOrder);
-
-      if (data !== engineRecommendations) {
-        await Promise.all(['today', 'tomorrow', 'dontForget'].flatMap(bucket =>
-          data[bucket].map((task, sectionOrder) => api.put(`/tasks/${task._id}`, {
-            sorted: true,
-            sortedCategory: bucket === 'today' ? 'priorities' : bucket,
-            sortedAt: Date.now(),
-            sectionOrder,
-          }))
-        ));
-      }
+      const legacyChoice = localStorage.getItem(`bloomspace.priorityChoice.${selectedEnergyLevel}`);
+      if (!savedOrder.length && legacyChoice) savedOrder = [legacyChoice];
+      const recommendationRequest = {
+        energyLevel: selectedEnergyLevel,
+        persist: true,
+        ...(savedOrder.length ? { preferredTodayIds: savedOrder } : {}),
+      };
+      const { data } = await api.post('/tasks/recommend', recommendationRequest);
+      if (requestId !== recommendationRequestId.current) return false;
+      localStorage.setItem(
+        `bloomspace.priorityOrder.${selectedEnergyLevel}`,
+        JSON.stringify(data.today.map(task => task._id))
+      );
       setTasks(prev => applyRecommendations(prev, data));
       setOrganizeSummary(
         `Sorted into sections: ${data.today.length} in Top Priorities, ${data.tomorrow.length} in For Tomorrow, and ${data.dontForget.length} in Don't Forget.`
@@ -380,6 +382,7 @@ const App = () => {
 
   const handleEnergyChange = async (level) => {
     setEnergyLevel(level);
+    localStorage.setItem('bloomspace.energyLevel', level);
     if (user && tasks.length > 0) await handleOrganize(level);
   };
 

@@ -5,15 +5,17 @@
  */
 
 // Fake logged-in user with one weekly goal the scorer can match
-const FAKE_USER = {
+const mockUser = {
   _id: 'user1',
   name: 'Test',
   goals: { yearly: [], monthly: [], weekly: ['go to the gym'] },
+  priorityPlans: { early: [], typical: [], slow: [] },
+  save: jest.fn(async () => mockUser),
 };
 
 jest.mock('../middleware/auth', () => ({
   protect: (req, res, next) => {
-    req.user = FAKE_USER;
+    req.user = mockUser;
     next();
   },
 }));
@@ -75,6 +77,8 @@ afterAll((done) => {
 beforeEach(() => {
   bulkWriteCalls.length = 0;
   Task.find.mockResolvedValue([...OPEN_TASKS]);
+  mockUser.priorityPlans = { early: [], typical: [], slow: [] };
+  mockUser.save.mockClear();
 });
 
 describe('POST /api/tasks/parse', () => {
@@ -110,7 +114,7 @@ describe('POST /api/tasks/recommend', () => {
 
   it('queries only the logged-in user\'s open tasks', async () => {
     await post('/api/tasks/recommend', { energyLevel: 'typical' });
-    expect(Task.find).toHaveBeenCalledWith({ user: FAKE_USER._id, completed: false });
+    expect(Task.find).toHaveBeenCalledWith({ user: mockUser._id, completed: false });
   });
 
   it('does not write to the DB without persist', async () => {
@@ -133,6 +137,35 @@ describe('POST /api/tasks/recommend', () => {
       expect(op.updateOne.update.sectionOrder).toEqual(expect.any(Number));
       expect(['priorities', 'tomorrow', 'dontForget']).toContain(op.updateOne.update.sortedCategory);
     });
+    expect(mockUser.priorityPlans.typical).toHaveLength(3);
+    expect(mockUser.save).toHaveBeenCalled();
+  });
+
+  it('applies a saved mode plan before persisting recommendations', async () => {
+    mockUser.priorityPlans.typical = ['e', 'b', 'a'];
+    const res = await post('/api/tasks/recommend', { energyLevel: 'typical', persist: true });
+    const body = await res.json();
+    expect(body.today.map(task => task._id)).toEqual(['e', 'b', 'a']);
+  });
+
+  it('accepts and saves an ordered priority plan within the mode capacity', async () => {
+    const res = await fetch(`${baseUrl}/api/tasks/priority-plan/typical`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ taskIds: ['e', 'b', 'a'] }),
+    });
+    expect(res.status).toBe(200);
+    expect(mockUser.priorityPlans.typical).toEqual(['e', 'b', 'a']);
+    expect(mockUser.save).toHaveBeenCalled();
+  });
+
+  it('rejects a priority plan above the mode capacity', async () => {
+    const res = await fetch(`${baseUrl}/api/tasks/priority-plan/slow`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ taskIds: ['a', 'b'] }),
+    });
+    expect(res.status).toBe(400);
   });
 
   it('the weekly goal task benefits from goal alignment', async () => {

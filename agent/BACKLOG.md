@@ -185,6 +185,14 @@ it, avoid collecting note or task contents, and include any privacy disclosure,
 consent, and App Store requirements. Do not build this during the current core
 MVP work, but do not launch publicly without reviewing it.
 
+### 21. Open task editing with a double-click
+
+Status: Future convenience enhancement
+
+Let a desktop user double-click a task title to open its existing inline editor.
+Keep the visible Edit control and provide an accessible mobile equivalent; do
+not make double-click the only way to edit.
+
 ## Core Loop Acceptance Test
 
 Before design work, confirm this complete flow:

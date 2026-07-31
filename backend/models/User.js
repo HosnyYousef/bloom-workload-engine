@@ -32,6 +32,13 @@ const userSchema = new mongoose.Schema(
       monthly: { type: [String], default: [] },
       weekly: { type: [String], default: [] },
     },
+    // Explicit daily plans override recommendation order for each energy mode.
+    // Missing/completed task ids are repaired by the recommendation engine.
+    priorityPlans: {
+      early: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
+      typical: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
+      slow: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
+    },
   },
   {
     timestamps: true,

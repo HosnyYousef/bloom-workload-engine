@@ -297,6 +297,29 @@ mode-switch acceptance check.
 What needs to happen next: choose and reorder priorities in Typical and Slow,
 switch among modes, and confirm each arrangement returns exactly.
 
+### 2026-07-31: Store independent energy-mode plans on the user account
+
+What changed:
+
+* User accounts now store separate ordered priority plans for Early, Typical,
+  and Slow modes.
+* The server applies the selected plan before persisting recommendations and
+  fills gaps left by completed or deleted tasks.
+* Manual choices and drag ordering save directly to the active server-side plan.
+* Existing browser preferences migrate through the recommendation request.
+* The selected energy mode now remains active after refresh.
+* Double-click-to-edit is recorded as backlog item 21.
+
+What works: frontend lint/build pass; 107 backend non-HTTP tests and all 11
+focused task-route integration tests pass.
+
+What is broken: no confirmed failure. One full backend-suite run had a transient
+timeout on its first localhost HTTP request; the complete focused HTTP suite
+passed immediately afterward.
+
+What needs to happen next: deploy both backend and frontend, then configure a
+different plan for each mode and verify switching and refresh preserve them.
+
 Update this file after every coding session.
 
 Include:

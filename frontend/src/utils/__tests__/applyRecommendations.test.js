@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { applyRecommendations, applySavedPriorityOrder } from '../applyRecommendations';
+import { applyRecommendations } from '../applyRecommendations';
 
 const NOW = 1750000000000;
 
@@ -65,26 +65,5 @@ describe('applyRecommendations', () => {
     const before = JSON.parse(JSON.stringify(localTasks));
     applyRecommendations(localTasks, response, NOW);
     expect(localTasks).toEqual(before);
-  });
-});
-
-describe('applySavedPriorityOrder', () => {
-  it('restores saved choices and their order while returning displaced tasks', () => {
-    const recommendations = {
-      today: [{ _id: 'a' }, { _id: 'b' }, { _id: 'c' }],
-      tomorrow: [{ _id: 'chosen' }, { _id: 'e' }],
-      dontForget: [{ _id: 'f' }],
-    };
-
-    const result = applySavedPriorityOrder(recommendations, ['chosen', 'b', 'a']);
-
-    expect(result.today.map(task => task._id)).toEqual(['chosen', 'b', 'a']);
-    expect(result.tomorrow.map(task => task._id)).toEqual(['e', 'c']);
-    expect(recommendations.today.map(task => task._id)).toEqual(['a', 'b', 'c']);
-  });
-
-  it('keeps recommendations unchanged when the saved task is unavailable', () => {
-    const recommendations = { today: [{ _id: 'a' }], tomorrow: [], dontForget: [] };
-    expect(applySavedPriorityOrder(recommendations, ['missing'])).toBe(recommendations);
   });
 });
