@@ -13,6 +13,8 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
     const [editSteps, setEditSteps] = useState([]);
     const [showAll, setShowAll] = useState(false);
     const [showChoices, setShowChoices] = useState(false);
+    const [isDragTarget, setIsDragTarget] = useState(false);
+    const [dropIndex, setDropIndex] = useState(null);
     const config = SECTION_CONFIG[category];
     const isSecondarySection = category !== 'priorities';
     const collapseKey = `bloomspace.sectionCollapsed.${category}`;
@@ -94,15 +96,54 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
         onUpdate(task._id, { steps });
     }
 
+    const clearDropCue = () => {
+        setIsDragTarget(false);
+        setDropIndex(null);
+    };
+
+    const beginDragging = (event, task) => {
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('application/x-bloomspace-task', task._id);
+
+        // Use a compact one-line preview instead of a browser snapshot of the
+        // entire task, including its expanded small steps.
+        const preview = document.createElement('div');
+        preview.textContent = task.text;
+        preview.className = 'fixed -left-[9999px] top-0 max-w-xs truncate rounded-lg border-2 border-blue-500 bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xl dark:bg-gray-800 dark:text-gray-100';
+        document.body.appendChild(preview);
+        event.dataTransfer.setDragImage(preview, 16, 16);
+        setTimeout(() => preview.remove(), 0);
+    };
+
+    const updateDropIndex = (event, index) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const bounds = event.currentTarget.getBoundingClientRect();
+        setDropIndex(index + (event.clientY > bounds.top + bounds.height / 2 ? 1 : 0));
+        setIsDragTarget(true);
+        event.dataTransfer.dropEffect = 'move';
+    };
+
+    const dropTask = (event, index = tasks.length) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const taskId = event.dataTransfer.getData('application/x-bloomspace-task');
+        if (taskId) onMove?.(taskId, category, index);
+        clearDropCue();
+    };
+
     return (
         <div
-            className={`card ${config.card} border-2 border-black dark:border-gray-700 rounded-2xl p-4 h-auto min-h-44 transition-colors`}
-            onDragOver={(event) => event.preventDefault()}
-            onDrop={(event) => {
-                event.preventDefault();
-                const taskId = event.dataTransfer.getData('application/x-bloomspace-task');
-                if (taskId) onMove?.(taskId, category, tasks.length);
+            className={`card ${config.card} border-2 rounded-2xl p-4 h-auto min-h-44 transition-all ${isDragTarget ? 'border-blue-500 ring-4 ring-blue-400/35 bg-blue-50 dark:bg-blue-950/30' : 'border-black dark:border-gray-700'}`}
+            onDragEnter={() => setIsDragTarget(true)}
+            onDragLeave={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) clearDropCue();
             }}
+            onDragOver={(event) => {
+                event.preventDefault();
+                event.dataTransfer.dropEffect = 'move';
+            }}
+            onDrop={(event) => dropTask(event, dropIndex ?? tasks.length)}
         >
             {/* Header */}
             <div className='flex justify-between items-start border-b-2 border-black dark:border-gray-600 pb-2 mb-3'>
@@ -125,23 +166,23 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
             </div>
 
             {/* Task List */}
-            {!isCollapsed && <div className={`space-y-2 transition-opacity ${isSecondarySection ? 'opacity-60 hover:opacity-100 focus-within:opacity-100' : ''}`}>
-                {visibleTasks.map(task => (
+            {!isCollapsed && <div
+                className={`space-y-2 transition-opacity ${isSecondarySection ? 'opacity-60 hover:opacity-100 focus-within:opacity-100' : ''}`}
+                onDragOver={(event) => {
+                    if (event.target === event.currentTarget) {
+                        event.preventDefault();
+                        setDropIndex(visibleTasks.length);
+                        setIsDragTarget(true);
+                    }
+                }}
+            >
+                {visibleTasks.map((task, taskIndex) => (
                     <div
                         key={task._id}
-                        draggable={editingTaskId !== task._id}
-                        onDragStart={(event) => {
-                            event.dataTransfer.effectAllowed = 'move';
-                            event.dataTransfer.setData('application/x-bloomspace-task', task._id);
-                        }}
-                        onDragOver={(event) => event.preventDefault()}
-                        onDrop={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            const taskId = event.dataTransfer.getData('application/x-bloomspace-task');
-                            if (taskId) onMove?.(taskId, category, tasks.findIndex(item => item._id === task._id));
-                        }}
+                        onDragOver={(event) => updateDropIndex(event, taskIndex)}
+                        onDrop={(event) => dropTask(event, dropIndex ?? taskIndex)}
                     >
+                        {dropIndex === taskIndex && <div aria-hidden='true' className='mb-2 h-1 rounded-full bg-blue-500 shadow-[0_0_0_3px_rgba(59,130,246,0.2)]' />}
                         {editingTaskId === task._id ? (
                             <div onKeyDown={handleEditorKeyDown} className='ml-6 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/50 p-3 space-y-2'>
                                 <label className='block text-xs font-semibold text-gray-600 dark:text-gray-300'>Task name</label>
@@ -173,7 +214,14 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
                             </div>
                         ) : (<>
                         <div className='flex items-center gap-2 group'>
-                            <span aria-label={`Drag ${task.text}`} title='Drag to reorder or move' className='cursor-grab select-none text-gray-400'>⋮⋮</span>
+                            <span
+                                draggable
+                                onDragStart={(event) => beginDragging(event, task)}
+                                onDragEnd={clearDropCue}
+                                aria-label={`Drag ${task.text}`}
+                                title='Drag to reorder or move'
+                                className='cursor-grab select-none text-gray-400 active:cursor-grabbing'
+                            >⋮⋮</span>
                             <input
                                 type="checkbox"
                                 checked={task.completed}
@@ -225,6 +273,7 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
                         </>)}
                     </div>
                 ))}
+                {dropIndex === visibleTasks.length && <div aria-hidden='true' className='h-1 rounded-full bg-blue-500 shadow-[0_0_0_3px_rgba(59,130,246,0.2)]' />}
             </div>}
 
             {canChooseAlternative && (

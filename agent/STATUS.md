@@ -236,6 +236,27 @@ manual pass over the engine assumptions in `backend/engine/README.md`
 
 ## Notes
 
+### 2026-07-31: Remember priority choices and clarify drag destinations
+
+What changed:
+
+* Typical and Slow Day now restore the user's chosen alternative after changing
+  energy modes and returning.
+* Task dragging uses a compact one-line preview instead of an image of the full
+  task card.
+* Valid destination sections glow while dragging, and an insertion line shows
+  the exact landing position.
+* Same-section moves account for the removed task so the insertion line and
+  persisted order agree.
+
+What works: frontend lint and the production build pass.
+
+What is broken: the frontend test runner timed out while starting its workers,
+so the focused tests could not execute in this environment.
+
+What needs to happen next: manually verify the saved choices and drag cues in
+the deployed browser, then continue with the separate Parking Lot task library.
+
 Update this file after every coding session.
 
 Include:

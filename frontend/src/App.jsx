@@ -12,7 +12,7 @@ import ProgressBar from "./components/ProgressBar"
 
 import api from "./services/api";
 import { sortTasks } from "./utils/sortTasks";
-import { applyRecommendations } from "./utils/applyRecommendations";
+import { applyRecommendations, applySavedPriorityChoice } from "./utils/applyRecommendations";
 
 const App = () => {
   const [energyLevel, setEnergyLevel] = useState('typical');
@@ -183,9 +183,16 @@ const App = () => {
     if (!movingTask) return false;
 
     const sourceCategory = movingTask.sortedCategory;
+    const sourceIndex = tasks
+      .filter(task => task.sortedCategory === sourceCategory)
+      .sort(bySectionOrder)
+      .findIndex(task => task._id === taskId);
     const sourceTasks = tasks.filter(task => task.sortedCategory === sourceCategory && task._id !== taskId).sort(bySectionOrder);
     const targetTasks = tasks.filter(task => task.sortedCategory === targetCategory && task._id !== taskId).sort(bySectionOrder);
-    const insertAt = Math.max(0, Math.min(targetIndex ?? targetTasks.length, targetTasks.length));
+    const adjustedTargetIndex = sourceCategory === targetCategory && sourceIndex < targetIndex
+      ? targetIndex - 1
+      : targetIndex;
+    const insertAt = Math.max(0, Math.min(adjustedTargetIndex ?? targetTasks.length, targetTasks.length));
     targetTasks.splice(insertAt, 0, movingTask);
 
     const updates = new Map();
@@ -244,6 +251,7 @@ const App = () => {
     setTasks(current => current.map(task => updates.has(task._id) ? { ...task, ...updates.get(task._id) } : task));
     try {
       await Promise.all([...updates].map(([id, taskUpdates]) => api.put(`/tasks/${id}`, taskUpdates)));
+      localStorage.setItem(`bloomspace.priorityChoice.${energyLevel}`, taskId);
       return true;
     } catch (err) {
       console.error('❌ Failed to choose priority task:', err);
@@ -272,10 +280,36 @@ const App = () => {
       // The engine scores every open task (urgency, goal alignment, energy
       // fit, time left today) and returns the top 3 plus the other buckets.
       // persist: true writes the categories server-side in the same call.
-      const { data } = await api.post('/tasks/recommend', {
+      const { data: engineRecommendations } = await api.post('/tasks/recommend', {
         energyLevel: selectedEnergyLevel,
         persist: true
       });
+      const savedChoice = ['typical', 'slow'].includes(selectedEnergyLevel)
+        ? localStorage.getItem(`bloomspace.priorityChoice.${selectedEnergyLevel}`)
+        : null;
+      const data = applySavedPriorityChoice(engineRecommendations, savedChoice);
+
+      if (data !== engineRecommendations) {
+        const chosenTask = data.today[data.today.length - 1];
+        const returnBucket = ['tomorrow', 'dontForget'].find(bucket =>
+          data[bucket]?.some(task => task._id === engineRecommendations.today[engineRecommendations.today.length - 1]?._id)
+        );
+        const displacedTask = engineRecommendations.today[engineRecommendations.today.length - 1];
+        await Promise.all([
+          api.put(`/tasks/${chosenTask._id}`, {
+            sorted: true,
+            sortedCategory: 'priorities',
+            sortedAt: Date.now(),
+            sectionOrder: data.today.length - 1,
+          }),
+          returnBucket && displacedTask ? api.put(`/tasks/${displacedTask._id}`, {
+            sorted: true,
+            sortedCategory: returnBucket,
+            sortedAt: Date.now(),
+            sectionOrder: data[returnBucket].findIndex(task => task._id === displacedTask._id),
+          }) : Promise.resolve(),
+        ]);
+      }
       setTasks(prev => applyRecommendations(prev, data));
       setOrganizeSummary(
         `Sorted into sections: ${data.today.length} in Top Priorities, ${data.tomorrow.length} in For Tomorrow, and ${data.dontForget.length} in Don't Forget.`

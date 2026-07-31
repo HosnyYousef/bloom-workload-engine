@@ -32,3 +32,27 @@ export const applyRecommendations = (tasks, response, now = Date.now()) => {
     };
   });
 };
+
+// Keep a user's explicit priority choice when the recommendation engine is
+// rerun after changing energy modes. The displaced recommendation returns to
+// the same bucket the chosen task came from.
+export const applySavedPriorityChoice = (response, preferredTaskId) => {
+  if (!preferredTaskId || !response?.today?.length) return response;
+
+  const sourceBucket = ['tomorrow', 'dontForget'].find(bucket =>
+    response[bucket]?.some(task => task._id === preferredTaskId)
+  );
+  if (!sourceBucket) return response;
+
+  const chosenTask = response[sourceBucket].find(task => task._id === preferredTaskId);
+  const displacedTask = response.today[response.today.length - 1];
+
+  return {
+    ...response,
+    today: [...response.today.slice(0, -1), chosenTask],
+    [sourceBucket]: [
+      ...response[sourceBucket].filter(task => task._id !== preferredTaskId),
+      displacedTask,
+    ],
+  };
+};

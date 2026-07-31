@@ -34,10 +34,15 @@ Current focused check: Tomorrow should contain three next-up tasks whenever at
 least three tasks remain after Top Priorities. Due-soon tasks must appear before
 later filler tasks. Parking Lot library work is intentionally separate.
 
-Also confirm Tomorrow and Don't Forget remember their collapsed state after a
-refresh. On Typical and Slow Day, expand Choose a different task, select an
-alternative, and confirm it replaces the last current priority without
-exceeding the mode's focus limit. Reorder chosen priorities by dragging.
+Tomorrow and Don't Forget collapse memory is accepted. Confirm that a manually
+chosen Typical task remains selected after switching away and back, then repeat
+for Slow Day. While dragging, confirm only one task title follows the pointer,
+the destination section glows, the insertion line matches the final persisted
+position, and a refresh preserves that order.
+
+After these checks pass, begin the separate Parking Lot task-library design:
+an overlay for finding and managing all parked tasks without crowding the daily
+focus view.
 
 The beta tester feedback box, optional cognitive-load breakdown, and daily
 history/calendar search are saved as items 17 through 19. They should not be
