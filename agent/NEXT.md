@@ -47,6 +47,11 @@ each mode should restore its own plan. Choosing an alternative should put it
 first. Completed/deleted saved tasks should be replaced without disturbing the
 remaining saved order.
 
+Use a normal account for the logout/login persistence check. Try Demo resets its
+shared task data on every login by design, so it cannot preserve plans whose task
+IDs were deleted during that reset. The deployed backend also needs the
+2026-08-01 Mongoose pre-save-hook fix before repeating these checks.
+
 After these checks pass, begin the separate Parking Lot task-library design:
 an overlay for finding and managing all parked tasks without crowding the daily
 focus view.

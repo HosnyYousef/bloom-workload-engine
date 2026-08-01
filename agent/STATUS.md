@@ -26,6 +26,22 @@ Phase 1: MVP Foundation
 
 ## Session Log
 
+### 2026-08-01: Fix deployed priority-plan saves
+
+What changed:
+
+* Fixed the Mongoose 9 user pre-save hook that caused every persisted
+  recommendation and priority-plan save to fail with `next is not a function`.
+* Added a focused regression test for saving non-password user fields without
+  rehashing the password.
+* Confirmed the deployed frontend contains the latest priority-plan client
+  code; the live backend error was the blocker.
+* Clarified that logout/login persistence must be tested with a normal account.
+  Try Demo intentionally deletes and recreates the shared demo tasks on login.
+
+What needs to happen next: deploy the backend fix, then rerun the energy-mode
+acceptance checks with a normal account containing at least eight tasks.
+
 ### 2026-07-30: Daily focus capacity by energy level
 
 What changed:
