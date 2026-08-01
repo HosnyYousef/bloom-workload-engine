@@ -190,14 +190,14 @@ describe('TopPriorities', () => {
     render(<TopPriorities tasks={[task]} onToggle={onToggle} onDelete={onDelete} onAdd={onAdd} />);
     const title = screen.getByText('Drag me');
     const grip = screen.getByLabelText('Drag Drag me');
-    const row = title.parentElement.parentElement;
     const dataTransfer = {
       effectAllowed: '',
       setData: vi.fn(),
       setDragImage: vi.fn(),
     };
 
-    expect(row).toHaveAttribute('draggable', 'true');
+    expect(title).toHaveAttribute('draggable', 'true');
+    expect(grip).toHaveAttribute('draggable', 'true');
     fireEvent.dragStart(title, { dataTransfer });
     fireEvent.dragStart(grip, { dataTransfer });
 

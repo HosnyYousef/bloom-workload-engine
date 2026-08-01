@@ -26,6 +26,20 @@ Phase 1: MVP Foundation
 
 ## Session Log
 
+### 2026-08-01: Restore direct title and grip dragging
+
+What changed:
+
+* Reverted the row-level drag source introduced in `088f8b9` after manual
+  desktop testing confirmed it prevented dragging from starting.
+* Restored the previously working native draggable elements directly on the
+  task title and grip.
+* Kept the accepted completion, deletion, replacement, and 4/3/1 capacity
+  fixes unchanged.
+
+What needs to happen next: deploy and manually confirm title/grip dragging,
+destination glow, insertion line, persisted drop, and Escape cancellation.
+
 ### 2026-08-01: Repair completed/deleted priorities and drag sources
 
 What changed:

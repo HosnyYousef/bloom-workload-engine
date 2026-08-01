@@ -58,6 +58,11 @@ saved priority should immediately fill one missing position, completed tasks
 must not count toward or appear in the active 4/3/1 plans, and dragging from the
 title or grip should show destination/insertion cues and persist the move.
 
+Completion, deletion, replacement, and limits have passed. The row-level drag
+source in `088f8b9` caused a confirmed manual regression and has been reverted.
+After deployment, only the title/grip drag cues, persisted drop, and Escape
+cancellation remain to be accepted.
+
 After these checks pass, begin the separate Parking Lot task-library design:
 an overlay for finding and managing all parked tasks without crowding the daily
 focus view.
