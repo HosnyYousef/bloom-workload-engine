@@ -89,7 +89,7 @@ const App = () => {
   }, [user])
 
   // DERIVED STATE - show SORTED tasks in the right panels
-  const sortedTasksOnly = tasks.filter(t => t.sorted)
+  const sortedTasksOnly = tasks.filter(t => t.sorted && !t.completed)
 
   const bySectionOrder = (a, b) => (a.sectionOrder ?? Number.MAX_SAFE_INTEGER) - (b.sectionOrder ?? Number.MAX_SAFE_INTEGER);
   const allPriorities = sortedTasksOnly.filter(t => t.sortedCategory === 'priorities').sort(bySectionOrder)
@@ -107,8 +107,12 @@ const App = () => {
     const task = tasks.find(t => t._id === id);
     if (!task) return;
     try {
-      const response = await api.put(`/tasks/${id}`, { completed: !task.completed });
-      setTasks(tasks.map(t => t._id === id ? response.data : t));
+      const completing = !task.completed;
+      const response = await api.put(`/tasks/${id}`, { completed: completing });
+      setTasks(current => current.map(t => t._id === id ? response.data : t));
+      if (completing && task.sortedCategory === 'priorities') {
+        await handleOrganize(energyLevel);
+      }
     } catch (err) {
       console.error('❌ Failed to toggle task:', err);
     }
@@ -164,9 +168,13 @@ const App = () => {
   };
 
   const deleteTask = async (id) => {
+    const task = tasks.find(item => item._id === id);
     try {
       await api.delete(`/tasks/${id}`)
-      setTasks(tasks.filter(task => task._id !== id))
+      setTasks(current => current.filter(item => item._id !== id))
+      if (task?.sortedCategory === 'priorities' && !task.completed) {
+        await handleOrganize(energyLevel);
+      }
     } catch (err) {
       console.error('❌ Failed to delete task:', err)
     }

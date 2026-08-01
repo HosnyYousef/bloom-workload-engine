@@ -52,6 +52,12 @@ shared task data on every login by design, so it cannot preserve plans whose tas
 IDs were deleted during that reset. The deployed backend also needs the
 2026-08-01 Mongoose pre-save-hook fix before repeating these checks.
 
+The backend fix and core persistence checks have now passed. After the latest
+frontend deploy, retest only the remaining failures: completing and deleting a
+saved priority should immediately fill one missing position, completed tasks
+must not count toward or appear in the active 4/3/1 plans, and dragging from the
+title or grip should show destination/insertion cues and persist the move.
+
 After these checks pass, begin the separate Parking Lot task-library design:
 an overlay for finding and managing all parked tasks without crowding the daily
 focus view.
@@ -62,6 +68,10 @@ built until the core MVP is stable.
 
 Product analytics is saved as item 20 and is required during final web and App
 Store launch preparation. The provider will be selected later.
+
+Username display for normal and Demo accounts, registration confirmation email,
+and forgot-password/reset support are saved as item 22. Do not interrupt the
+current acceptance test to build them.
 
 Suggested command after the change:
 

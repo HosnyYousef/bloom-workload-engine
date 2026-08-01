@@ -193,6 +193,17 @@ Let a desktop user double-click a task title to open its existing inline editor.
 Keep the visible Edit control and provide an accessible mobile equivalent; do
 not make double-click the only way to edit.
 
+### 22. Complete account identity and recovery
+
+Status: Future authentication enhancement
+
+Show the signed-in user's username in the app, including a friendly username
+for the Demo account. Send an account-confirmation email after registration and
+add a **Forgot password?** flow that securely emails a time-limited password
+reset link. Keep these changes out of the current recommendation acceptance
+test and design the email delivery, expiry, and abuse protection before
+implementation.
+
 ## Core Loop Acceptance Test
 
 Before design work, confirm this complete flow:

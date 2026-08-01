@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TopPriorities from '../TopPriorities';
 
@@ -183,6 +183,26 @@ describe('TopPriorities', () => {
 
     expect(onMoveSection).toHaveBeenCalledWith('abc6', 1);
     expect(onMoveToParking).toHaveBeenCalledWith('abc6');
+  });
+
+  it('starts the same native drag from the task title or grip', () => {
+    const task = { _id: 'abc-drag', text: 'Drag me', completed: false, steps: [] };
+    render(<TopPriorities tasks={[task]} onToggle={onToggle} onDelete={onDelete} onAdd={onAdd} />);
+    const title = screen.getByText('Drag me');
+    const grip = screen.getByLabelText('Drag Drag me');
+    const row = title.parentElement.parentElement;
+    const dataTransfer = {
+      effectAllowed: '',
+      setData: vi.fn(),
+      setDragImage: vi.fn(),
+    };
+
+    expect(row).toHaveAttribute('draggable', 'true');
+    fireEvent.dragStart(title, { dataTransfer });
+    fireEvent.dragStart(grip, { dataTransfer });
+
+    expect(dataTransfer.setData).toHaveBeenNthCalledWith(1, 'application/x-bloomspace-task', 'abc-drag');
+    expect(dataTransfer.setData).toHaveBeenNthCalledWith(2, 'application/x-bloomspace-task', 'abc-drag');
   });
 
   it('checks one small step without completing the main task', async () => {

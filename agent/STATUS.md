@@ -26,6 +26,40 @@ Phase 1: MVP Foundation
 
 ## Session Log
 
+### 2026-08-01: Repair completed/deleted priorities and drag sources
+
+What changed:
+
+* Removed completed tasks from active recommendation sections so they no longer
+  inflate the visible 4/3/1 energy-mode capacities.
+* Completing or deleting an active priority now immediately asks the server to
+  repair only the missing plan position.
+* Made each task row the native drag source while allowing drag initiation only
+  from the task title or grip, improving browser drag reliability without
+  making its controls draggable.
+* Added focused drag-source regression coverage.
+
+What works: frontend lint and the production build pass. Mode-specific plans,
+switching, refresh, normal-account logout/login, alternative selection, and
+collapsed-section memory passed deployed acceptance before this change.
+
+What still needs work: the focused Vitest file could not start a forks worker in
+this environment. After deployment, manually retest completion, deletion,
+capacity limits, and drag behavior.
+
+### 2026-08-01: Record future account identity and recovery
+
+What changed:
+
+* Added a future backlog item to display the signed-in username for normal and
+  Demo accounts.
+* Included account-confirmation email and secure forgot-password/reset support
+  in the same future authentication work.
+* Kept the active recommendation acceptance test unchanged.
+
+What needs to happen next: finish the current item 8 acceptance test before
+starting this future authentication enhancement.
+
 ### 2026-08-01: Fix deployed priority-plan saves
 
 What changed:

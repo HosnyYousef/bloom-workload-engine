@@ -191,6 +191,12 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
                 {visibleTasks.map((task, taskIndex) => (
                     <div
                         key={task._id}
+                        draggable
+                        onDragStart={(event) => {
+                            if (event.target.closest('[data-drag-handle]')) beginDragging(event, task);
+                            else event.preventDefault();
+                        }}
+                        onDragEnd={clearDropCue}
                         onDragOver={(event) => updateDropIndex(event, taskIndex)}
                         onDrop={(event) => dropTask(event, dropIndex ?? taskIndex)}
                     >
@@ -227,9 +233,7 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
                         ) : (<>
                         <div className='flex items-center gap-2 group'>
                             <span
-                                draggable
-                                onDragStart={(event) => beginDragging(event, task)}
-                                onDragEnd={clearDropCue}
+                                data-drag-handle
                                 aria-label={`Drag ${task.text}`}
                                 title='Drag to reorder or move'
                                 className='cursor-grab select-none text-gray-400 active:cursor-grabbing'
@@ -241,9 +245,7 @@ const TopPriorities = ({ tasks, onToggle, onDelete, onAdd, onUpdate, category = 
                                 className='cursor-pointer'
                             />
                             <span
-                                draggable
-                                onDragStart={(event) => beginDragging(event, task)}
-                                onDragEnd={clearDropCue}
+                                data-drag-handle
                                 title='Drag to reorder or move'
                                 className={`flex-1 cursor-grab active:cursor-grabbing ${config.text} ${task.completed ? 'line-through text-gray-400 dark:text-gray-500' : ''}`}
                             >
