@@ -26,6 +26,23 @@ Phase 1: MVP Foundation
 
 ## Session Log
 
+### 2026-08-01: Accept daily focus capacity and priority plans
+
+What passed manual acceptance:
+
+* Early Start, Typical Day, and Slow Day preserve independent task selections
+  and ordering across switching, refresh, and normal-account logout/login.
+* The visible active capacities remain 4, 3, and 1 respectively.
+* Choosing an alternative puts it first and persists it.
+* Completing or deleting a saved priority fills only the missing position while
+  preserving the remaining order.
+* Dragging works from the title and grip; destination glow, insertion line,
+  persisted drops, and Escape cancellation all work.
+* Tomorrow and Don't Forget independently remember their collapsed state.
+
+What needs to happen next: design the separate Parking Lot task library before
+implementation.
+
 ### 2026-08-01: Restore direct title and grip dragging
 
 What changed:

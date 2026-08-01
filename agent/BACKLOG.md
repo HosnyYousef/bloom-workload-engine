@@ -60,6 +60,14 @@ Convert written lines into tasks, keep the original text recoverable, and let
 the user undo the conversion. Review the partial uncommitted implementation
 before continuing.
 
+### 4a. Parking Lot task library
+
+Status: Next design task
+
+Design a calm overlay for finding and managing all parked tasks without
+crowding the daily focus view. Define the smallest useful library experience
+and acceptance checks before implementation.
+
 ## Task Steps
 
 ### 5. Generate steps only when useful
@@ -88,9 +96,7 @@ completion of the main task.
 
 ### 8. Set daily focus capacity
 
-Status: Required for MVP
-
-Implementation status: Implemented, awaiting manual acceptance
+Status: Accepted August 1, 2026
 
 Recommend 3 tasks on a Typical Day and 1 task on a Slow Day. Allow up to 4
 tasks when the user chooses Early Start. Keep the daily list intentionally
